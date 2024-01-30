@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Uno.Class
+namespace Uno.Classes
 {
     public class Card
     {
@@ -12,10 +12,10 @@ namespace Uno.Class
         public WildEnum Wild { get; set; }
         public ActionEnum Action { get; set; }
         public ColorEnum Color { get; set; }
-        public int Number { get; set; }
+        public int Number { get; set; } = -1;
 
         //Normal Card Constructor
-        public Card(TypeEnum type, ColorEnum color, int number) 
+        public Card(TypeEnum type, ColorEnum color, int number)
         {
             this.Type = type;
             this.Color = color;
@@ -39,25 +39,28 @@ namespace Uno.Class
         {
             Number = 0, 
             Action = 1, 
-            Wild = 3
+            Wild = 2
         }
         public enum WildEnum
         {
-            DrawFour = 0, 
-            ChangeColor = 1
+            None = 0,
+            DrawFour = 1, 
+            ChangeColor = 2
         }
         public enum ActionEnum
         {
-            Reverse = 0, 
-            Skip = 1, 
-            DrawTwo = 2
+            None = 0,
+            Reverse = 1, 
+            Skip = 2, 
+            DrawTwo = 3
         }
         public enum ColorEnum
         {
-            Red = 0, 
-            Yellow = 1, 
-            Blue = 2, 
-            Green = 3
+            None = 0,
+            Red = 1, 
+            Yellow = 2, 
+            Blue = 3, 
+            Green = 4
         }
     }
 }
