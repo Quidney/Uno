@@ -69,18 +69,20 @@ namespace Uno.Class
         {
             //Fisher-Yates shuffle algorithm
 
-            int deckCount = cardsDeckList.Count;
-
-            while (deckCount > 1)
+            for (int i = 0; i < 4; i++)
             {
-                deckCount--;
+                int deckCount = cardsDeckList.Count;
 
-                int randomIndex = random.Next(deckCount + 1);
+                while (deckCount > 1)
+                {
+                    deckCount--;
 
-                Card card = cardsDeckList[randomIndex];
-                cardsDeckList[randomIndex] = cardsDeckList[deckCount];
-                cardsDeckList[deckCount] = card;
+                    int randomIndex = random.Next(deckCount + 1);
 
+                    Card card = cardsDeckList[randomIndex];
+                    cardsDeckList[randomIndex] = cardsDeckList[deckCount];
+                    cardsDeckList[deckCount] = card;
+                }
             }
         }
     }

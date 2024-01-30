@@ -1,4 +1,6 @@
-﻿namespace Uno.Classes
+﻿using System.Drawing;
+
+namespace Uno.Classes
 {
     public class Card
     {
@@ -59,5 +61,34 @@
             Green = 4
         }
         #endregion
+
+        public override string ToString()
+        {
+            string color = Color != Card.ColorEnum.None ? $"{Color}" : string.Empty;
+            string type = $"{Type}";
+            string wild = Wild != Card.WildEnum.None ? $"{Wild}" : string.Empty;
+            string action = Action != Card.ActionEnum.None ? $"{Action}" : string.Empty;
+            string number = Number != -1 ? $"{Number}" : string.Empty;
+
+            return $"{color} {type} {wild}{action}{number}";
+        }
+
+        public System.Drawing.Color ToColor()
+        {
+            switch (Color)
+            {
+                case ColorEnum.Red:
+                    return System.Drawing.Color.OrangeRed;
+                case ColorEnum.Green:
+                    return System.Drawing.Color.LimeGreen;
+                case ColorEnum.Yellow: 
+                    return System.Drawing.Color.Lime;
+                case ColorEnum.Blue:
+                    return System.Drawing.Color.CornflowerBlue;
+                default:
+                    return SystemColors.Control;
+
+            }
+        }
     }
 }
