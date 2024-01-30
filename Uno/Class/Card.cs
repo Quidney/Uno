@@ -18,37 +18,46 @@ namespace Uno.Class
         public Card(TypeEnum type, ColorEnum color, int number) 
         {
             this.Type = type;
-            this.Number = number;
             this.Color = color;
+            this.Number = number;
         }
         //Action Card Constructor
-        public Card(TypeEnum type, ActionEnum action, ColorEnum color) 
+        public Card(TypeEnum type, ColorEnum color, ActionEnum action) 
         {
             this.Type = type;
-            this.Action = action;
             this.Color = color;
+            this.Action = action;
         }
         //Wild Card Constructor
         public Card(TypeEnum type,  WildEnum wild)
         {
-
+            this.Type = type;
+            this.Wild = wild;
         }
+
         public enum TypeEnum
         {
-            Color, Action, Wild
+            Number = 0, 
+            Action = 1, 
+            Wild = 3
         }
         public enum WildEnum
         {
-            WildDraw, WildColor
+            DrawFour = 0, 
+            ChangeColor = 1
         }
         public enum ActionEnum
         {
-            Reverse, Skip, DrawTwo
+            Reverse = 0, 
+            Skip = 1, 
+            DrawTwo = 2
         }
-     
         public enum ColorEnum
         {
-            Red, Yellow, Blue, Green
+            Red = 0, 
+            Yellow = 1, 
+            Blue = 2, 
+            Green = 3
         }
     }
 }
