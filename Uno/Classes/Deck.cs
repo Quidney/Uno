@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Uno.Classes;
 
 namespace Uno.Class
@@ -12,7 +8,7 @@ namespace Uno.Class
     {
         public List<Card> cardsDeckList;
 
-        public Deck() 
+        public Deck()
         {
             cardsDeckList = new List<Card>();
 
@@ -64,13 +60,15 @@ namespace Uno.Class
                             cardsDeckList.Add(new Card((Card.TypeEnum)i, (Card.WildEnum)j));
                         }
                     }
-                }   
+                }
             }
         }
 
         Random random = new Random();
         public void Shuffle()
         {
+            //Fisher-Yates shuffle algorithm
+
             int deckCount = cardsDeckList.Count;
 
             while (deckCount > 1)
