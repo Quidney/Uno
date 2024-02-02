@@ -37,6 +37,9 @@ namespace Uno.Classes
 
             pnlCards.SetRow(label, 1);
             pnlCards.SetColumn(label, 1);
+
+            pnlCards.SetRowSpan(label, 3);
+            pnlCards.SetColumnSpan(label, 2);
         }
         public void ThrowCardInPile(object sender, EventArgs e, CustomLabel label, Player currentPlayer)
         {

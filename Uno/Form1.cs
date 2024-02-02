@@ -45,6 +45,7 @@ namespace Uno
         {
             Card card = deck.cardsDeckList.LastOrDefault();
             cardFunctionality.NewCardInPile(card);
+            deck.cardsDeckList.Remove(card);
         }
 
         void GiveStartingCards()
@@ -92,6 +93,7 @@ namespace Uno
                 Parent = pnlMain,
                 Text = card.ToString(),
                 AssignedCard = card,
+                Tag = "PlayerCard"
             };
 
             switch (card.Type)
@@ -138,8 +140,31 @@ namespace Uno
             pnlMain.SetRow(label, 18);
             pnlMain.SetColumn(label, 1);
 
-            pnlMain.SetRowSpan(label, 5);
+            pnlMain.SetRowSpan(label, 3);
             pnlMain.SetColumnSpan(label, 2);
+
+            foreach(Control control in pnlMain.Controls)
+            {
+                if (control is CustomLabel cardLabel)
+                {
+                    if ((string)cardLabel.Tag == "PlayerCard")
+                    {
+                        TableLayoutPanelCellPosition lblPos = pnlMain.GetCellPosition(cardLabel);
+
+                        if (lblPos.Column + 1 <= pnlMain.ColumnCount)
+                        {
+                            pnlMain.SetColumn(cardLabel, lblPos.Column + 1);
+                        }
+                        else
+                        {
+                            if (lblPos.Row + 1 <= pnlMain.RowCount)
+                            {
+                                pnlMain.SetRow(cardLabel, lblPos.Row + 1);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
