@@ -64,13 +64,32 @@ namespace Uno.Classes
 
         public override string ToString()
         {
-            string color = Color != Card.ColorEnum.None ? $"{Color}" : string.Empty;
-            string type = $"{Type}";
-            string wild = Wild != Card.WildEnum.None ? $"{Wild}" : string.Empty;
-            string action = Action != Card.ActionEnum.None ? $"{Action}" : string.Empty;
-            string number = Number != -1 ? $"{Number}" : string.Empty;
-
-            return $"{color} {type} {wild}{action}{number}";
+            switch (Type)
+            {
+                case TypeEnum.Number:
+                    return Number.ToString();
+                case TypeEnum.Action:
+                    switch (Action)
+                    {
+                        case ActionEnum.DrawTwo:
+                            return $"+2";
+                        case ActionEnum.Reverse:
+                            return "Reverse";
+                        case ActionEnum.Skip:
+                            return "Skip";
+                    }
+                    break;
+                case TypeEnum.Wild:
+                    switch (Wild)
+                    {
+                        case WildEnum.DrawFour:
+                            return "+4";
+                        case WildEnum.ChangeColor:
+                            return "Change Color";
+                    }
+                    break;
+            }
+            return string.Empty;
         }
 
         public System.Drawing.Color ToColor()
@@ -82,11 +101,11 @@ namespace Uno.Classes
                 case ColorEnum.Green:
                     return System.Drawing.Color.LimeGreen;
                 case ColorEnum.Yellow: 
-                    return System.Drawing.Color.Lime;
+                    return System.Drawing.Color.Yellow;
                 case ColorEnum.Blue:
                     return System.Drawing.Color.CornflowerBlue;
                 default:
-                    return SystemColors.Control;
+                    return System.Drawing.Color.Black;
 
             }
         }

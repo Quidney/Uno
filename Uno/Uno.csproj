@@ -47,7 +47,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Card.cs" />
-    <Compile Include="Classes\CardPile.cs" />
+    <Compile Include="Classes\CardFunctionality.cs" />
+    <Compile Include="Classes\CustomControls.cs" />
     <Compile Include="Classes\Deck.cs" />
     <Compile Include="Classes\Player.cs" />
     <Compile Include="Classes\PlayerDatabase.cs" />
