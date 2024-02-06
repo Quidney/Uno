@@ -13,6 +13,8 @@ namespace Uno.Classes
 
         public List<Card> playerInventory;
 
+        public bool IsHost { get; set; }
+
         public Player(int id, string name)
         {
             this.Id = id;

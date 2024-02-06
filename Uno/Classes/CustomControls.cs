@@ -8,12 +8,29 @@ using System.Windows.Forms;
 
 namespace Uno.Classes
 {
+    //This is here to prevent the class from turning into a "design mode" class.
     public class CustomControls{}
 
     public class CustomLabel : Label
     {
         public Card AssignedCard { get; set; }
         public CustomLabel() : base() 
+        {
+            DoubleBuffered = true;
+        }
+    }
+
+    public class CustomButton : Button
+    {
+        public CustomButton() : base()
+        {
+            DoubleBuffered = true;
+        }
+    }
+
+    public class CustomTextBox : TextBox
+    {
+        public CustomTextBox() : base()
         {
             DoubleBuffered = true;
         }

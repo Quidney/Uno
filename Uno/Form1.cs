@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -14,6 +17,8 @@ namespace Uno
         Deck deck;
         CardFunctionality cardFunctionality;
         PlayerDatabase playerDatabase;
+        Server server;
+
         public Form1()
         {
             InitializeComponent();
@@ -23,16 +28,23 @@ namespace Uno
 
         void InitMethod()
         {
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "Uno!";
+
             deck = new Deck();
             deck.Shuffle();
 
             cardFunctionality = new CardFunctionality();
 
             playerDatabase = new PlayerDatabase();
-            playerDatabase.AddPlayer("User");
+
+            server = new Server();
+
             currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == "User");
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
+
+            server.SetReferences(playerDatabase);
         }
 
         void StartGame()
@@ -149,7 +161,7 @@ namespace Uno
             int row = 15;
             int column = 0;
 
-            foreach(Control control in pnlMain.Controls)
+            foreach (Control control in pnlMain.Controls)
             {
                 if (control is CustomLabel cardLabel)
                 {
@@ -171,6 +183,83 @@ namespace Uno
                         }
                     }
                 }
+            }
+        }
+
+        private void LimitPortInput(object sender, KeyPressEventArgs e)
+        {
+            CustomTextBox txtBox = sender as CustomTextBox;
+
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+            else if (txtBox.Text.Length >= txtBox.MaxLength)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void LimitPortInput_MaxLimit(object sender, EventArgs e)
+        {
+            int port;
+            CustomTextBox txtBox = sender as CustomTextBox;
+
+            if (!int.TryParse(txtBox.Text, out port) || port < 0 || port > 65535)
+            {
+                if (txtBox.Text.Length > 0)
+                {
+                    txtBox.Text = txtBox.Text.Substring(0, txtBox.Text.Length - 1);
+                    txtBox.SelectionStart = txtBox.Text.Length;
+                }
+            }
+        }
+
+        private void HostGame(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
+            {
+                if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
+                {
+                    int portToHost = Convert.ToInt32(txtPortHost.Text);
+
+                    server.CreateServer(portToHost);
+
+                    playerDatabase.AddHostPlayer(txtUsername.Text);
+                }
+                else
+                {
+                    MessageBox.Show("Username must be between 4 and 24 characters long");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please fill both Host Port and Username");
+            }
+            
+        }
+
+        private void JoinGame(object sender, EventArgs e)
+        {
+            try
+            {
+                TcpClient client = new TcpClient();
+                string ip = txtIPAddressJoin.Text;
+                int port = Convert.ToInt32(txtPortJoin.Text);
+                client.Connect(ip, port);
+
+                NetworkStream stream = client.GetStream();
+
+                string joinMessage = "JOIN " + txtUsername.Text;
+                byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
+                stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
+
+                //client.Close();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\nJoinGame");
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Uno.Classes
 {
@@ -13,9 +14,21 @@ namespace Uno.Classes
             lastID = 1;
         }
 
-        public void AddPlayer(string name)
+        public void AddClientPlayer(string name)
         {
-            players.Add(new Player(lastID++, name));
+            Player clientPlayer = new Player(lastID++, name);
+            clientPlayer.IsHost = false;
+            players.Add(clientPlayer);
+
+            MessageBox.Show($"Player {name} joined the game!");
+        }
+
+        public void AddHostPlayer(string name)
+        {
+            Player hostPlayer = new Player(lastID++, name);
+            hostPlayer.IsHost = true;
+            players.Add(hostPlayer);
+
         }
     }
 }
