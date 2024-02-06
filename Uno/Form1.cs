@@ -61,9 +61,10 @@ namespace Uno
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void BtnStartGame_Click(object sender, EventArgs e)
         {
             StartGame();
+            (sender as Button).Dispose();
         }
         private void DrawCard(object sender, EventArgs e)
         {

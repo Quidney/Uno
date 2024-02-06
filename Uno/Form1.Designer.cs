@@ -110,7 +110,7 @@
             this.btnStartGame.TabIndex = 7;
             this.btnStartGame.Text = "Start Game";
             this.btnStartGame.UseVisualStyleBackColor = true;
-            this.btnStartGame.Click += new System.EventHandler(this.button1_Click);
+            this.btnStartGame.Click += new System.EventHandler(this.BtnStartGame_Click);
             // 
             // btnDrawCard
             // 
