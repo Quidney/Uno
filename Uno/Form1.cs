@@ -40,6 +40,7 @@ namespace Uno
 
             server = new Server();
 
+            //playerDatabase.AddClientPlayer("User");
             currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == "User");
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
