@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Windows.Forms;
+using System.Security.AccessControl;
 
 namespace Uno.Classes
 {
@@ -17,16 +18,24 @@ namespace Uno.Classes
         public List<Card> cardsInPile;
         public PlayerDatabase playerDatabase;
 
+        private Form1 mainForm;
+
+        public Card.ColorEnum currentColor;
+
+        ColorSelectionPanel colorSelectionPanel;
+
         public CardFunctionality()
         {
             cardsInPile = new List<Card>();
 
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards)
+        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, Form1 form1)
         {
             this.playerDatabase = playerDatabase;
             this.pnlCards = pnlCards;
+
+            this.mainForm = form1;
 
             label = new CustomLabel()
             {
@@ -44,24 +53,45 @@ namespace Uno.Classes
         public void ThrowCardInPile(object sender, EventArgs e, CustomLabel label, Player currentPlayer)
         {
             Card lastCardInPile = cardsInPile.LastOrDefault();
+            Card thrownCard = label.AssignedCard;
 
-            switch (lastCardInPile.Type)
+            switch (thrownCard.Type)
             {
                 case Card.TypeEnum.Number:
-                    if (label.AssignedCard.Number == lastCardInPile.Number || label.AssignedCard.Color == lastCardInPile.Color)
+                    if (thrownCard.Number == lastCardInPile.Number || thrownCard.Color == currentColor) 
                     {
-                        currentPlayer.playerInventory.Remove(label.AssignedCard);
+                        currentPlayer.playerInventory.Remove(thrownCard);
+                        NewCardInPile(thrownCard);
                         label.Dispose();
-                        NewCardInPile(label.AssignedCard);
+                        currentColor = thrownCard.Color;
                     }
                     break;
                 case Card.TypeEnum.Action:
-                    if (label.AssignedCard.Color == lastCardInPile.Color || label.AssignedCard.Action == lastCardInPile.Action)
+                    if (thrownCard.Action == lastCardInPile.Action || thrownCard.Color == currentColor) 
                     {
-                        currentPlayer.playerInventory.Remove(label.AssignedCard);
+                        currentPlayer.playerInventory.Remove(thrownCard);
+                        NewCardInPile(thrownCard);
                         label.Dispose();
-                        NewCardInPile(label.AssignedCard);
+                        currentColor = thrownCard.Color;
                     }
+                    break;
+                case Card.TypeEnum.Wild:
+                    if (thrownCard.Wild == Card.WildEnum.DrawFour)
+                    {
+
+                    }
+                    else if (thrownCard.Wild == Card.WildEnum.ChangeColor)
+                    {
+                        
+                    }
+
+                    colorSelectionPanel = new ColorSelectionPanel(mainForm, this);
+                    colorSelectionPanel.Show();
+                    colorSelectionPanel.BringToFront();
+
+                    currentPlayer.playerInventory.Remove(thrownCard);
+                    NewCardInPile(thrownCard);
+                    label.Dispose();
                     break;
             }
         }
@@ -113,6 +143,16 @@ namespace Uno.Classes
                     break;
             }
 
+        }
+
+        public void ChangeGameColor(object sender, EventArgs e, Card.ColorEnum color)
+        {
+            currentColor = color;
+        }
+
+        public void CloseColorSelector(object sender, EventArgs e)
+        {
+            colorSelectionPanel.Dispose();
         }
     }
 }

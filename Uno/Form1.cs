@@ -32,7 +32,7 @@ namespace Uno
             playerDatabase.AddPlayer("User");
             currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == "User");
 
-            cardFunctionality.SetReferences(playerDatabase, pnlMain);
+            cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
         }
 
         void StartGame()
@@ -46,6 +46,7 @@ namespace Uno
             Card card = deck.cardsDeckList.LastOrDefault();
             cardFunctionality.NewCardInPile(card);
             deck.cardsDeckList.Remove(card);
+            cardFunctionality.currentColor = card.Color;
         }
 
         void GiveStartingCards()
@@ -143,23 +144,28 @@ namespace Uno
             pnlMain.SetRowSpan(label, 3);
             pnlMain.SetColumnSpan(label, 2);
 
+
+            int row = 15;
+            int column = 0;
+
             foreach(Control control in pnlMain.Controls)
             {
                 if (control is CustomLabel cardLabel)
                 {
                     if ((string)cardLabel.Tag == "PlayerCard")
                     {
-                        TableLayoutPanelCellPosition lblPos = pnlMain.GetCellPosition(cardLabel);
 
-                        if (lblPos.Column + 1 <= pnlMain.ColumnCount)
+                        if (column + 1 <= pnlMain.ColumnCount)
                         {
-                            pnlMain.SetColumn(cardLabel, lblPos.Column + 1);
+                            pnlMain.SetColumn(cardLabel, column + 1);
+                            column++;
                         }
                         else
                         {
-                            if (lblPos.Row + 1 <= pnlMain.RowCount)
+                            if (row + 1 <= pnlMain.RowCount)
                             {
-                                pnlMain.SetRow(cardLabel, lblPos.Row + 1);
+                                pnlMain.SetRow(cardLabel, row + 1);
+                                row++;
                             }
                         }
                     }
