@@ -40,9 +40,6 @@ namespace Uno
 
             server = new Server();
 
-            //playerDatabase.AddClientPlayer("User");
-            currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == "User");
-
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
 
             server.SetReferences(playerDatabase);
@@ -255,8 +252,8 @@ namespace Uno
                 byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
                 stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
 
-                //client.Close();
 
+                currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
             }
             catch (Exception ex)
             {

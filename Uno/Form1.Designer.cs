@@ -42,6 +42,9 @@
             this.txtPortHost = new Uno.Classes.CustomTextBox();
             this.btnJoinServer = new Uno.Classes.CustomButton();
             this.btnHostServer = new Uno.Classes.CustomButton();
+            this.txtServerLog = new Uno.Classes.CustomTextBox();
+            this.lblJoin = new Uno.Classes.CustomLabel();
+            this.lblHost = new Uno.Classes.CustomLabel();
             this.pnlMain.SuspendLayout();
             this.pnlMultiplayer.SuspendLayout();
             this.SuspendLayout();
@@ -166,16 +169,19 @@
             this.pnlMultiplayer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMultiplayer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMultiplayer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMultiplayer.Controls.Add(this.lblUsername, 10, 9);
-            this.pnlMultiplayer.Controls.Add(this.txtUsername, 10, 10);
-            this.pnlMultiplayer.Controls.Add(this.lblIPAdressJoin, 7, 12);
-            this.pnlMultiplayer.Controls.Add(this.txtIPAddressJoin, 7, 13);
-            this.pnlMultiplayer.Controls.Add(this.lblPortJoin, 7, 14);
-            this.pnlMultiplayer.Controls.Add(this.txtPortJoin, 7, 15);
-            this.pnlMultiplayer.Controls.Add(this.lblPortHost, 15, 14);
-            this.pnlMultiplayer.Controls.Add(this.txtPortHost, 15, 15);
-            this.pnlMultiplayer.Controls.Add(this.btnJoinServer, 7, 16);
-            this.pnlMultiplayer.Controls.Add(this.btnHostServer, 15, 16);
+            this.pnlMultiplayer.Controls.Add(this.lblUsername, 7, 2);
+            this.pnlMultiplayer.Controls.Add(this.txtUsername, 6, 3);
+            this.pnlMultiplayer.Controls.Add(this.lblIPAdressJoin, 1, 5);
+            this.pnlMultiplayer.Controls.Add(this.txtIPAddressJoin, 1, 6);
+            this.pnlMultiplayer.Controls.Add(this.lblPortJoin, 1, 7);
+            this.pnlMultiplayer.Controls.Add(this.txtPortJoin, 1, 8);
+            this.pnlMultiplayer.Controls.Add(this.lblPortHost, 11, 7);
+            this.pnlMultiplayer.Controls.Add(this.txtPortHost, 11, 8);
+            this.pnlMultiplayer.Controls.Add(this.btnJoinServer, 1, 9);
+            this.pnlMultiplayer.Controls.Add(this.btnHostServer, 11, 9);
+            this.pnlMultiplayer.Controls.Add(this.txtServerLog, 18, 1);
+            this.pnlMultiplayer.Controls.Add(this.lblJoin, 1, 4);
+            this.pnlMultiplayer.Controls.Add(this.lblHost, 11, 4);
             this.pnlMultiplayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMultiplayer.Location = new System.Drawing.Point(0, 0);
             this.pnlMultiplayer.Name = "pnlMultiplayer";
@@ -217,19 +223,19 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblUsername, 3);
             this.lblUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsername.Location = new System.Drawing.Point(483, 432);
+            this.lblUsername.Location = new System.Drawing.Point(339, 96);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(138, 48);
             this.lblUsername.TabIndex = 3;
             this.lblUsername.Text = "Username";
-            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // txtUsername
             // 
             this.pnlMultiplayer.SetColumnSpan(this.txtUsername, 5);
             this.txtUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUsername.Location = new System.Drawing.Point(483, 483);
+            this.txtUsername.Location = new System.Drawing.Point(291, 147);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(234, 40);
             this.txtUsername.TabIndex = 4;
@@ -241,7 +247,7 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblIPAdressJoin, 4);
             this.lblIPAdressJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblIPAdressJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIPAdressJoin.Location = new System.Drawing.Point(339, 576);
+            this.lblIPAdressJoin.Location = new System.Drawing.Point(51, 240);
             this.lblIPAdressJoin.Name = "lblIPAdressJoin";
             this.lblIPAdressJoin.Size = new System.Drawing.Size(186, 48);
             this.lblIPAdressJoin.TabIndex = 5;
@@ -250,12 +256,12 @@
             // 
             // txtIPAddressJoin
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.txtIPAddressJoin, 4);
+            this.pnlMultiplayer.SetColumnSpan(this.txtIPAddressJoin, 5);
             this.txtIPAddressJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtIPAddressJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIPAddressJoin.Location = new System.Drawing.Point(339, 627);
+            this.txtIPAddressJoin.Location = new System.Drawing.Point(51, 291);
             this.txtIPAddressJoin.Name = "txtIPAddressJoin";
-            this.txtIPAddressJoin.Size = new System.Drawing.Size(186, 40);
+            this.txtIPAddressJoin.Size = new System.Drawing.Size(234, 40);
             this.txtIPAddressJoin.TabIndex = 2;
             // 
             // lblPortJoin
@@ -265,7 +271,7 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblPortJoin, 4);
             this.lblPortJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPortJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPortJoin.Location = new System.Drawing.Point(339, 672);
+            this.lblPortJoin.Location = new System.Drawing.Point(51, 336);
             this.lblPortJoin.Name = "lblPortJoin";
             this.lblPortJoin.Size = new System.Drawing.Size(186, 48);
             this.lblPortJoin.TabIndex = 7;
@@ -274,13 +280,13 @@
             // 
             // txtPortJoin
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.txtPortJoin, 4);
+            this.pnlMultiplayer.SetColumnSpan(this.txtPortJoin, 5);
             this.txtPortJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPortJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPortJoin.Location = new System.Drawing.Point(339, 723);
+            this.txtPortJoin.Location = new System.Drawing.Point(51, 387);
             this.txtPortJoin.MaxLength = 5;
             this.txtPortJoin.Name = "txtPortJoin";
-            this.txtPortJoin.Size = new System.Drawing.Size(186, 40);
+            this.txtPortJoin.Size = new System.Drawing.Size(234, 40);
             this.txtPortJoin.TabIndex = 6;
             this.txtPortJoin.TextChanged += new System.EventHandler(this.LimitPortInput_MaxLimit);
             this.txtPortJoin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LimitPortInput);
@@ -292,7 +298,7 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblPortHost, 4);
             this.lblPortHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPortHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPortHost.Location = new System.Drawing.Point(723, 672);
+            this.lblPortHost.Location = new System.Drawing.Point(531, 336);
             this.lblPortHost.Name = "lblPortHost";
             this.lblPortHost.Size = new System.Drawing.Size(186, 48);
             this.lblPortHost.TabIndex = 8;
@@ -301,13 +307,13 @@
             // 
             // txtPortHost
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.txtPortHost, 4);
+            this.pnlMultiplayer.SetColumnSpan(this.txtPortHost, 5);
             this.txtPortHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPortHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPortHost.Location = new System.Drawing.Point(723, 723);
+            this.txtPortHost.Location = new System.Drawing.Point(531, 387);
             this.txtPortHost.MaxLength = 5;
             this.txtPortHost.Name = "txtPortHost";
-            this.txtPortHost.Size = new System.Drawing.Size(186, 40);
+            this.txtPortHost.Size = new System.Drawing.Size(234, 40);
             this.txtPortHost.TabIndex = 9;
             this.txtPortHost.TextChanged += new System.EventHandler(this.LimitPortInput_MaxLimit);
             this.txtPortHost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.LimitPortInput);
@@ -317,7 +323,7 @@
             this.pnlMultiplayer.SetColumnSpan(this.btnJoinServer, 3);
             this.btnJoinServer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnJoinServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJoinServer.Location = new System.Drawing.Point(339, 771);
+            this.btnJoinServer.Location = new System.Drawing.Point(51, 435);
             this.btnJoinServer.Name = "btnJoinServer";
             this.pnlMultiplayer.SetRowSpan(this.btnJoinServer, 2);
             this.btnJoinServer.Size = new System.Drawing.Size(138, 90);
@@ -331,7 +337,7 @@
             this.pnlMultiplayer.SetColumnSpan(this.btnHostServer, 3);
             this.btnHostServer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnHostServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnHostServer.Location = new System.Drawing.Point(723, 771);
+            this.btnHostServer.Location = new System.Drawing.Point(531, 435);
             this.btnHostServer.Name = "btnHostServer";
             this.pnlMultiplayer.SetRowSpan(this.btnHostServer, 2);
             this.btnHostServer.Size = new System.Drawing.Size(138, 90);
@@ -339,6 +345,47 @@
             this.btnHostServer.Text = "Host";
             this.btnHostServer.UseVisualStyleBackColor = true;
             this.btnHostServer.Click += new System.EventHandler(this.HostGame);
+            // 
+            // txtServerLog
+            // 
+            this.txtServerLog.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.pnlMultiplayer.SetColumnSpan(this.txtServerLog, 6);
+            this.txtServerLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtServerLog.Location = new System.Drawing.Point(867, 51);
+            this.txtServerLog.Multiline = true;
+            this.txtServerLog.Name = "txtServerLog";
+            this.txtServerLog.ReadOnly = true;
+            this.pnlMultiplayer.SetRowSpan(this.txtServerLog, 10);
+            this.txtServerLog.Size = new System.Drawing.Size(282, 474);
+            this.txtServerLog.TabIndex = 10;
+            // 
+            // lblJoin
+            // 
+            this.lblJoin.AssignedCard = null;
+            this.lblJoin.AutoSize = true;
+            this.pnlMultiplayer.SetColumnSpan(this.lblJoin, 4);
+            this.lblJoin.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblJoin.Location = new System.Drawing.Point(51, 192);
+            this.lblJoin.Name = "lblJoin";
+            this.lblJoin.Size = new System.Drawing.Size(186, 48);
+            this.lblJoin.TabIndex = 11;
+            this.lblJoin.Text = "JOIN";
+            this.lblJoin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblHost
+            // 
+            this.lblHost.AssignedCard = null;
+            this.lblHost.AutoSize = true;
+            this.pnlMultiplayer.SetColumnSpan(this.lblHost, 4);
+            this.lblHost.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHost.Location = new System.Drawing.Point(531, 192);
+            this.lblHost.Name = "lblHost";
+            this.lblHost.Size = new System.Drawing.Size(186, 48);
+            this.lblHost.TabIndex = 12;
+            this.lblHost.Text = "HOST";
+            this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Form1
             // 
@@ -373,6 +420,9 @@
         private Classes.CustomTextBox txtPortJoin;
         private Classes.CustomTextBox txtPortHost;
         private Classes.CustomLabel lblPortHost;
+        private Classes.CustomTextBox txtServerLog;
+        private Classes.CustomLabel lblJoin;
+        private Classes.CustomLabel lblHost;
     }
 }
 
