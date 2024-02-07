@@ -263,7 +263,6 @@ namespace Uno
                 byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
                 stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
 
-
                 currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
             }
             catch (Exception ex)

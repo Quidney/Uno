@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -72,7 +73,10 @@ namespace Uno.Classes
         private PlayerDatabase playerDatabase;
         private CardFunctionality cardFunctionality;
         private CustomTextBox serverLog;
+
         private string clientUsername;
+        private string clientUUID;
+        private Player clientPlayer;
 
         public ClientHandler(TcpClient client)
         {
@@ -116,6 +120,10 @@ namespace Uno.Classes
                 serverLog.AppendText($"{clientUsername} Disconnected. {Environment.NewLine}");
                 stream.Close();
                 serverLog.AppendText($"Stream Closed.{Environment.NewLine}");
+
+                playerDatabase.players.Remove(clientPlayer);
+                playerDatabase.UuidPlayerDictionary.Remove(clientUUID);
+                playerDatabase.UuidNameDictionary.Remove(clientUUID);
             }
         }
 
@@ -125,7 +133,10 @@ namespace Uno.Classes
             {
                 string playerName = dataReceived.Substring(5);
                 playerDatabase.AddClientPlayer(playerName);
+
                 clientUsername = playerName;
+                clientUUID = playerDatabase.UuidNameDictionary.FirstOrDefault(x => x.Value == clientUsername).Key;
+                playerDatabase.UuidPlayerDictionary.TryGetValue(clientUUID, out clientPlayer);
             }
             else if (dataReceived.StartsWith("PLAY"))
             {

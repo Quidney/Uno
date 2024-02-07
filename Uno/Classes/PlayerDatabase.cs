@@ -10,12 +10,14 @@ namespace Uno.Classes
     {
         public List<Player> players;
         private CustomTextBox serverLog;
-        public Dictionary<string, Player> playerDictionary;
+        public Dictionary<string, string> UuidNameDictionary;
+        public Dictionary<string, Player> UuidPlayerDictionary;
 
         public PlayerDatabase()
         {
             players = new List<Player>();
-            playerDictionary = new Dictionary<string, Player>();
+            UuidNameDictionary = new Dictionary<string, string>();
+            UuidPlayerDictionary = new Dictionary<string, Player>();
         }
 
         public void SetReferences(CustomTextBox serverLog)
@@ -29,7 +31,10 @@ namespace Uno.Classes
             Player clientPlayer = new Player(playerID, name);
             clientPlayer.IsHost = false;
             players.Add(clientPlayer);
-            playerDictionary.Add(playerID, clientPlayer);
+
+            UuidNameDictionary.Add(playerID, clientPlayer.Name);
+            UuidPlayerDictionary.Add(playerID, clientPlayer);
+
             serverLog.AppendText($"Player {name} (UUID: {playerID}) joined the game!{Environment.NewLine}");
         }
 
@@ -39,7 +44,7 @@ namespace Uno.Classes
             Player hostPlayer = new Player(playerID, name);
             hostPlayer.IsHost = true;
             players.Add(hostPlayer);
-            playerDictionary.Add(playerID, hostPlayer);
+            UuidNameDictionary.Add(playerID, hostPlayer.Name);
             serverLog.AppendText($"Host {name} (UUID: {playerID}) created the server.{Environment.NewLine}");
         }
         public string GetUUIDFromUsername(string username)
