@@ -9,13 +9,13 @@ namespace Uno.Classes
     public class Player
     {
         public string Name { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public List<Card> playerInventory;
 
         public bool IsHost { get; set; }
 
-        public Player(int id, string name)
+        public Player(string id, string name)
         {
             this.Id = id;
             this.Name = name;

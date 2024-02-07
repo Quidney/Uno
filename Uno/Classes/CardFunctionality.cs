@@ -2,12 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Windows.Forms;
-using System.Security.AccessControl;
 
 namespace Uno.Classes
 {
@@ -58,7 +53,7 @@ namespace Uno.Classes
             switch (thrownCard.Type)
             {
                 case Card.TypeEnum.Number:
-                    if (thrownCard.Number == lastCardInPile.Number || thrownCard.Color == currentColor) 
+                    if (thrownCard.Number == lastCardInPile.Number || thrownCard.Color == currentColor)
                     {
                         currentPlayer.playerInventory.Remove(thrownCard);
                         NewCardInPile(thrownCard);
@@ -67,7 +62,7 @@ namespace Uno.Classes
                     }
                     break;
                 case Card.TypeEnum.Action:
-                    if (thrownCard.Action == lastCardInPile.Action || thrownCard.Color == currentColor) 
+                    if (thrownCard.Action == lastCardInPile.Action || thrownCard.Color == currentColor)
                     {
                         currentPlayer.playerInventory.Remove(thrownCard);
                         NewCardInPile(thrownCard);
@@ -82,7 +77,7 @@ namespace Uno.Classes
                     }
                     else if (thrownCard.Wild == Card.WildEnum.ChangeColor)
                     {
-                        
+
                     }
 
                     colorSelectionPanel = new ColorSelectionPanel(mainForm, this);

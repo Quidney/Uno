@@ -41,8 +41,10 @@ namespace Uno
             server = new Server();
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
+            server.SetReferences(playerDatabase, txtServerLog, cardFunctionality);
+            playerDatabase.SetReferences(txtServerLog);
 
-            server.SetReferences(playerDatabase);
+            txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
 
         void StartGame()
@@ -219,11 +221,20 @@ namespace Uno
             {
                 if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
                 {
-                    int portToHost = Convert.ToInt32(txtPortHost.Text);
+                    try
+                    {
+                        int portToHost = Convert.ToInt32(txtPortHost.Text);
 
-                    server.CreateServer(portToHost);
+                        server.CreateServer(portToHost);
 
-                    playerDatabase.AddHostPlayer(txtUsername.Text);
+                        playerDatabase.AddHostPlayer(txtUsername.Text);
+                    }
+                    catch (Exception ex)
+                    {
+                        txtServerLog.AppendText($"{ex.Message}{Environment.NewLine}");
+                        return;
+                    }
+                    
                 }
                 else
                 {
@@ -257,7 +268,7 @@ namespace Uno
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\nJoinGame");
+                txtServerLog.AppendText($"Error: JoinGame: {ex.Message}{Environment.NewLine}");
             }
         }
     }

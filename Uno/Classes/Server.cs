@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -11,15 +12,19 @@ namespace Uno.Classes
     {
         TcpListener listener;
         PlayerDatabase playerDatabase;
+        CustomTextBox serverLog;
+        CardFunctionality cardFunctionality;
 
         public Server()
         {
 
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase)
+        public void SetReferences(PlayerDatabase playerDatabase, CustomTextBox serverLog, CardFunctionality cardFunctionality)
         {
             this.playerDatabase = playerDatabase;
+            this.serverLog = serverLog;
+            this.cardFunctionality = cardFunctionality;
         }
 
         public void CreateServer(int port)
@@ -28,12 +33,15 @@ namespace Uno.Classes
             {
                 listener = new TcpListener(IPAddress.Any, port);
                 listener.Start();
+                serverLog.AppendText($"Server starting at port: {port}{Environment.NewLine}");
 
                 listener.BeginAcceptTcpClient(ConnectionHandling, null);
+                serverLog.AppendText($"Server starting accepting TCP Clients.{Environment.NewLine}");
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error creating server: {e.Message}" + "\nCreateServer");
+                //serverLog.AppendText($"Error: CreateServer: {e.Message}{Environment.NewLine}");
+                throw new Exception(e.Message);
             }
         }
 
@@ -46,12 +54,12 @@ namespace Uno.Classes
                 listener.BeginAcceptTcpClient(ConnectionHandling, null);
 
                 ClientHandler clientHandler = new ClientHandler(client);
-                clientHandler.SetReferences(playerDatabase);
+                clientHandler.SetReferences(playerDatabase, cardFunctionality, serverLog);
                 clientHandler.Start();
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error while making connection with client {e.Message}" + "\nConnectionHandling");
+                serverLog.AppendText($"Error: ConnectionHandling: {e.Message}{Environment.NewLine}");
             }
         }
     }
@@ -62,15 +70,20 @@ namespace Uno.Classes
         private NetworkStream stream;
         private Thread clientThread;
         private PlayerDatabase playerDatabase;
+        private CardFunctionality cardFunctionality;
+        private CustomTextBox serverLog;
+        private string clientUsername;
 
         public ClientHandler(TcpClient client)
         {
             this.client = client;
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase)
+        public void SetReferences(PlayerDatabase playerDatabase, CardFunctionality cardFunctionality, CustomTextBox serverLog)
         {
             this.playerDatabase = playerDatabase;
+            this.cardFunctionality = cardFunctionality;
+            this.serverLog = serverLog;
         }
 
         public void Start()
@@ -95,12 +108,14 @@ namespace Uno.Classes
             }
             catch (Exception e)
             {
-                MessageBox.Show($"Error handling client: {e.Message}" + "\nHandleClient");
+                serverLog.AppendText($"Error: HandleClient: {e.Message}{Environment.NewLine}");
             }
             finally
             {
                 client.Close();
+                serverLog.AppendText($"{clientUsername} Disconnected. {Environment.NewLine}");
                 stream.Close();
+                serverLog.AppendText($"Stream Closed.{Environment.NewLine}");
             }
         }
 
@@ -110,6 +125,12 @@ namespace Uno.Classes
             {
                 string playerName = dataReceived.Substring(5);
                 playerDatabase.AddClientPlayer(playerName);
+                clientUsername = playerName;
+            }
+            else if (dataReceived.StartsWith("PLAY"))
+            {
+                string playedCard = dataReceived.Substring(5);
+
             }
         }
 
