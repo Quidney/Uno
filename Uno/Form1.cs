@@ -19,6 +19,9 @@ namespace Uno
         PlayerDatabase playerDatabase;
         Server server;
 
+        TcpClient client;
+        NetworkStream stream;
+
         public Form1()
         {
             InitializeComponent();
@@ -45,6 +48,12 @@ namespace Uno
             playerDatabase.SetReferences(txtServerLog);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+
+            server.CreateServer(25565);
+            playerDatabase.AddHostPlayer("Quidney");
+            playerDatabase.AddClientPlayer("Test1");
+            playerDatabase.AddClientPlayer("Test2");
+            //playerDatabase.AddClientPlayer("Test3");
         }
 
         void StartGame()
@@ -250,24 +259,58 @@ namespace Uno
 
         private void JoinGame(object sender, EventArgs e)
         {
-            try
+            if (playerDatabase.players.Count >= 4)
             {
-                TcpClient client = new TcpClient();
-                string ip = txtIPAddressJoin.Text;
-                int port = Convert.ToInt32(txtPortJoin.Text);
-                client.Connect(ip, port);
-
-                NetworkStream stream = client.GetStream();
-
-                string joinMessage = "JOIN " + txtUsername.Text;
-                byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
-                stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
-
-                currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
+                txtServerLog.AppendText($"The server ({txtIPAddressJoin.Text}) is full!");
             }
-            catch (Exception ex)
+            else
             {
-                txtServerLog.AppendText($"Error: JoinGame: {ex.Message}{Environment.NewLine}");
+                try
+                {
+                    if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
+                    {
+                        client = new TcpClient();
+                        string ip = txtIPAddressJoin.Text;
+                        int port = Convert.ToInt32(txtPortJoin.Text);
+                        client.Connect(ip, port);
+
+                        NetworkStream stream = client.GetStream();
+
+                        string joinMessage = "JOIN " + txtUsername.Text;
+                        byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
+                        stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
+
+                        currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Username must be between 4 and 24 characters long");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    txtServerLog.AppendText($"Error: JoinGame: {ex.Message}{Environment.NewLine}");
+                    client.Close();
+                    client = null;
+
+                    stream.Close();
+                    stream = null;
+                }
+            }
+            
+        }
+
+        private void btnSendDataToServer_Click(object sender, EventArgs e)
+        {
+            if (stream != null)
+            {
+                string messageToSend = "MSG " + txtSendDataToServer.Text;
+                byte[] messageToSendBytes = Encoding.ASCII.GetBytes(messageToSend);
+                stream.Write(messageToSendBytes, 0, messageToSendBytes.Length);
+            }
+            else
+            {
+                txtServerLog.AppendText("You're not connected to any game!" + Environment.NewLine);
             }
         }
     }

@@ -143,6 +143,11 @@ namespace Uno.Classes
                 string playedCard = dataReceived.Substring(5);
 
             }
+            else if (dataReceived.StartsWith("MSG"))
+            {
+                string messageReceived = dataReceived.Substring(4);
+                MessageBox.Show($"Message Received From Client: {messageReceived}");
+            }
         }
 
         public void SendData(string data)

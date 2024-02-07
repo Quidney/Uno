@@ -7,10 +7,15 @@ namespace Uno.Class
     public class Deck
     {
         public List<Card> cardsDeckList;
+        public Dictionary<int, Card> idToCard;
 
         public Deck()
         {
             cardsDeckList = new List<Card>();
+            idToCard = new Dictionary<int, Card>();
+
+            Card newCard;
+            int id = 1;
 
             //Repeat 3 times, (0, 1, 2) for each Type
             for (int i = 0; i < 3; i++)
@@ -24,9 +29,16 @@ namespace Uno.Class
                         //For each number
                         for (int k = 0; k < 10; k++)
                         {
-                            cardsDeckList.Add(new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k));
+                            newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k);
+                            cardsDeckList.Add(newCard);
+                            idToCard.Add(id++, newCard);
+
                             if (k != 0) //If K (number) isn't 0 (there are two of each number except for 0 in UNO)
-                                cardsDeckList.Add(new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k));
+                            {
+                                newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k);
+                                cardsDeckList.Add(newCard);
+                                idToCard.Add(id++, newCard);
+                            }
                         }
                     }
                 }
@@ -42,7 +54,9 @@ namespace Uno.Class
                             //Add two times
                             for (int l = 0; l < 2; l++)
                             {
-                                cardsDeckList.Add(new Card((Card.TypeEnum)i, (Card.ColorEnum)j, (Card.ActionEnum)k));
+                                newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, (Card.ActionEnum)k);
+                                cardsDeckList.Add(newCard);
+                                idToCard.Add(id++, newCard);
                             }
                         }
 
@@ -57,7 +71,9 @@ namespace Uno.Class
                         //Add 4 wild cards per wild card type
                         for (int k = 0; k < 4; k++)
                         {
-                            cardsDeckList.Add(new Card((Card.TypeEnum)i, (Card.WildEnum)j));
+                            newCard = new Card((Card.TypeEnum)i, (Card.WildEnum)j);
+                            cardsDeckList.Add(newCard);
+                            idToCard.Add(id++, newCard);
                         }
                     }
                 }

@@ -45,6 +45,8 @@
             this.txtServerLog = new Uno.Classes.CustomTextBox();
             this.lblJoin = new Uno.Classes.CustomLabel();
             this.lblHost = new Uno.Classes.CustomLabel();
+            this.btnSendDataToServer = new Uno.Classes.CustomButton();
+            this.txtSendDataToServer = new Uno.Classes.CustomTextBox();
             this.pnlMain.SuspendLayout();
             this.pnlMultiplayer.SuspendLayout();
             this.SuspendLayout();
@@ -185,6 +187,8 @@
             this.pnlMultiplayer.Controls.Add(this.txtServerLog, 17, 1);
             this.pnlMultiplayer.Controls.Add(this.lblJoin, 1, 4);
             this.pnlMultiplayer.Controls.Add(this.lblHost, 11, 4);
+            this.pnlMultiplayer.Controls.Add(this.txtSendDataToServer, 2, 20);
+            this.pnlMultiplayer.Controls.Add(this.btnSendDataToServer, 2, 21);
             this.pnlMultiplayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMultiplayer.Location = new System.Drawing.Point(0, 0);
             this.pnlMultiplayer.Margin = new System.Windows.Forms.Padding(4);
@@ -405,6 +409,27 @@
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btnSendDataToServer
+            // 
+            this.pnlMultiplayer.SetColumnSpan(this.btnSendDataToServer, 3);
+            this.btnSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSendDataToServer.Location = new System.Drawing.Point(131, 885);
+            this.btnSendDataToServer.Name = "btnSendDataToServer";
+            this.btnSendDataToServer.Size = new System.Drawing.Size(186, 36);
+            this.btnSendDataToServer.TabIndex = 13;
+            this.btnSendDataToServer.Text = "Send Message To server";
+            this.btnSendDataToServer.UseVisualStyleBackColor = true;
+            this.btnSendDataToServer.Click += new System.EventHandler(this.btnSendDataToServer_Click);
+            // 
+            // txtSendDataToServer
+            // 
+            this.pnlMultiplayer.SetColumnSpan(this.txtSendDataToServer, 3);
+            this.txtSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSendDataToServer.Location = new System.Drawing.Point(131, 843);
+            this.txtSendDataToServer.Name = "txtSendDataToServer";
+            this.txtSendDataToServer.Size = new System.Drawing.Size(186, 22);
+            this.txtSendDataToServer.TabIndex = 14;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -441,6 +466,8 @@
         private Classes.CustomTextBox txtServerLog;
         private Classes.CustomLabel lblJoin;
         private Classes.CustomLabel lblHost;
+        private Classes.CustomTextBox txtSendDataToServer;
+        private Classes.CustomButton btnSendDataToServer;
     }
 }
 
