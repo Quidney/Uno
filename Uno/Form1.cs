@@ -274,7 +274,7 @@ namespace Uno
                         int port = Convert.ToInt32(txtPortJoin.Text);
                         client.Connect(ip, port);
 
-                        NetworkStream stream = client.GetStream();
+                        stream = client.GetStream();
 
                         string joinMessage = "JOIN " + txtUsername.Text;
                         byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);

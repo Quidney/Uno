@@ -45,8 +45,8 @@
             this.txtServerLog = new Uno.Classes.CustomTextBox();
             this.lblJoin = new Uno.Classes.CustomLabel();
             this.lblHost = new Uno.Classes.CustomLabel();
-            this.btnSendDataToServer = new Uno.Classes.CustomButton();
             this.txtSendDataToServer = new Uno.Classes.CustomTextBox();
+            this.btnSendDataToServer = new Uno.Classes.CustomButton();
             this.pnlMain.SuspendLayout();
             this.pnlMultiplayer.SuspendLayout();
             this.SuspendLayout();
@@ -409,6 +409,15 @@
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // txtSendDataToServer
+            // 
+            this.pnlMultiplayer.SetColumnSpan(this.txtSendDataToServer, 3);
+            this.txtSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSendDataToServer.Location = new System.Drawing.Point(131, 843);
+            this.txtSendDataToServer.Name = "txtSendDataToServer";
+            this.txtSendDataToServer.Size = new System.Drawing.Size(186, 22);
+            this.txtSendDataToServer.TabIndex = 14;
+            // 
             // btnSendDataToServer
             // 
             this.pnlMultiplayer.SetColumnSpan(this.btnSendDataToServer, 3);
@@ -420,15 +429,6 @@
             this.btnSendDataToServer.Text = "Send Message To server";
             this.btnSendDataToServer.UseVisualStyleBackColor = true;
             this.btnSendDataToServer.Click += new System.EventHandler(this.btnSendDataToServer_Click);
-            // 
-            // txtSendDataToServer
-            // 
-            this.pnlMultiplayer.SetColumnSpan(this.txtSendDataToServer, 3);
-            this.txtSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSendDataToServer.Location = new System.Drawing.Point(131, 843);
-            this.txtSendDataToServer.Name = "txtSendDataToServer";
-            this.txtSendDataToServer.Size = new System.Drawing.Size(186, 22);
-            this.txtSendDataToServer.TabIndex = 14;
             // 
             // Form1
             // 
