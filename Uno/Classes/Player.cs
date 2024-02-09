@@ -10,10 +10,8 @@ namespace Uno.Classes
     {
         public string Name { get; set; }
         public string Id { get; set; }
-
-        public List<Card> playerInventory;
-
         public bool IsHost { get; set; }
+        public List<Card> playerInventory;
 
         public Player(string id, string name)
         {

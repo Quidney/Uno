@@ -36,6 +36,14 @@ namespace Uno.Classes
         }
     }
 
+    public class CustomRichTextBox : RichTextBox
+    {
+        public CustomRichTextBox() : base()
+        {
+            DoubleBuffered = true;
+        }
+    }
+
     public class ColorSelectionPanel : Panel
     {
         public ColorSelectionPanel(Form1 mainForm, CardFunctionality cardFunctionalityInit) : base()

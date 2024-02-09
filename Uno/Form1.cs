@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
@@ -14,6 +13,7 @@ namespace Uno
     public partial class Form1 : Form
     {
         Player currentPlayer;
+
         Deck deck;
         CardFunctionality cardFunctionality;
         PlayerDatabase playerDatabase;
@@ -44,16 +44,10 @@ namespace Uno
             server = new Server();
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
-            server.SetReferences(playerDatabase, txtServerLog, cardFunctionality);
+            server.SetReferences(playerDatabase, txtServerLog, cardFunctionality, txtChatBox);
             playerDatabase.SetReferences(txtServerLog);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
-
-            server.CreateServer(25565);
-            playerDatabase.AddHostPlayer("Quidney");
-            playerDatabase.AddClientPlayer("Test1");
-            playerDatabase.AddClientPlayer("Test2");
-            //playerDatabase.AddClientPlayer("Test3");
         }
 
         void StartGame()
@@ -134,7 +128,8 @@ namespace Uno
                             label.BackColor = card.ToColor();
                             label.Font = new Font("Arial", 12);
                             break;
-                        case Card.ActionEnum.Reverse: case Card.ActionEnum.Skip:
+                        case Card.ActionEnum.Reverse:
+                        case Card.ActionEnum.Skip:
                             label.TextAlign = ContentAlignment.TopRight;
                             label.BackColor = card.ToColor();
                             label.Font = new Font("Arial", 12);
@@ -237,13 +232,14 @@ namespace Uno
                         server.CreateServer(portToHost);
 
                         playerDatabase.AddHostPlayer(txtUsername.Text);
+                        currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
                     }
                     catch (Exception ex)
                     {
                         txtServerLog.AppendText($"{ex.Message}{Environment.NewLine}");
                         return;
                     }
-                    
+
                 }
                 else
                 {
@@ -254,7 +250,7 @@ namespace Uno
             {
                 MessageBox.Show("Please fill both Host Port and Username");
             }
-            
+
         }
 
         private void JoinGame(object sender, EventArgs e)
@@ -297,21 +293,12 @@ namespace Uno
                     stream = null;
                 }
             }
-            
+
         }
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
         {
-            if (stream != null)
-            {
-                string messageToSend = "MSG " + txtSendDataToServer.Text;
-                byte[] messageToSendBytes = Encoding.ASCII.GetBytes(messageToSend);
-                stream.Write(messageToSendBytes, 0, messageToSendBytes.Length);
-            }
-            else
-            {
-                txtServerLog.AppendText("You're not connected to any game!" + Environment.NewLine);
-            }
+
         }
     }
 }
