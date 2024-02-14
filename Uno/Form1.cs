@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -17,9 +17,11 @@ namespace Uno
         Deck deck;
         CardFunctionality cardFunctionality;
         PlayerDatabase playerDatabase;
-        Server server;
 
-        TcpClient client;
+        bool joinedOrHosted = false;
+        ServerHost serverHost;
+        ServerJoin serverJoin;
+
         NetworkStream stream;
 
         public Form1()
@@ -41,10 +43,11 @@ namespace Uno
 
             playerDatabase = new PlayerDatabase();
 
-            server = new Server();
+            serverHost = new ServerHost();
+            serverJoin = new ServerJoin();
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
-            server.SetReferences(playerDatabase, txtServerLog, cardFunctionality, txtChatBox);
+            //server.SetReferences(playerDatabase, txtServerLog, cardFunctionality, txtChatBox);
             playerDatabase.SetReferences(txtServerLog);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
@@ -190,56 +193,19 @@ namespace Uno
             }
         }
 
-        private void LimitPortInput(object sender, KeyPressEventArgs e)
-        {
-            CustomTextBox txtBox = sender as CustomTextBox;
-
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-            else if (txtBox.Text.Length >= txtBox.MaxLength)
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void LimitPortInput_MaxLimit(object sender, EventArgs e)
-        {
-            int port;
-            CustomTextBox txtBox = sender as CustomTextBox;
-
-            if (!int.TryParse(txtBox.Text, out port) || port < 0 || port > 65535)
-            {
-                if (txtBox.Text.Length > 0)
-                {
-                    txtBox.Text = txtBox.Text.Substring(0, txtBox.Text.Length - 1);
-                    txtBox.SelectionStart = txtBox.Text.Length;
-                }
-            }
-        }
-
-        private void HostGame(object sender, EventArgs e)
+        private void HostGame_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
                 if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
                 {
-                    try
+                    string username = txtUsername.Text;
+
+                    if (int.TryParse(txtPortHost.Text, out int port))
                     {
-                        int portToHost = Convert.ToInt32(txtPortHost.Text);
-
-                        server.CreateServer(portToHost);
-
-                        playerDatabase.AddHostPlayer(txtUsername.Text);
-                        currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
+                        HostGame(port, username);
                     }
-                    catch (Exception ex)
-                    {
-                        txtServerLog.AppendText($"{ex.Message}{Environment.NewLine}");
-                        return;
-                    }
-
+                    else MessageBox.Show("Invalid Port!", "Error while hosting", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
@@ -252,53 +218,49 @@ namespace Uno
             }
 
         }
-
-        private void JoinGame(object sender, EventArgs e)
+        private void JoinGame_Click(object sender, EventArgs e)
         {
-            if (playerDatabase.players.Count >= 4)
+            if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 3)
             {
-                txtServerLog.AppendText($"The server ({txtIPAddressJoin.Text}) is full!");
+                string username = txtUsername.Text;
+
+                if (IPAddress.TryParse(txtIPAddressJoin.Text, out IPAddress ip))
+                {
+                    if (int.TryParse(txtPortJoin.Text, out int port) && port > 0 && port <= 65535)
+                    {
+                        JoinGame(ip, port, username);
+                    }
+                    else
+                        MessageBox.Show("Invalid Port!", "Error while joining", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                    MessageBox.Show("Invalid IPAddress!", "Error while joining", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                try
-                {
-                    if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
-                    {
-                        client = new TcpClient();
-                        string ip = txtIPAddressJoin.Text;
-                        int port = Convert.ToInt32(txtPortJoin.Text);
-                        client.Connect(ip, port);
-
-                        stream = client.GetStream();
-
-                        string joinMessage = "JOIN " + txtUsername.Text;
-                        byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
-                        stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
-
-                        currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Username must be between 4 and 24 characters long");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    txtServerLog.AppendText($"Error: JoinGame: {ex.Message}{Environment.NewLine}");
-                    client.Close();
-                    client = null;
-
-                    stream.Close();
-                    stream = null;
-                }
+                MessageBox.Show("Username must be between 4 and 24 characters long");
             }
-
         }
+
+        private void HostGame(int port, string username)
+        {
+            serverHost.HostServer(port);
+            joinedOrHosted = true;
+        }
+        private void JoinGame(IPAddress ip, int port, string username)
+        {
+            serverJoin.JoinGame(ip, port);
+            joinedOrHosted = true;
+        }
+
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
         {
-
+            if (joinedOrHosted)
+            {
+                string message = txtSendDataToServer.Text;
+                serverJoin.SendDataToServer(message);
+            }
         }
     }
 }

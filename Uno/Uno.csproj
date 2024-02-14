@@ -48,12 +48,12 @@
   <ItemGroup>
     <Compile Include="Classes\Card.cs" />
     <Compile Include="Classes\CardFunctionality.cs" />
-    <Compile Include="Classes\ClientHandler.cs" />
     <Compile Include="Classes\CustomControls.cs" />
     <Compile Include="Classes\Deck.cs" />
-    <Compile Include="Classes\Server.cs" />
     <Compile Include="Classes\Player.cs" />
     <Compile Include="Classes\PlayerDatabase.cs" />
+    <Compile Include="Classes\ServerHost.cs" />
+    <Compile Include="Classes\ServerJoin.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
