@@ -11,7 +11,7 @@ using Uno.Classes;
 
 namespace Uno
 {
-    public partial class Form1 : Form
+    public partial class frmUno : Form
     {
         Player currentPlayer;
         Deck deck;
@@ -19,7 +19,7 @@ namespace Uno
         PlayerDatabase playerDatabase;
         Server server;
 
-        public Form1()
+        public frmUno()
         {
             InitializeComponent();
 

@@ -1,6 +1,6 @@
 ﻿namespace Uno
 {
-    partial class Form1
+    partial class frmUno
     {
         /// <summary>
         /// Required designer variable.
@@ -389,7 +389,7 @@
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // Form1
+            // frmUno
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -397,8 +397,8 @@
             this.Controls.Add(this.pnlMultiplayer);
             this.Controls.Add(this.pnlMain);
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "frmUno";
+            this.Text = "Uno!";
             this.pnlMain.ResumeLayout(false);
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
