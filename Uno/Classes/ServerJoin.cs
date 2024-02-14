@@ -19,12 +19,12 @@ namespace Uno.Classes
 
         }
 
-        public void JoinGame(IPAddress ip, int port)
+        public async Task JoinGame(IPAddress ip, int port)
         {
             try
             {
                 client = new TcpClient();
-                client.Connect(ip, port);
+                await client.ConnectAsync(ip, port);
                 stream = client.GetStream();
 
                 Thread joinServerThread = new Thread(ServerConnection);

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,9 +16,16 @@ namespace Uno.Classes
         TcpListener listener;
         List<TcpClient> clients;
 
+        Form1 form1;
+
         public ServerHost()
         {
             clients = new List<TcpClient>();
+        }
+
+        public void SetReferences(Form1 form1)
+        {
+            this.form1 = form1;
         }
 
         public void HostServer(int port)
@@ -32,7 +41,7 @@ namespace Uno.Classes
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
-            
+
         }
 
         private async void AcceptClients()
@@ -49,19 +58,21 @@ namespace Uno.Classes
                     newClientThread.Start(client);
                 }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
-           
+
         }
 
         private async void ClientConnection(object clientInit)
         {
+            TcpClient client = null;
+            NetworkStream stream = null;
             try
             {
-                TcpClient client = (TcpClient)clientInit;
-                NetworkStream stream = client.GetStream();
+                client = (TcpClient)clientInit;
+                stream = client.GetStream();
 
                 byte[] buffer = new byte[4096];
                 int bytesRead;
@@ -70,12 +81,22 @@ namespace Uno.Classes
                 {
                     string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                     ProcessMessage(message);
-                    MessageBox.Show(message);
                 }
+            }
+            catch (IOException)
+            {
+                if (client != null)
+                {
+                    client.Close();
+                    clients.Remove(client);
+                }
+
+                stream?.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -89,7 +110,9 @@ namespace Uno.Classes
                     switch (wholeMessage[0])
                     {
                         case "MSG":
-                            MessageBox.Show(message, "MESSAGES FROM THE STARS");
+                            string messageSentBy = message.Split(' ')[1];
+                            string messageContent = message.Substring(5 + messageSentBy.Length);
+                            form1.AppendChatBox(messageContent, Color.Blue, messageSentBy);
                             break;
                         default:
                             MessageBox.Show("UNKNOWN MESSAGE");
@@ -101,7 +124,7 @@ namespace Uno.Classes
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
-            
+
         }
 
     }

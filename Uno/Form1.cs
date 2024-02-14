@@ -22,8 +22,6 @@ namespace Uno
         ServerHost serverHost;
         ServerJoin serverJoin;
 
-        NetworkStream stream;
-
         public Form1()
         {
             InitializeComponent();
@@ -47,8 +45,10 @@ namespace Uno
             serverJoin = new ServerJoin();
 
             cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
-            //server.SetReferences(playerDatabase, txtServerLog, cardFunctionality, txtChatBox);
+
+            serverHost.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
+
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
@@ -220,7 +220,7 @@ namespace Uno
         }
         private void JoinGame_Click(object sender, EventArgs e)
         {
-            if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 3)
+            if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
                 string username = txtUsername.Text;
 
@@ -238,29 +238,58 @@ namespace Uno
             }
             else
             {
-                MessageBox.Show("Username must be between 4 and 24 characters long");
+                MessageBox.Show("Username must be between 3 and 24 characters long, and cannot contain whitespaces");
             }
         }
 
         private void HostGame(int port, string username)
         {
+            string hostName = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
+            AppendLogBox($"Hosting server on {hostName}:{port}");
             serverHost.HostServer(port);
+            AppendLogBox("Server is running.");
             joinedOrHosted = true;
         }
-        private void JoinGame(IPAddress ip, int port, string username)
+        private async void JoinGame(IPAddress ip, int port, string username)
         {
-            serverJoin.JoinGame(ip, port);
+            AppendLogBox($"Connecting to {ip}:{port} as {username}");
+            await serverJoin.JoinGame(ip, port);
+            AppendLogBox("Connected to server.");
             joinedOrHosted = true;
         }
-
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
         {
             if (joinedOrHosted)
             {
-                string message = txtSendDataToServer.Text;
-                serverJoin.SendDataToServer(message);
+                if (!string.IsNullOrEmpty(txtSendDataToServer.Text))
+                {
+                    string message = txtSendDataToServer.Text;
+                    AppendChatBox(message, Color.Blue, txtUsername.Text);
+                    txtSendDataToServer.Text = string.Empty;
+                    serverJoin.SendDataToServer("MSG " + txtUsername.Text + " " + message);
+                }
             }
+        }
+
+        public void AppendChatBox(string message, Color? color = null, string sender = "Server")
+        {
+            CustomRichTextBox txtBox = txtChatBox;
+
+            txtBox.SelectionStart = txtBox.Text.Length;
+            txtBox.SelectionLength = 0;
+
+            txtBox.SelectionColor = color ?? Color.Red;
+            txtBox.AppendText($"{sender}: ");
+            txtBox.SelectionColor = txtBox.ForeColor;
+            txtBox.AppendText(message + Environment.NewLine);
+        }
+
+        public void AppendLogBox(string message)
+        {
+            CustomTextBox txtBox = txtServerLog;
+
+            txtBox.AppendText(message + Environment.NewLine);
         }
     }
 }
