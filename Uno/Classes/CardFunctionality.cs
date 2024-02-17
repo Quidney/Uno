@@ -25,13 +25,11 @@ namespace Uno.Classes
 
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, Form1 form1)
+        public void SetReferences(Form1 form1, TableLayoutPanel pnlCards)
         {
-            this.playerDatabase = playerDatabase;
-            this.pnlCards = pnlCards;
-
             this.mainForm = form1;
-
+            this.playerDatabase = form1.playerDatabase;
+            this.pnlCards = pnlCards;
             label = new CustomLabel()
             {
                 Dock = DockStyle.Fill,

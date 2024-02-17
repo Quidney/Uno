@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -13,14 +13,16 @@ namespace Uno
     public partial class Form1 : Form
     {
         Player currentPlayer;
-
-        Deck deck;
-        CardFunctionality cardFunctionality;
-        PlayerDatabase playerDatabase;
-
         bool joinedOrHosted = false;
-        ServerHost serverHost;
-        ServerJoin serverJoin;
+        bool isHost = false;
+
+        public Deck deck;
+        public CardFunctionality cardFunctionality;
+        public PlayerDatabase playerDatabase;
+        public ServerHost serverHost;
+        public ServerJoin serverJoin;
+
+
 
         public Form1()
         {
@@ -44,9 +46,9 @@ namespace Uno
             serverHost = new ServerHost();
             serverJoin = new ServerJoin();
 
-            cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
-
+            cardFunctionality.SetReferences(this, pnlMain);
             serverHost.SetReferences(this);
+            serverJoin.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
 
 
@@ -246,16 +248,28 @@ namespace Uno
         {
             string hostName = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
             AppendLogBox($"Hosting server on {hostName}:{port}");
-            serverHost.HostServer(port);
+
+            currentPlayer = serverHost.HostServer(port, username);
+            isHost = currentPlayer.IsHost;
+
             AppendLogBox("Server is running.");
             joinedOrHosted = true;
         }
         private async void JoinGame(IPAddress ip, int port, string username)
         {
             AppendLogBox($"Connecting to {ip}:{port} as {username}");
-            await serverJoin.JoinGame(ip, port);
-            AppendLogBox("Connected to server.");
-            joinedOrHosted = true;
+
+            currentPlayer = await Task.Run(() => serverJoin.JoinGame(ip, port, username));
+
+            if (currentPlayer != null)
+            {
+                AppendLogBox("Connected to server.");
+                joinedOrHosted = true;
+            }
+            else
+            {
+                AppendLogBox("Failed to connect to server.");
+            }
         }
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
@@ -265,9 +279,20 @@ namespace Uno
                 if (!string.IsNullOrEmpty(txtSendDataToServer.Text))
                 {
                     string message = txtSendDataToServer.Text;
-                    AppendChatBox(message, Color.Blue, txtUsername.Text);
+                    AppendChatBox(message, Color.Blue, currentPlayer.Name);
+
+                    switch (isHost)
+                    {
+                        case true:
+                            serverHost.BroadcastData("MSG " + currentPlayer.Name + " " + message);
+                            break;
+                        case false:
+                            serverJoin.SendDataToServer("MSG " + currentPlayer.Name + " " + message);
+                            break;
+                    }
+
                     txtSendDataToServer.Text = string.Empty;
-                    serverJoin.SendDataToServer("MSG " + txtUsername.Text + " " + message);
+
                 }
             }
         }

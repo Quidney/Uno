@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,14 +12,24 @@ namespace Uno.Classes
 {
     public class ServerJoin
     {
+        Player player;
         TcpClient client;
         NetworkStream stream;
-        public ServerJoin() 
+
+        Form1 form1;
+        PlayerDatabase playerDatabase;
+        public ServerJoin()
         {
 
         }
 
-        public async Task JoinGame(IPAddress ip, int port)
+        public void SetReferences(Form1 form1)
+        {
+            this.form1 = form1;
+            this.playerDatabase = form1.playerDatabase;
+        }
+
+        public async Task<Player> JoinGame(IPAddress ip, int port, string username)
         {
             try
             {
@@ -29,10 +39,17 @@ namespace Uno.Classes
 
                 Thread joinServerThread = new Thread(ServerConnection);
                 joinServerThread.Start();
+
+                SendDataToServer($"JOIN {username}");
+
+                player = playerDatabase.AddClientPlayer(username);
+
+                return player;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                return null;
             }
         }
 
@@ -46,13 +63,56 @@ namespace Uno.Classes
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    MessageBox.Show(message);
+                    ProcessMessage(message);
+                }
+            }
+            catch (IOException ioEx)
+            {
+                form1.AppendLogBox($"You have disconnected. Reason: {ioEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+            }
+        }
+
+        private void ProcessMessage(string message)
+        {
+            try
+            {
+                string command = message.Split(' ')[0].Trim();
+
+                switch (command)
+                {
+                    case "MSG":
+                        string senderString = message.Split(' ')[1].Trim();
+                        int skipSubstringMSG = command.Length + senderString.Length + 2;
+                        string restOfMessageMSG = message.Substring(skipSubstringMSG);
+                        form1.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
+
+                        break;
+                    case "JOIN":
+                        int skipSubstringJOIN = command.Length + 1;
+                        string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
+
+                        form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
+                        break;
+                    case "ERR":
+                        int skipSubstringERR = command.Length + 1;
+                        string restOfMessageERR = message.Substring(skipSubstringERR);
+                        form1.AppendLogBox(restOfMessageERR);
+
+                        break;
+                    default:
+                        MessageBox.Show("UNKNOWN MESSAGE");
+                        break;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
+
         }
 
         public void SendDataToServer(string message)
@@ -61,6 +121,10 @@ namespace Uno.Classes
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(message);
                 stream.Write(buffer, 0, buffer.Length);
+            }
+            catch (IOException)
+            {
+                form1.AppendChatBox("Your Message was not sent because you are not connected to a server.");
             }
             catch (Exception ex)
             {

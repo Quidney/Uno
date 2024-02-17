@@ -15,6 +15,7 @@ namespace Uno.Classes
 
         public Dictionary<string, string> UuidNameDictionary;
         public Dictionary<string, Player> UuidPlayerDictionary;
+        public Dictionary<string, Player> NamePlayerDictionary;
 
         public Dictionary<int, Color> indexColorDictionary;
 
@@ -23,6 +24,7 @@ namespace Uno.Classes
             players = new List<Player>();
             UuidNameDictionary = new Dictionary<string, string>();
             UuidPlayerDictionary = new Dictionary<string, Player>();
+            NamePlayerDictionary = new Dictionary<string, Player>();
 
             indexColorDictionary = new Dictionary<int, Color>()
             {
@@ -38,45 +40,33 @@ namespace Uno.Classes
             this.serverLog = serverLog;
         }
 
-        public void AddClientPlayer(string name)
+        public Player AddClientPlayer(string name)
         {
             string playerID = GetUUIDFromUsername(name);
             Player clientPlayer = new Player(playerID, name);
             clientPlayer.IsHost = false;
-            players.Add(clientPlayer);
 
+            players.Add(clientPlayer);
+            NamePlayerDictionary.Add(clientPlayer.Name, clientPlayer);
             UuidNameDictionary.Add(playerID, clientPlayer.Name);
             UuidPlayerDictionary.Add(playerID, clientPlayer);
 
-            AppendToServerLog($"Player {name} (UUID: {playerID}) joined the game!{Environment.NewLine}");
+            return clientPlayer;
         }
 
-        public void AddHostPlayer(string name)
+        public Player AddHostPlayer(string name)
         {
             string playerID = GetUUIDFromUsername(name);
             Player hostPlayer = new Player(playerID, name);
             hostPlayer.IsHost = true;
-            players.Add(hostPlayer);
 
+            players.Add(hostPlayer);
+            NamePlayerDictionary.Add(hostPlayer.Name, hostPlayer);
             UuidNameDictionary.Add(playerID, hostPlayer.Name);
             UuidPlayerDictionary.Add(playerID, hostPlayer);
-            AppendToServerLog($"Host {name} (UUID: {playerID}) created the server.{Environment.NewLine}");
+
+            return hostPlayer;
         }
-
-
-        private void AppendToServerLog(string message)
-        {
-            if (serverLog.InvokeRequired)
-            {
-                serverLog.Invoke(new MethodInvoker(delegate { serverLog.AppendText(message); }));
-            }
-            else
-            {
-                serverLog.AppendText(message);
-            }
-        }
-
-
         public string GetUUIDFromUsername(string username)
         {
             // Namespace for UUID generation
@@ -105,8 +95,7 @@ namespace Uno.Classes
         public Color GetPlayerColor(Player player)
         {
             int index = players.IndexOf(player);
-            Color playerColor;
-            indexColorDictionary.TryGetValue(index, out playerColor);
+            indexColorDictionary.TryGetValue(index, out Color playerColor);
             return playerColor;
         }
     }
