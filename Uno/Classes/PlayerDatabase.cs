@@ -17,22 +17,12 @@ namespace Uno.Classes
         public Dictionary<string, Player> UuidPlayerDictionary;
         public Dictionary<string, Player> NamePlayerDictionary;
 
-        public Dictionary<int, Color> indexColorDictionary;
-
         public PlayerDatabase()
         {
             players = new List<Player>();
             UuidNameDictionary = new Dictionary<string, string>();
             UuidPlayerDictionary = new Dictionary<string, Player>();
             NamePlayerDictionary = new Dictionary<string, Player>();
-
-            indexColorDictionary = new Dictionary<int, Color>()
-            {
-                {0, Color.Red },
-                {1, Color.Yellow },
-                {2, Color.Blue },
-                {3, Color.Green },
-            };
         }
 
         public void SetReferences(CustomTextBox serverLog)
@@ -67,6 +57,15 @@ namespace Uno.Classes
 
             return hostPlayer;
         }
+
+        public void RemovePlayer(Player player)
+        {
+            players.Remove(player);
+            NamePlayerDictionary.Remove(player.Name);
+            UuidNameDictionary.Remove(player.Id);
+            UuidPlayerDictionary.Remove(player.Id);
+        }
+
         public string GetUUIDFromUsername(string username)
         {
             // Namespace for UUID generation
@@ -90,13 +89,6 @@ namespace Uno.Classes
 
                 return uuid.ToString();
             }
-        }
-
-        public Color GetPlayerColor(Player player)
-        {
-            int index = players.IndexOf(player);
-            indexColorDictionary.TryGetValue(index, out Color playerColor);
-            return playerColor;
         }
     }
 }

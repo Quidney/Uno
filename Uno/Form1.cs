@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
@@ -12,9 +13,9 @@ namespace Uno
 {
     public partial class Form1 : Form
     {
-        Player currentPlayer;
-        bool joinedOrHosted = false;
-        bool isHost = false;
+        public Player currentPlayer;
+        public bool joinedOrHosted = false;
+        public bool isHost = false;
 
         public Deck deck;
         public CardFunctionality cardFunctionality;
@@ -22,7 +23,7 @@ namespace Uno
         public ServerHost serverHost;
         public ServerJoin serverJoin;
 
-
+        public ChatBox chatBox;
 
         public Form1()
         {
@@ -33,11 +34,13 @@ namespace Uno
 
         void InitMethod()
         {
+            chatBox = new ChatBox();
+
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Uno!";
 
             deck = new Deck();
-            deck.Shuffle();
+            //deck.Shuffle();
 
             cardFunctionality = new CardFunctionality();
 
@@ -50,61 +53,10 @@ namespace Uno
             serverHost.SetReferences(this);
             serverJoin.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
+            chatBox.SetReferences(this);
 
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
-        }
-
-        void StartGame()
-        {
-            PlaceOneCardOnThePile();
-            GiveStartingCards();
-        }
-
-        void PlaceOneCardOnThePile()
-        {
-            Card card = deck.cardsDeckList.LastOrDefault();
-            cardFunctionality.NewCardInPile(card);
-            deck.cardsDeckList.Remove(card);
-            cardFunctionality.currentColor = card.Color;
-        }
-
-        void GiveStartingCards()
-        {
-            for (int i = 0; i < 7; i++)
-            {
-                Card card = deck.cardsDeckList.LastOrDefault();
-                currentPlayer.DrawCard(card);
-                deck.cardsDeckList.Remove(card);
-
-                AddCardToGUI(card);
-            }
-        }
-
-        private void BtnStartGame_Click(object sender, EventArgs e)
-        {
-            StartGame();
-            (sender as Button).Dispose();
-        }
-        private void DrawCard(object sender, EventArgs e)
-        {
-            if (deck.cardsDeckList.Count < 1)
-            {
-                foreach (Card card in cardFunctionality.cardsInPile)
-                {
-                    deck.cardsDeckList.Add(card);
-                }
-                cardFunctionality.cardsInPile = new List<Card>();
-
-                deck.Shuffle();
-            }
-
-            Card drawnCard = deck.cardsDeckList.LastOrDefault();
-            currentPlayer.DrawCard(drawnCard);
-            deck.cardsDeckList.Remove(drawnCard);
-
-            AddCardToGUI(drawnCard);
-
         }
 
         private void AddCardToGUI(Card card)
@@ -244,16 +196,24 @@ namespace Uno
             }
         }
 
-        private void HostGame(int port, string username)
+        private async void HostGame(int port, string username)
         {
-            string hostName = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
-            AppendLogBox($"Hosting server on {hostName}:{port}");
+            string response;
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string api = "http://ipinfo.io/ip";
+                response = await httpClient.GetStringAsync(api);
+            }
+            AppendLogBox($"Hosting server on {response}:{port}");
 
             currentPlayer = serverHost.HostServer(port, username);
             isHost = currentPlayer.IsHost;
 
             AppendLogBox("Server is running.");
             joinedOrHosted = true;
+
+            chatBox.lblTitleExtern.Text = $"Chatbox - {response}:{port}";
+            chatBox.Show();
         }
         private async void JoinGame(IPAddress ip, int port, string username)
         {
@@ -265,56 +225,29 @@ namespace Uno
             {
                 AppendLogBox("Connected to server.");
                 joinedOrHosted = true;
+
+                chatBox.lblTitleExtern.Text = $"Chatbox - {ip}:{port}";
+                chatBox.Show();
             }
             else
             {
                 AppendLogBox("Failed to connect to server.");
             }
         }
+       
 
-        private void btnSendDataToServer_Click(object sender, EventArgs e)
-        {
-            if (joinedOrHosted)
-            {
-                if (!string.IsNullOrEmpty(txtSendDataToServer.Text))
-                {
-                    string message = txtSendDataToServer.Text;
-                    AppendChatBox(message, Color.Blue, currentPlayer.Name);
-
-                    switch (isHost)
-                    {
-                        case true:
-                            serverHost.BroadcastData("MSG " + currentPlayer.Name + " " + message);
-                            break;
-                        case false:
-                            serverJoin.SendDataToServer("MSG " + currentPlayer.Name + " " + message);
-                            break;
-                    }
-
-                    txtSendDataToServer.Text = string.Empty;
-
-                }
-            }
-        }
-
-        public void AppendChatBox(string message, Color? color = null, string sender = "Server")
-        {
-            CustomRichTextBox txtBox = txtChatBox;
-
-            txtBox.SelectionStart = txtBox.Text.Length;
-            txtBox.SelectionLength = 0;
-
-            txtBox.SelectionColor = color ?? Color.Red;
-            txtBox.AppendText($"{sender}: ");
-            txtBox.SelectionColor = txtBox.ForeColor;
-            txtBox.AppendText(message + Environment.NewLine);
-        }
+        
 
         public void AppendLogBox(string message)
         {
             CustomTextBox txtBox = txtServerLog;
 
             txtBox.AppendText(message + Environment.NewLine);
+        }
+
+        private void customPictureBox1_Click(object sender, EventArgs e)
+        {
+            chatBox.Show();
         }
     }
 }

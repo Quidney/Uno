@@ -9,6 +9,7 @@ namespace Uno.Classes
         public ActionEnum Action { get; set; }
         public ColorEnum Color { get; set; }
         public int Number { get; set; } = -1;
+        public int ID { get; set; }
 
 
         //Normal Card Constructor

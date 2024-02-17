@@ -30,12 +30,14 @@ namespace Uno.Class
                         for (int k = 0; k < 10; k++)
                         {
                             newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k);
+                            newCard.ID = id;
                             cardsDeckList.Add(newCard);
                             idToCard.Add(id++, newCard);
 
                             if (k != 0) //If K (number) isn't 0 (there are two of each number except for 0 in UNO)
                             {
                                 newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, k);
+                                newCard.ID = id;
                                 cardsDeckList.Add(newCard);
                                 idToCard.Add(id++, newCard);
                             }
@@ -46,7 +48,7 @@ namespace Uno.Class
                 else if (i == 1)
                 {
                     //For each color
-                    for (int j = 1; j < 4; j++)
+                    for (int j = 1; j < 5; j++)
                     {
                         //For each action type
                         for (int k = 1; k < 4; k++)
@@ -55,6 +57,7 @@ namespace Uno.Class
                             for (int l = 0; l < 2; l++)
                             {
                                 newCard = new Card((Card.TypeEnum)i, (Card.ColorEnum)j, (Card.ActionEnum)k);
+                                newCard.ID = id;
                                 cardsDeckList.Add(newCard);
                                 idToCard.Add(id++, newCard);
                             }
@@ -72,12 +75,26 @@ namespace Uno.Class
                         for (int k = 0; k < 4; k++)
                         {
                             newCard = new Card((Card.TypeEnum)i, (Card.WildEnum)j);
+                            newCard.ID = id;
                             cardsDeckList.Add(newCard);
                             idToCard.Add(id++, newCard);
                         }
                     }
                 }
             }
+
+            /*  -- Enable to Debug Deck --
+             
+            string allCards = string.Empty;
+
+            foreach (Card card in cardsDeckList)
+            {
+                allCards += card.ToColor().ToString() + " " + card.ToString() + " " + card.ID + "\n";
+            }
+
+            MessageBox.Show(allCards);
+
+            */
         }
 
         Random random = new Random();

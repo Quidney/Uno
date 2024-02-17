@@ -17,6 +17,7 @@ namespace Uno.Classes
         NetworkStream stream;
 
         Form1 form1;
+        ChatBox chatBox;
         PlayerDatabase playerDatabase;
         public ServerJoin()
         {
@@ -27,6 +28,8 @@ namespace Uno.Classes
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;
+            this.chatBox = form1.chatBox;
+
         }
 
         public async Task<Player> JoinGame(IPAddress ip, int port, string username)
@@ -88,7 +91,7 @@ namespace Uno.Classes
                         string senderString = message.Split(' ')[1].Trim();
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
-                        form1.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
+                        chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
 
                         break;
                     case "JOIN":
@@ -124,7 +127,7 @@ namespace Uno.Classes
             }
             catch (IOException)
             {
-                form1.AppendChatBox("Your Message was not sent because you are not connected to a server.");
+                chatBox.AppendChatBox("Your Message was not sent because you are not connected to a server.");
             }
             catch (Exception ex)
             {

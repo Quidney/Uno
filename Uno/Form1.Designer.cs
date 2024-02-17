@@ -28,10 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pnlMain = new System.Windows.Forms.TableLayoutPanel();
-            this.btnStartGame = new System.Windows.Forms.Button();
-            this.btnDrawCard = new System.Windows.Forms.Button();
-            this.pnlMultiplayer = new System.Windows.Forms.TableLayoutPanel();
+            this.pnlMultiplayer = new Uno.Classes.CustomTableLayoutPanel();
             this.lblUsername = new Uno.Classes.CustomLabel();
             this.txtUsername = new Uno.Classes.CustomTextBox();
             this.lblIPAdressJoin = new Uno.Classes.CustomLabel();
@@ -45,107 +42,11 @@
             this.txtServerLog = new Uno.Classes.CustomTextBox();
             this.lblJoin = new Uno.Classes.CustomLabel();
             this.lblHost = new Uno.Classes.CustomLabel();
-            this.txtSendDataToServer = new Uno.Classes.CustomTextBox();
-            this.btnSendDataToServer = new Uno.Classes.CustomButton();
-            this.txtChatBox = new Uno.Classes.CustomRichTextBox();
-            this.pnlMain.SuspendLayout();
+            this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
+            this.customPictureBox1 = new Uno.Classes.CustomPictureBox();
             this.pnlMultiplayer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.customPictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pnlMain
-            // 
-            this.pnlMain.ColumnCount = 25;
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.Controls.Add(this.btnStartGame, 11, 14);
-            this.pnlMain.Controls.Add(this.btnDrawCard, 15, 14);
-            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMain.Location = new System.Drawing.Point(0, 0);
-            this.pnlMain.Margin = new System.Windows.Forms.Padding(4);
-            this.pnlMain.Name = "pnlMain";
-            this.pnlMain.RowCount = 25;
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlMain.Size = new System.Drawing.Size(1380, 1035);
-            this.pnlMain.TabIndex = 0;
-            // 
-            // btnStartGame
-            // 
-            this.pnlMain.SetColumnSpan(this.btnStartGame, 3);
-            this.btnStartGame.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnStartGame.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStartGame.Location = new System.Drawing.Point(609, 578);
-            this.btnStartGame.Margin = new System.Windows.Forms.Padding(4);
-            this.btnStartGame.Name = "btnStartGame";
-            this.pnlMain.SetRowSpan(this.btnStartGame, 3);
-            this.btnStartGame.Size = new System.Drawing.Size(157, 115);
-            this.btnStartGame.TabIndex = 7;
-            this.btnStartGame.Text = "Start Game";
-            this.btnStartGame.UseVisualStyleBackColor = true;
-            this.btnStartGame.Click += new System.EventHandler(this.BtnStartGame_Click);
-            // 
-            // btnDrawCard
-            // 
-            this.pnlMain.SetColumnSpan(this.btnDrawCard, 3);
-            this.btnDrawCard.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnDrawCard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDrawCard.Location = new System.Drawing.Point(829, 578);
-            this.btnDrawCard.Margin = new System.Windows.Forms.Padding(4);
-            this.btnDrawCard.Name = "btnDrawCard";
-            this.pnlMain.SetRowSpan(this.btnDrawCard, 3);
-            this.btnDrawCard.Size = new System.Drawing.Size(157, 115);
-            this.btnDrawCard.TabIndex = 8;
-            this.btnDrawCard.Text = "Draw Card";
-            this.btnDrawCard.UseVisualStyleBackColor = true;
-            this.btnDrawCard.Click += new System.EventHandler(this.DrawCard);
             // 
             // pnlMultiplayer
             // 
@@ -183,17 +84,14 @@
             this.pnlMultiplayer.Controls.Add(this.txtPortJoin, 1, 8);
             this.pnlMultiplayer.Controls.Add(this.lblPortHost, 11, 7);
             this.pnlMultiplayer.Controls.Add(this.txtPortHost, 11, 8);
-            this.pnlMultiplayer.Controls.Add(this.btnJoinServer, 1, 9);
-            this.pnlMultiplayer.Controls.Add(this.btnHostServer, 11, 9);
+            this.pnlMultiplayer.Controls.Add(this.btnJoinServer, 1, 10);
+            this.pnlMultiplayer.Controls.Add(this.btnHostServer, 11, 10);
             this.pnlMultiplayer.Controls.Add(this.txtServerLog, 17, 1);
             this.pnlMultiplayer.Controls.Add(this.lblJoin, 1, 4);
             this.pnlMultiplayer.Controls.Add(this.lblHost, 11, 4);
-            this.pnlMultiplayer.Controls.Add(this.txtSendDataToServer, 1, 23);
-            this.pnlMultiplayer.Controls.Add(this.btnSendDataToServer, 7, 23);
-            this.pnlMultiplayer.Controls.Add(this.txtChatBox, 1, 12);
+            this.pnlMultiplayer.Controls.Add(this.customPictureBox1, 0, 0);
             this.pnlMultiplayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMultiplayer.Location = new System.Drawing.Point(0, 0);
-            this.pnlMultiplayer.Margin = new System.Windows.Forms.Padding(4);
             this.pnlMultiplayer.Name = "pnlMultiplayer";
             this.pnlMultiplayer.RowCount = 25;
             this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
@@ -221,9 +119,9 @@
             this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.pnlMultiplayer.Size = new System.Drawing.Size(1380, 1035);
+            this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlMultiplayer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlMultiplayer.Size = new System.Drawing.Size(1104, 828);
             this.pnlMultiplayer.TabIndex = 9;
             // 
             // lblUsername
@@ -233,10 +131,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblUsername, 3);
             this.lblUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsername.Location = new System.Drawing.Point(389, 82);
-            this.lblUsername.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblUsername.Location = new System.Drawing.Point(311, 66);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(157, 41);
+            this.lblUsername.Size = new System.Drawing.Size(126, 33);
             this.lblUsername.TabIndex = 3;
             this.lblUsername.Text = "Username";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -246,10 +143,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.txtUsername, 5);
             this.txtUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtUsername.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtUsername.Location = new System.Drawing.Point(334, 127);
-            this.txtUsername.Margin = new System.Windows.Forms.Padding(4);
+            this.txtUsername.Location = new System.Drawing.Point(267, 102);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(267, 49);
+            this.txtUsername.Size = new System.Drawing.Size(214, 40);
             this.txtUsername.TabIndex = 4;
             // 
             // lblIPAdressJoin
@@ -259,10 +155,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblIPAdressJoin, 4);
             this.lblIPAdressJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblIPAdressJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIPAdressJoin.Location = new System.Drawing.Point(59, 205);
-            this.lblIPAdressJoin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblIPAdressJoin.Location = new System.Drawing.Point(47, 165);
             this.lblIPAdressJoin.Name = "lblIPAdressJoin";
-            this.lblIPAdressJoin.Size = new System.Drawing.Size(212, 41);
+            this.lblIPAdressJoin.Size = new System.Drawing.Size(170, 33);
             this.lblIPAdressJoin.TabIndex = 5;
             this.lblIPAdressJoin.Text = "Ip-Address of Server";
             this.lblIPAdressJoin.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -272,10 +167,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.txtIPAddressJoin, 5);
             this.txtIPAddressJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtIPAddressJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIPAddressJoin.Location = new System.Drawing.Point(59, 250);
-            this.txtIPAddressJoin.Margin = new System.Windows.Forms.Padding(4);
+            this.txtIPAddressJoin.Location = new System.Drawing.Point(47, 201);
             this.txtIPAddressJoin.Name = "txtIPAddressJoin";
-            this.txtIPAddressJoin.Size = new System.Drawing.Size(267, 49);
+            this.txtIPAddressJoin.Size = new System.Drawing.Size(214, 40);
             this.txtIPAddressJoin.TabIndex = 2;
             // 
             // lblPortJoin
@@ -285,10 +179,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblPortJoin, 4);
             this.lblPortJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPortJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPortJoin.Location = new System.Drawing.Point(59, 287);
-            this.lblPortJoin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblPortJoin.Location = new System.Drawing.Point(47, 231);
             this.lblPortJoin.Name = "lblPortJoin";
-            this.lblPortJoin.Size = new System.Drawing.Size(212, 41);
+            this.lblPortJoin.Size = new System.Drawing.Size(170, 33);
             this.lblPortJoin.TabIndex = 7;
             this.lblPortJoin.Text = "Port of Server";
             this.lblPortJoin.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -298,11 +191,10 @@
             this.pnlMultiplayer.SetColumnSpan(this.txtPortJoin, 5);
             this.txtPortJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPortJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPortJoin.Location = new System.Drawing.Point(59, 332);
-            this.txtPortJoin.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPortJoin.Location = new System.Drawing.Point(47, 267);
             this.txtPortJoin.MaxLength = 5;
             this.txtPortJoin.Name = "txtPortJoin";
-            this.txtPortJoin.Size = new System.Drawing.Size(267, 49);
+            this.txtPortJoin.Size = new System.Drawing.Size(214, 40);
             this.txtPortJoin.TabIndex = 6;
             // 
             // lblPortHost
@@ -312,10 +204,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblPortHost, 4);
             this.lblPortHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblPortHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPortHost.Location = new System.Drawing.Point(609, 287);
-            this.lblPortHost.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblPortHost.Location = new System.Drawing.Point(487, 231);
             this.lblPortHost.Name = "lblPortHost";
-            this.lblPortHost.Size = new System.Drawing.Size(212, 41);
+            this.lblPortHost.Size = new System.Drawing.Size(170, 33);
             this.lblPortHost.TabIndex = 8;
             this.lblPortHost.Text = "Port to Host";
             this.lblPortHost.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
@@ -325,11 +216,10 @@
             this.pnlMultiplayer.SetColumnSpan(this.txtPortHost, 5);
             this.txtPortHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtPortHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtPortHost.Location = new System.Drawing.Point(609, 332);
-            this.txtPortHost.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPortHost.Location = new System.Drawing.Point(487, 267);
             this.txtPortHost.MaxLength = 5;
             this.txtPortHost.Name = "txtPortHost";
-            this.txtPortHost.Size = new System.Drawing.Size(267, 49);
+            this.txtPortHost.Size = new System.Drawing.Size(214, 40);
             this.txtPortHost.TabIndex = 9;
             // 
             // btnJoinServer
@@ -337,11 +227,10 @@
             this.pnlMultiplayer.SetColumnSpan(this.btnJoinServer, 3);
             this.btnJoinServer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnJoinServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnJoinServer.Location = new System.Drawing.Point(59, 373);
-            this.btnJoinServer.Margin = new System.Windows.Forms.Padding(4);
+            this.btnJoinServer.Location = new System.Drawing.Point(47, 333);
             this.btnJoinServer.Name = "btnJoinServer";
             this.pnlMultiplayer.SetRowSpan(this.btnJoinServer, 2);
-            this.btnJoinServer.Size = new System.Drawing.Size(157, 74);
+            this.btnJoinServer.Size = new System.Drawing.Size(126, 60);
             this.btnJoinServer.TabIndex = 0;
             this.btnJoinServer.Text = "Join";
             this.btnJoinServer.UseVisualStyleBackColor = true;
@@ -352,11 +241,10 @@
             this.pnlMultiplayer.SetColumnSpan(this.btnHostServer, 3);
             this.btnHostServer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnHostServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnHostServer.Location = new System.Drawing.Point(609, 373);
-            this.btnHostServer.Margin = new System.Windows.Forms.Padding(4);
+            this.btnHostServer.Location = new System.Drawing.Point(487, 333);
             this.btnHostServer.Name = "btnHostServer";
             this.pnlMultiplayer.SetRowSpan(this.btnHostServer, 2);
-            this.btnHostServer.Size = new System.Drawing.Size(157, 74);
+            this.btnHostServer.Size = new System.Drawing.Size(126, 60);
             this.btnHostServer.TabIndex = 1;
             this.btnHostServer.Text = "Host";
             this.btnHostServer.UseVisualStyleBackColor = true;
@@ -368,13 +256,12 @@
             this.pnlMultiplayer.SetColumnSpan(this.txtServerLog, 7);
             this.txtServerLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtServerLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtServerLog.Location = new System.Drawing.Point(939, 45);
-            this.txtServerLog.Margin = new System.Windows.Forms.Padding(4);
+            this.txtServerLog.Location = new System.Drawing.Point(751, 36);
             this.txtServerLog.Multiline = true;
             this.txtServerLog.Name = "txtServerLog";
             this.txtServerLog.ReadOnly = true;
             this.pnlMultiplayer.SetRowSpan(this.txtServerLog, 23);
-            this.txtServerLog.Size = new System.Drawing.Size(377, 935);
+            this.txtServerLog.Size = new System.Drawing.Size(302, 753);
             this.txtServerLog.TabIndex = 10;
             // 
             // lblJoin
@@ -384,10 +271,9 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblJoin, 4);
             this.lblJoin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblJoin.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblJoin.Location = new System.Drawing.Point(59, 164);
-            this.lblJoin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblJoin.Location = new System.Drawing.Point(47, 132);
             this.lblJoin.Name = "lblJoin";
-            this.lblJoin.Size = new System.Drawing.Size(212, 41);
+            this.lblJoin.Size = new System.Drawing.Size(170, 33);
             this.lblJoin.TabIndex = 11;
             this.lblJoin.Text = "JOIN";
             this.lblJoin.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -399,88 +285,119 @@
             this.pnlMultiplayer.SetColumnSpan(this.lblHost, 4);
             this.lblHost.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblHost.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHost.Location = new System.Drawing.Point(609, 164);
-            this.lblHost.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblHost.Location = new System.Drawing.Point(487, 132);
             this.lblHost.Name = "lblHost";
-            this.lblHost.Size = new System.Drawing.Size(212, 41);
+            this.lblHost.Size = new System.Drawing.Size(170, 33);
             this.lblHost.TabIndex = 12;
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // txtSendDataToServer
+            // pnlMain
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.txtSendDataToServer, 6);
-            this.txtSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSendDataToServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSendDataToServer.Location = new System.Drawing.Point(58, 946);
-            this.txtSendDataToServer.Name = "txtSendDataToServer";
-            this.txtSendDataToServer.Size = new System.Drawing.Size(324, 28);
-            this.txtSendDataToServer.TabIndex = 14;
+            this.pnlMain.ColumnCount = 25;
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlMain.Location = new System.Drawing.Point(0, 0);
+            this.pnlMain.Name = "pnlMain";
+            this.pnlMain.RowCount = 25;
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.pnlMain.Size = new System.Drawing.Size(1104, 828);
+            this.pnlMain.TabIndex = 0;
             // 
-            // btnSendDataToServer
+            // customPictureBox1
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.btnSendDataToServer, 2);
-            this.btnSendDataToServer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSendDataToServer.Location = new System.Drawing.Point(388, 946);
-            this.btnSendDataToServer.Name = "btnSendDataToServer";
-            this.btnSendDataToServer.Size = new System.Drawing.Size(104, 35);
-            this.btnSendDataToServer.TabIndex = 13;
-            this.btnSendDataToServer.Text = "Send Message";
-            this.btnSendDataToServer.UseVisualStyleBackColor = true;
-            this.btnSendDataToServer.Click += new System.EventHandler(this.btnSendDataToServer_Click);
-            // 
-            // txtChatBox
-            // 
-            this.txtChatBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.pnlMultiplayer.SetColumnSpan(this.txtChatBox, 8);
-            this.txtChatBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtChatBox.Location = new System.Drawing.Point(58, 495);
-            this.txtChatBox.Name = "txtChatBox";
-            this.txtChatBox.ReadOnly = true;
-            this.pnlMultiplayer.SetRowSpan(this.txtChatBox, 11);
-            this.txtChatBox.Size = new System.Drawing.Size(434, 445);
-            this.txtChatBox.TabIndex = 15;
-            this.txtChatBox.Text = "";
+            this.customPictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.customPictureBox1.Name = "customPictureBox1";
+            this.customPictureBox1.Size = new System.Drawing.Size(38, 27);
+            this.customPictureBox1.TabIndex = 13;
+            this.customPictureBox1.TabStop = false;
+            this.customPictureBox1.Click += new System.EventHandler(this.customPictureBox1_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1380, 1035);
+            this.ClientSize = new System.Drawing.Size(1104, 828);
             this.Controls.Add(this.pnlMultiplayer);
             this.Controls.Add(this.pnlMain);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
-            this.pnlMain.ResumeLayout(false);
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.customPictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TableLayoutPanel pnlMain;
-        private System.Windows.Forms.Button btnStartGame;
-        private System.Windows.Forms.Button btnDrawCard;
-        private System.Windows.Forms.TableLayoutPanel pnlMultiplayer;
-        private Uno.Classes.CustomButton btnJoinServer;
+        private Uno.Classes.CustomTableLayoutPanel pnlMain;
+        private Uno.Classes.CustomTableLayoutPanel pnlMultiplayer;
         private Uno.Classes.CustomButton btnHostServer;
-        private Classes.CustomTextBox txtIPAddressJoin;
-        private Classes.CustomLabel lblUsername;
-        private Classes.CustomTextBox txtUsername;
-        private Classes.CustomLabel lblIPAdressJoin;
-        private Classes.CustomLabel lblPortJoin;
-        private Classes.CustomTextBox txtPortJoin;
-        private Classes.CustomTextBox txtPortHost;
-        private Classes.CustomLabel lblPortHost;
-        private Classes.CustomTextBox txtServerLog;
-        private Classes.CustomLabel lblJoin;
-        private Classes.CustomLabel lblHost;
-        private Classes.CustomTextBox txtSendDataToServer;
-        private Classes.CustomButton btnSendDataToServer;
-        private Classes.CustomRichTextBox txtChatBox;
+        private Uno.Classes.CustomTextBox txtIPAddressJoin;
+        private Uno.Classes.CustomLabel lblUsername;
+        private Uno.Classes.CustomTextBox txtUsername;
+        private Uno.Classes.CustomLabel lblIPAdressJoin;
+        private Uno.Classes.CustomLabel lblPortJoin;
+        private Uno.Classes.CustomTextBox txtPortJoin;
+        private Uno.Classes.CustomTextBox txtPortHost;
+        private Uno.Classes.CustomLabel lblPortHost;
+        private Uno.Classes.CustomTextBox txtServerLog;
+        private Uno.Classes.CustomLabel lblJoin;
+        private Uno.Classes.CustomLabel lblHost;
+        private Classes.CustomButton btnJoinServer;
+        private Classes.CustomPictureBox customPictureBox1;
     }
 }
 

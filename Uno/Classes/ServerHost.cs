@@ -14,20 +14,26 @@ namespace Uno.Classes
     {
         Player hostPlayer;
         TcpListener listener;
+
         List<TcpClient> clients;
+        Dictionary<TcpClient, Player> playerClientPair;
+
         PlayerDatabase playerDatabase;
 
         Form1 form1;
+        ChatBox chatBox;
 
         public ServerHost()
         {
             clients = new List<TcpClient>();
+            playerClientPair = new Dictionary<TcpClient, Player>();
         }
 
         public void SetReferences(Form1 form1)
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;
+            this.chatBox = form1.chatBox;
         }
 
         public Player HostServer(int port, string username)
@@ -82,17 +88,12 @@ namespace Uno.Classes
 
                 byte[] buffer = new byte[4096];
                 int bytesRead;
-                
 
 
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    int messageType = buffer[0];
-                    byte[] restOfData = new byte[bytesRead - 1];
-                    Array.Copy(buffer, 1, restOfData, 0, bytesRead - 1);
-
-                    string message = Encoding.ASCII.GetString(restOfData);
-                    if (!ProcessMessage(message, client, messageType))
+                    string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    if (!ProcessMessage(message, client))
                     {
                         break;
                     }
@@ -111,6 +112,7 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
+                playerDatabase.RemovePlayer(disconnectedPlayer);
 
                 client?.Close();
                 clients.Remove(client);
@@ -126,7 +128,7 @@ namespace Uno.Classes
             }
         }
 
-        private bool ProcessMessage(string message, TcpClient client, int messageType)
+        private bool ProcessMessage(string message, TcpClient client)
         {
             try
             {
@@ -141,9 +143,8 @@ namespace Uno.Classes
 
                         playerDatabase.NamePlayerDictionary.TryGetValue(senderString, out Player senderPlayer);
                         int indexPlayer = playerDatabase.players.IndexOf(senderPlayer);
-                        playerDatabase.indexColorDictionary.TryGetValue(indexPlayer, out Color playerColor);
 
-                        form1.AppendChatBox(restOfMessageMSG, playerColor, senderPlayer.Name);
+                        chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name);
                         return true;
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
@@ -153,7 +154,8 @@ namespace Uno.Classes
                         if (!playerDatabase.NamePlayerDictionary.TryGetValue(restOfMessageJOIN, out Player existingPlayer))
                         {
                             Player newPlayer = playerDatabase.AddClientPlayer(senderString);
-                            form1.AppendLogBox($"Player {newPlayer.Name} has joined the server!");
+                            playerClientPair.Add(client, newPlayer);
+                            form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
                             BroadcastData($"JOIN {newPlayer.Name}");
                             return true;
                         }

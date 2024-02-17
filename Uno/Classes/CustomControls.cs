@@ -139,4 +139,12 @@ namespace Uno.Classes
             DoubleBuffered = true;
         }
     }
+
+    public class CustomPictureBox : PictureBox
+    {
+        public CustomPictureBox() : base()
+        {
+            DoubleBuffered = true;
+        }
+    }
 }
