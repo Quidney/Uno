@@ -39,13 +39,13 @@
             this.txtPortHost = new Uno.Classes.CustomTextBox();
             this.btnJoinServer = new Uno.Classes.CustomButton();
             this.btnHostServer = new Uno.Classes.CustomButton();
-            this.txtServerLog = new Uno.Classes.CustomTextBox();
+            this.txtServerLog = new Uno.Classes.CustomRichTextBox();
             this.lblJoin = new Uno.Classes.CustomLabel();
             this.lblHost = new Uno.Classes.CustomLabel();
+            this.pctrChatBox = new Uno.Classes.CustomPictureBox();
             this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
-            this.customPictureBox1 = new Uno.Classes.CustomPictureBox();
             this.pnlMultiplayer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.customPictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pctrChatBox)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlMultiplayer
@@ -89,7 +89,7 @@
             this.pnlMultiplayer.Controls.Add(this.txtServerLog, 17, 1);
             this.pnlMultiplayer.Controls.Add(this.lblJoin, 1, 4);
             this.pnlMultiplayer.Controls.Add(this.lblHost, 11, 4);
-            this.pnlMultiplayer.Controls.Add(this.customPictureBox1, 0, 0);
+            this.pnlMultiplayer.Controls.Add(this.pctrChatBox, 0, 0);
             this.pnlMultiplayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMultiplayer.Location = new System.Drawing.Point(0, 0);
             this.pnlMultiplayer.Name = "pnlMultiplayer";
@@ -257,12 +257,12 @@
             this.txtServerLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtServerLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtServerLog.Location = new System.Drawing.Point(751, 36);
-            this.txtServerLog.Multiline = true;
             this.txtServerLog.Name = "txtServerLog";
             this.txtServerLog.ReadOnly = true;
             this.pnlMultiplayer.SetRowSpan(this.txtServerLog, 23);
             this.txtServerLog.Size = new System.Drawing.Size(302, 753);
             this.txtServerLog.TabIndex = 10;
+            this.txtServerLog.Text = "";
             // 
             // lblJoin
             // 
@@ -291,6 +291,17 @@
             this.lblHost.TabIndex = 12;
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pctrChatBox
+            // 
+            this.pctrChatBox.Image = global::Uno.Properties.Resources.Chat_Icon;
+            this.pctrChatBox.Location = new System.Drawing.Point(3, 3);
+            this.pctrChatBox.Name = "pctrChatBox";
+            this.pctrChatBox.Size = new System.Drawing.Size(38, 27);
+            this.pctrChatBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pctrChatBox.TabIndex = 13;
+            this.pctrChatBox.TabStop = false;
+            this.pctrChatBox.Click += new System.EventHandler(this.PctrChatBox_Click);
             // 
             // pnlMain
             // 
@@ -354,15 +365,6 @@
             this.pnlMain.Size = new System.Drawing.Size(1104, 828);
             this.pnlMain.TabIndex = 0;
             // 
-            // customPictureBox1
-            // 
-            this.customPictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.customPictureBox1.Name = "customPictureBox1";
-            this.customPictureBox1.Size = new System.Drawing.Size(38, 27);
-            this.customPictureBox1.TabIndex = 13;
-            this.customPictureBox1.TabStop = false;
-            this.customPictureBox1.Click += new System.EventHandler(this.customPictureBox1_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -375,7 +377,7 @@
             this.Text = "Form1";
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.customPictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pctrChatBox)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -393,11 +395,11 @@
         private Uno.Classes.CustomTextBox txtPortJoin;
         private Uno.Classes.CustomTextBox txtPortHost;
         private Uno.Classes.CustomLabel lblPortHost;
-        private Uno.Classes.CustomTextBox txtServerLog;
+        private Uno.Classes.CustomRichTextBox txtServerLog;
         private Uno.Classes.CustomLabel lblJoin;
         private Uno.Classes.CustomLabel lblHost;
         private Classes.CustomButton btnJoinServer;
-        private Classes.CustomPictureBox customPictureBox1;
+        private Classes.CustomPictureBox pctrChatBox;
     }
 }
 

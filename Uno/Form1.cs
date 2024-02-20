@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -58,7 +57,7 @@ namespace Uno
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
-
+        /*
         private void AddCardToGUI(Card card)
         {
             CustomLabel label = new CustomLabel()
@@ -146,7 +145,7 @@ namespace Uno
                 }
             }
         }
-
+        */
         private void HostGame_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
@@ -206,48 +205,176 @@ namespace Uno
             }
             AppendLogBox($"Hosting server on {response}:{port}");
 
-            currentPlayer = serverHost.HostServer(port, username);
-            isHost = currentPlayer.IsHost;
+            (Player, bool) hostServer = serverHost.HostServer(port, username);
 
-            AppendLogBox("Server is running.");
-            joinedOrHosted = true;
+            if (hostServer.Item2)
+            {
+                currentPlayer = hostServer.Item1;
+                isHost = currentPlayer.IsHost;
 
-            chatBox.lblTitleExtern.Text = $"Chatbox - {response}:{port}";
-            chatBox.Show();
+                AppendLogBox("Server is running.");
+                joinedOrHosted = true;
+
+                chatBox.lblTitleExtern.Text = $"Chatbox - {response}:{port}";
+                //chatBox.Show();
+
+
+                CustomButton btnStartGame = new CustomButton()
+                {
+                    Text = "Start the Game",
+                    Enabled = false,
+                    Parent = pnlMultiplayer,
+                    Dock = DockStyle.Fill,
+                };
+
+                pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(6, 13));
+                pnlMultiplayer.SetColumnSpan(btnStartGame, 3);
+                pnlMultiplayer.SetRowSpan(btnStartGame, 2);
+
+                InitGUIForPlayers();
+            }
         }
+
+        private void InitGUIForPlayers()
+        {
+            Image userIcon = Properties.Resources.User_Icon;
+
+            CustomPictureBox player1PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+            pnlMultiplayer.SetCellPosition(player1PictureBox, new TableLayoutPanelCellPosition(1, 18));
+            pnlMultiplayer.SetColumnSpan(player1PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player1PictureBox, 3);
+            CustomLabel player1Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = currentPlayer.Name,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player1Label, new TableLayoutPanelCellPosition(1, 21));
+            pnlMultiplayer.SetColumnSpan(player1Label, 2);
+
+            CustomPictureBox player2PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+            pnlMultiplayer.SetCellPosition(player2PictureBox, new TableLayoutPanelCellPosition(4, 18));
+            pnlMultiplayer.SetColumnSpan(player2PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player2PictureBox, 3);
+            CustomLabel player2Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player2Label, new TableLayoutPanelCellPosition(4, 21));
+            pnlMultiplayer.SetColumnSpan(player2Label, 2);
+
+            CustomPictureBox player3PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.Zoom
+
+            };
+            pnlMultiplayer.SetCellPosition(player3PictureBox, new TableLayoutPanelCellPosition(7, 18));
+            pnlMultiplayer.SetColumnSpan(player3PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player3PictureBox, 3);
+            CustomLabel player3Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player3Label, new TableLayoutPanelCellPosition(7, 21));
+            pnlMultiplayer.SetColumnSpan(player3Label, 2);
+
+            CustomPictureBox player4PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.Zoom
+            };
+            pnlMultiplayer.SetCellPosition(player4PictureBox, new TableLayoutPanelCellPosition(10, 18));
+            pnlMultiplayer.SetColumnSpan(player4PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player4PictureBox, 3);
+            CustomLabel player4Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player4Label, new TableLayoutPanelCellPosition(10, 21));
+            pnlMultiplayer.SetColumnSpan(player4Label, 2);
+
+            playerLabels[0] = player1Label;
+            playerLabels[1] = player2Label;
+            playerLabels[2] = player3Label;
+            playerLabels[3] = player4Label;
+        }
+
+        Label[] playerLabels = new Label[4];
+        public void AddPlayerToGUI(int playerIndex, Player player)
+        {
+            playerLabels[playerIndex].Text = player.Name;
+        }
+
         private async void JoinGame(IPAddress ip, int port, string username)
         {
             AppendLogBox($"Connecting to {ip}:{port} as {username}");
 
-            currentPlayer = await Task.Run(() => serverJoin.JoinGame(ip, port, username));
+            (Player, bool) joinServer = await Task.Run(() => serverJoin.JoinGame(ip, port, username));
 
-            if (currentPlayer != null)
+            if (joinServer.Item2)
             {
+                currentPlayer = joinServer.Item1;
+
                 AppendLogBox("Connected to server.");
                 joinedOrHosted = true;
 
                 chatBox.lblTitleExtern.Text = $"Chatbox - {ip}:{port}";
-                chatBox.Show();
+                //chatBox.Show();
             }
             else
             {
-                AppendLogBox("Failed to connect to server.");
+                AppendLogBox("Failed to join the server.");
             }
         }
-       
 
-        
+        public void DisconnectedFromServer()
+        {
+            joinedOrHosted = false;
+            isHost = false;
+            chatBox.lblTitleExtern.Text = string.Empty;
+            playerDatabase.players.Clear();
+        }
 
         public void AppendLogBox(string message)
         {
-            CustomTextBox txtBox = txtServerLog;
+            CustomRichTextBox txtBox = txtServerLog;
 
             txtBox.AppendText(message + Environment.NewLine);
         }
 
-        private void customPictureBox1_Click(object sender, EventArgs e)
+        private void PctrChatBox_Click(object sender, EventArgs e)
         {
-            chatBox.Show();
+            if (joinedOrHosted)
+                chatBox.Show();
+            else
+                MessageBox.Show("You must Host or Join a server first.");
         }
     }
 }

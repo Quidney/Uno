@@ -32,7 +32,7 @@ namespace Uno.Classes
 
         }
 
-        public async Task<Player> JoinGame(IPAddress ip, int port, string username)
+        public async Task<(Player, bool)> JoinGame(IPAddress ip, int port, string username)
         {
             try
             {
@@ -47,12 +47,12 @@ namespace Uno.Classes
 
                 player = playerDatabase.AddClientPlayer(username);
 
-                return player;
+                return (player, true);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
-                return null;
+                return (null, false);
             }
         }
 
@@ -69,13 +69,26 @@ namespace Uno.Classes
                     ProcessMessage(message);
                 }
             }
+            catch (ArgumentException argEx)
+            {
+                form1.AppendLogBox($"You have disconnected. (Reason: {argEx.Message})");
+            }
             catch (IOException ioEx)
             {
-                form1.AppendLogBox($"You have disconnected. Reason: {ioEx.Message}");
+                form1.AppendLogBox($"You have disconnected. (Reason: {ioEx.Message})");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+            }
+            finally
+            {
+                stream?.Close();
+                stream?.Dispose();
+                client?.Close();
+                client?.Dispose();
+                form1.AppendLogBox("Disconnected from the server.");
+                form1.DisconnectedFromServer();
             }
         }
 
@@ -113,7 +126,7 @@ namespace Uno.Classes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ProcessMessage - Client");
             }
 
         }

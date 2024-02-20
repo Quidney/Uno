@@ -85,7 +85,7 @@
             this.btnMinimize.Name = "btnMinimize";
             this.btnMinimize.Size = new System.Drawing.Size(33, 29);
             this.btnMinimize.TabIndex = 21;
-            this.btnMinimize.Text = "---";
+            this.btnMinimize.Text = "🗕";
             this.btnMinimize.UseVisualStyleBackColor = true;
             // 
             // btnMaximize
@@ -96,7 +96,7 @@
             this.btnMaximize.Name = "btnMaximize";
             this.btnMaximize.Size = new System.Drawing.Size(33, 29);
             this.btnMaximize.TabIndex = 20;
-            this.btnMaximize.Text = "□";
+            this.btnMaximize.Text = "🗖";
             this.btnMaximize.UseVisualStyleBackColor = true;
             // 
             // btnClose
@@ -108,7 +108,7 @@
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(36, 29);
             this.btnClose.TabIndex = 19;
-            this.btnClose.Text = "X";
+            this.btnClose.Text = "✖";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 

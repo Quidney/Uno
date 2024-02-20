@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -36,7 +37,7 @@ namespace Uno.Classes
             this.chatBox = form1.chatBox;
         }
 
-        public Player HostServer(int port, string username)
+        public (Player,bool) HostServer(int port, string username)
         {
             try
             {
@@ -47,12 +48,12 @@ namespace Uno.Classes
 
                 AcceptClients();
 
-                return hostPlayer;
+                return (hostPlayer,true);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
-                return null;
+                return (null,false);
             }
         }
 
@@ -72,15 +73,18 @@ namespace Uno.Classes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "AcceptClients");
             }
 
         }
 
+        
         private async void ClientConnection(object clientInit)
         {
+            
             TcpClient client = null;
             NetworkStream stream = null;
+            bool sameNameDisconnection = false;
             try
             {
                 client = (TcpClient)clientInit;
@@ -93,16 +97,13 @@ namespace Uno.Classes
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    if (!ProcessMessage(message, client))
+                    (bool,bool) operationSuccess = ProcessMessage(message, client);
+                    sameNameDisconnection = operationSuccess.Item2;
+                    if (!operationSuccess.Item1)
                     {
                         break;
                     }
                 }
-                stream?.Close();
-                stream?.Dispose();
-                clients.Remove(client);
-                client?.Close();
-                client?.Dispose();
             }
             catch (ObjectDisposedException)
             {
@@ -112,23 +113,30 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
-                playerDatabase.RemovePlayer(disconnectedPlayer);
-
-                client?.Close();
-                clients.Remove(client);
-                client?.Dispose();
-
-                stream?.Close();
-                stream?.Dispose();
+                
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ClientConnection");
                 MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                if (!sameNameDisconnection)
+                {
+                    Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
+                    playerDatabase.RemovePlayer(disconnectedPlayer);
+                }
+
+                stream?.Close();
+                stream?.Dispose();
+                clients.Remove(client);
+                client?.Close();
+                client?.Dispose();
             }
         }
 
-        private bool ProcessMessage(string message, TcpClient client)
+        private (bool,bool) ProcessMessage(string message, TcpClient client)
         {
             try
             {
@@ -145,7 +153,7 @@ namespace Uno.Classes
                         int indexPlayer = playerDatabase.players.IndexOf(senderPlayer);
 
                         chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name);
-                        return true;
+                        return (true, false);
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
@@ -153,26 +161,43 @@ namespace Uno.Classes
 
                         if (!playerDatabase.NamePlayerDictionary.TryGetValue(restOfMessageJOIN, out Player existingPlayer))
                         {
-                            Player newPlayer = playerDatabase.AddClientPlayer(senderString);
-                            playerClientPair.Add(client, newPlayer);
-                            form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
-                            BroadcastData($"JOIN {newPlayer.Name}");
-                            return true;
+                            if ((playerDatabase.players.Count <= 3))
+                            {
+                                Player newPlayer = playerDatabase.AddClientPlayer(senderString);
+                                playerClientPair.Add(client, newPlayer);
+                                form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
+                                BroadcastData($"JOIN {newPlayer.Name}");
+
+                                form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
+
+                                return (true,false);
+                            }
+                            else
+                            {
+                                SendDataToSpecificClient("ERR Server is full. Disconnecting...", client);
+                                return (false, false);
+                            }
                         }
                         else
                         {
                             SendDataToSpecificClient("ERR Failed to join the server. Reason: A user with the same name already exists.", client);
-                            return false;
+                            return (false,true);
                         }
                     default:
                         MessageBox.Show("UNKNOWN MESSAGE");
-                        return true;
+                        return (true, false);
                 }
+            }
+            catch (ArgumentException argEx)
+            {
+                form1.AppendLogBox($"A user tried to connect with an already existing name. ({argEx.Message})");
+                SendDataToSpecificClient("ERR A user with the same name aleady exists", client);
+                return (false, true);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ProcessMessage");
-                return false;
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ProcessMessage - Server");
+                return (false, false);
             }
 
         }

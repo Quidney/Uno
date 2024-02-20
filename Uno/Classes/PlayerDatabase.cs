@@ -11,7 +11,7 @@ namespace Uno.Classes
     public class PlayerDatabase
     {
         public List<Player> players;
-        private CustomTextBox serverLog;
+        private CustomRichTextBox serverLog;
 
         public Dictionary<string, string> UuidNameDictionary;
         public Dictionary<string, Player> UuidPlayerDictionary;
@@ -25,7 +25,7 @@ namespace Uno.Classes
             NamePlayerDictionary = new Dictionary<string, Player>();
         }
 
-        public void SetReferences(CustomTextBox serverLog)
+        public void SetReferences(CustomRichTextBox serverLog)
         {
             this.serverLog = serverLog;
         }
