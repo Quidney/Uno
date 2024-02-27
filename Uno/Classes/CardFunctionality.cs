@@ -100,8 +100,12 @@ namespace Uno.Classes
             {
                 Card drawnCard = deck.DrawCard();
                 player.AddCardToInventory(drawnCard);
-                playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                serverHost.SendDataToSpecificClient("DRAW " + drawnCard.ID, client);
+
+                if (!player.IsHost)
+                {
+                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                    serverHost.SendDataToSpecificClient("DRAW " + drawnCard.ID, client);
+                }
             }
         }
 

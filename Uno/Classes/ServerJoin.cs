@@ -58,6 +58,7 @@ namespace Uno.Classes
             }
         }
 
+        private StringBuilder messageBuffer = new StringBuilder();
         private async void ServerConnection()
         {
             try
@@ -67,8 +68,8 @@ namespace Uno.Classes
 
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    ProcessMessage(message);
+                    string receivedData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    ProcessReceivedData(receivedData);
                 }
             }
             catch (ArgumentException argEx)
@@ -94,12 +95,32 @@ namespace Uno.Classes
             }
         }
 
+        private void ProcessReceivedData(string receivedData)
+        {
+            string delimiter = "\n";
+
+            messageBuffer.Append(receivedData);
+
+            string[] messages = messageBuffer.ToString().Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string message in messages)
+            {
+                ProcessMessage(message);
+            }
+
+            int lastDelimiterIndex = messageBuffer.ToString().LastIndexOf(delimiter);
+            if (lastDelimiterIndex >= 0)
+            {
+                messageBuffer.Remove(0, lastDelimiterIndex + delimiter.Length);
+            }
+        }
+
         private void ProcessMessage(string message)
         {
             try
             {
                 string command = message.Split(' ')[0].Trim();
-
+                //MessageBox.Show($"\"{message}\"");
                 switch (command)
                 {
                     case "MSG":
@@ -126,12 +147,16 @@ namespace Uno.Classes
                         break;
 
                     case "DRAW":
-                        int cardID = Convert.ToInt32(message.Split(' ')[1].Trim());
+                        string cardIdStr = message.Split(' ')[1]; 
+                        int cardID = Convert.ToInt32(cardIdStr);
                         deck.idToCard.TryGetValue(cardID, out Card cardToDraw);
                         player.AddCardToInventory(cardToDraw);
                         break;
+                    case "START":
+                        form1.StartGameClient();
+                        break;
                     default:
-                        MessageBox.Show("UNKNOWN MESSAGE\nPlease tell the developer what you were doing when this occured.");
+                        MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");
                         break;
                 }
             }

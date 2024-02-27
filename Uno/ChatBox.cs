@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Classes;
 
@@ -42,24 +43,31 @@ namespace Uno
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtSendDataToServer.Text))
+            if (!string.IsNullOrEmpty(txtMessageBox.Text))
             {
-                string message = txtSendDataToServer.Text;
+                string message = txtMessageBox.Text;
                 AppendChatBox(message, Color.Blue, form1.currentPlayer.Name);
 
                 switch (form1.isHost)
                 {
                     case true:
-                        form1.serverHost.BroadcastData("MSG " + form1.currentPlayer.Name + " " + message);
+                        BroadcastMessage();
                         break;
                     case false:
                         form1.serverJoin.SendDataToServer("MSG " + form1.currentPlayer.Name + " " + message);
                         break;
                 }
 
-                txtSendDataToServer.Text = string.Empty;
+                txtMessageBox.Text = string.Empty;
 
             }
+        }
+
+        private async void BroadcastMessage()
+        {
+            string message = txtMessageBox.Text;
+
+            await form1.serverHost.BroadcastData("MSG " + form1.currentPlayer.Name + " " + message);
         }
 
         public void OpenChatBox()

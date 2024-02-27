@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
 
@@ -134,6 +135,11 @@ namespace Uno.Classes
                         Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                         form1.RemovePlayerFromGUI(playerDatabase.players.IndexOf(disconnectedPlayer));
                         playerDatabase.RemovePlayer(disconnectedPlayer);
+
+                        if (playerDatabase.players.Count < 2)
+                        {
+                            form1.StartGameButtonState(false);
+                        }
                     }
 
                     stream?.Close();
@@ -185,6 +191,11 @@ namespace Uno.Classes
                                 SendDataToAllExcept($"JOIN {newPlayer.Name}", client);
 
                                 form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
+
+                                if (playerDatabase.players.Count > 1 && playerDatabase.players.Count < 5)
+                                {
+                                    form1.StartGameButtonState(true);
+                                }
 
                                 return (true, false);
                             }
@@ -253,26 +264,34 @@ namespace Uno.Classes
 
         }
 
-        public void BroadcastData(string message)
+        public async Task BroadcastData(string message)
         {
             foreach (TcpClient client in clients)
             {
                 NetworkStream stream = client.GetStream();
 
-                byte[] buffer = Encoding.ASCII.GetBytes(message);
-                stream.Write(buffer, 0, buffer.Length);
+                string delimiter = "\n";
+
+                string messageWithDelimiter = message + delimiter;
+
+                byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                await stream.WriteAsync(buffer, 0, buffer.Length);
             }
         }
 
-        public void SendDataToSpecificClient(string message, TcpClient client)
+        public async void SendDataToSpecificClient(string message, TcpClient client)
         {
             NetworkStream clientStream = client?.GetStream();
 
-            byte[] buffer = Encoding.ASCII.GetBytes(message);
-            clientStream?.Write(buffer, 0, buffer.Length);
+            string delimiter = "\n";
+
+            string messageWithDelimiter = message + delimiter;
+
+            byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+            await clientStream?.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        public void SendDataToAllExcept(string message, TcpClient clientInit)
+        public async void SendDataToAllExcept(string message, TcpClient clientInit)
         {
             foreach (TcpClient client in clients)
             {
@@ -280,8 +299,12 @@ namespace Uno.Classes
                 {
                     NetworkStream stream = client.GetStream();
 
-                    byte[] buffer = Encoding.ASCII.GetBytes(message);
-                    stream.Write(buffer, 0, buffer.Length);
+                    string delimiter = "\n";
+
+                    string messageWithDelimiter = message + delimiter;
+
+                    byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                    await stream.WriteAsync(buffer, 0, buffer.Length);
                 }
             }
         }

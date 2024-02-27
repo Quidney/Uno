@@ -55,7 +55,7 @@ namespace Uno.Classes
         }
         public enum ColorEnum
         {
-            None = 0,
+            Black = 0,
             Red = 1,
             Yellow = 2,
             Blue = 3,

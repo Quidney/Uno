@@ -23,6 +23,7 @@ namespace Uno
         public ServerJoin serverJoin;
 
         public ChatBox chatBox;
+        public AdminConsole adminConsole;
 
         public Form1()
         {
@@ -34,12 +35,13 @@ namespace Uno
         void InitMethod()
         {
             chatBox = new ChatBox();
+            adminConsole = new AdminConsole();
 
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Uno!";
 
             deck = new Deck();
-            //deck.Shuffle();
+            deck.Shuffle();
 
             cardFunctionality = new CardFunctionality();
 
@@ -52,8 +54,9 @@ namespace Uno
             serverHost.SetReferences(this);
             serverJoin.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
-            chatBox.SetReferences(this, pctrChatBox);
 
+            chatBox.SetReferences(this, pctrChatBox);
+            adminConsole.SetReferences(this);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
@@ -106,7 +109,8 @@ namespace Uno
                 MessageBox.Show("Username must be between 3 and 24 characters long, and cannot contain whitespaces");
             }
         }
-
+        CustomButton btnStartGame;
+        CustomPictureBox pctrAdminConsole;
         private async void HostGame(int port, string username)
         {
             string response;
@@ -132,17 +136,29 @@ namespace Uno
                 chatBox.Hide();
 
 
-                CustomButton btnStartGame = new CustomButton()
+                btnStartGame = new CustomButton()
                 {
                     Text = "Start the Game",
                     Enabled = false,
                     Parent = pnlMultiplayer,
                     Dock = DockStyle.Fill,
                 };
+                btnStartGame.Click += (sender, e) => StartGame();
 
                 pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(6, 13));
                 pnlMultiplayer.SetColumnSpan(btnStartGame, 3);
                 pnlMultiplayer.SetRowSpan(btnStartGame, 2);
+
+                pctrAdminConsole = new CustomPictureBox()
+                {
+                    Dock = DockStyle.Fill,
+                    Parent = pnlMultiplayer,
+                    SizeMode = PictureBoxSizeMode.Zoom,
+                    Image = Properties.Resources.User_Icon,
+                };
+                pctrAdminConsole.Click += (sender, e) => { adminConsole.Show(); };
+
+                pnlMultiplayer.SetCellPosition(pctrAdminConsole, new TableLayoutPanelCellPosition(1,0));
 
                 InitGUIForPlayers();
 
@@ -334,6 +350,43 @@ namespace Uno
                 
             else
                 MessageBox.Show("You must Host or Join a server first.");
+        }
+
+
+        public void StartGameButtonState(bool state)
+        {
+            btnStartGame.Enabled = state;
+        }
+        private async void StartGame()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                foreach (Player player in playerDatabase.players)
+                {
+                    //Draw Card, Player, Int Card Count
+                    cardFunctionality.DrawCardsFromDeck(player, 1);
+                }
+            }
+
+            pctrChatBox.Parent = pnlMain;
+            pctrAdminConsole.Parent = pnlMain;
+
+            await serverHost.BroadcastData("START");
+
+            pnlMain.Show();
+            pnlMain.BringToFront();
+            Application.DoEvents();
+            pnlMultiplayer.Hide();
+        }
+
+        public void StartGameClient()
+        {
+            pctrChatBox.Parent = pnlMain;
+
+            pnlMain.Show();
+            pnlMain.BringToFront();
+            Application.DoEvents();
+            pnlMultiplayer.Hide();
         }
     }
 }
