@@ -9,6 +9,9 @@ namespace Uno
 {
     public partial class ChatBox : Form
     {
+        CustomPictureBox openChatBox;
+        Image[] chatBoxStates;
+
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HTCAPTION = 0x2;
 
@@ -21,6 +24,8 @@ namespace Uno
         Form1 form1;
         public CustomLabel lblTitleExtern;
 
+        public bool newMessage = false;
+
         public ChatBox()
         {
             InitializeComponent();
@@ -28,11 +33,12 @@ namespace Uno
             lblTitleExtern = lblTitle;
         }
 
-        public void SetReferences(Form1 form1)
+        public void SetReferences(Form1 form1, CustomPictureBox openChatBox)
         {
             this.form1 = form1;
+            this.openChatBox = openChatBox;
+            chatBoxStates = new Image[] {Properties.Resources.Chat_Icon, Properties.Resources.Chat_Icon_NewMessage };
         }
-
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)
         {
@@ -55,8 +61,20 @@ namespace Uno
 
             }
         }
+
+        public void OpenChatBox()
+        {
+            if (openChatBox.Image != chatBoxStates[0])
+                openChatBox.Image = chatBoxStates[0];
+        }
+
         public void AppendChatBox(string message, Color? color = null, string sender = "Server")
         {
+            if (!this.Visible && openChatBox.Image != chatBoxStates[1])
+            {
+                openChatBox.Image = chatBoxStates[1];
+            }
+
             CustomRichTextBox txtBox = txtChatBox;
 
             txtBox.SelectionStart = txtBox.Text.Length;

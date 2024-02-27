@@ -98,6 +98,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Chat_Icon-NewMessage.png" />
     <Content Include="Resources\Chat_Icon.png" />
   </ItemGroup>
   <ItemGroup>

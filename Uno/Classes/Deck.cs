@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Uno.Classes;
 
 namespace Uno.Class
@@ -117,6 +118,13 @@ namespace Uno.Class
                     cardsDeckList[deckCount] = card;
                 }
             }
+        }
+
+        public Card DrawCard()
+        {
+            Card drawnCard = cardsDeckList.LastOrDefault();
+            cardsDeckList.Remove(drawnCard);
+            return drawnCard;
         }
     }
 }

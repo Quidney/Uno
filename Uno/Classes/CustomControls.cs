@@ -49,6 +49,7 @@ namespace Uno.Classes
         public ColorSelectionPanel(Form1 mainForm, CardFunctionality cardFunctionalityInit) : base()
         {
             Parent = mainForm;
+            BackColor = Color.Gray;
 
             CardFunctionality cardFunctionality = cardFunctionalityInit;
 
@@ -121,13 +122,13 @@ namespace Uno.Classes
             pnlColorSelection.SetColumn(lblYellow, 5);
             pnlColorSelection.SetColumn(lblBlue, 7);
 
-            lblRed.Click += (sender,e) => cardFunctionality.ChangeGameColor (sender, e, Card.ColorEnum.Red);
+            lblRed.Click += (sender,e) => cardFunctionality.ChangeGameColor (Card.ColorEnum.Red);
             lblRed.Click += cardFunctionality.CloseColorSelector;
-            lblGreen.Click += (sender,e) => cardFunctionality.ChangeGameColor (sender, e, Card.ColorEnum.Green);
+            lblGreen.Click += (sender,e) => cardFunctionality.ChangeGameColor (Card.ColorEnum.Green);
             lblGreen.Click += cardFunctionality.CloseColorSelector;
-            lblYellow.Click += (sender,e) => cardFunctionality.ChangeGameColor (sender, e, Card.ColorEnum.Yellow);
+            lblYellow.Click += (sender,e) => cardFunctionality.ChangeGameColor (Card.ColorEnum.Yellow);
             lblYellow.Click += cardFunctionality.CloseColorSelector;
-            lblBlue.Click += (sender,e) => cardFunctionality.ChangeGameColor (sender, e, Card.ColorEnum.Blue);
+            lblBlue.Click += (sender,e) => cardFunctionality.ChangeGameColor (Card.ColorEnum.Blue);
             lblBlue.Click += cardFunctionality.CloseColorSelector;
         }
     }

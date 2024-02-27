@@ -52,100 +52,12 @@ namespace Uno
             serverHost.SetReferences(this);
             serverJoin.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
-            chatBox.SetReferences(this);
+            chatBox.SetReferences(this, pctrChatBox);
 
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
-        /*
-        private void AddCardToGUI(Card card)
-        {
-            CustomLabel label = new CustomLabel()
-            {
-                Dock = DockStyle.Fill,
-                Parent = pnlMain,
-                Text = card.ToString(),
-                AssignedCard = card,
-                Tag = "PlayerCard"
-            };
 
-            switch (card.Type)
-            {
-                case Card.TypeEnum.Number:
-                    label.TextAlign = ContentAlignment.TopRight;
-                    label.BackColor = card.ToColor();
-                    label.Font = new Font("Arial", 12);
-                    break;
-                case Card.TypeEnum.Action:
-                    switch (card.Action)
-                    {
-                        case Card.ActionEnum.DrawTwo:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.ActionEnum.Reverse:
-                        case Card.ActionEnum.Skip:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    break;
-                case Card.TypeEnum.Wild:
-                    switch (card.Wild)
-                    {
-                        case Card.WildEnum.DrawFour:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.WildEnum.ChangeColor:
-                            label.TextAlign = ContentAlignment.MiddleCenter;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    label.BackColor = Color.Black;
-                    label.ForeColor = Color.White;
-                    break;
-            }
-
-            label.Click += (sender, e) => cardFunctionality.ThrowCardInPile(sender, e, label, currentPlayer);
-
-            pnlMain.SetRow(label, 18);
-            pnlMain.SetColumn(label, 1);
-
-            pnlMain.SetRowSpan(label, 3);
-            pnlMain.SetColumnSpan(label, 2);
-
-
-            int row = 15;
-            int column = 0;
-
-            foreach (Control control in pnlMain.Controls)
-            {
-                if (control is CustomLabel cardLabel)
-                {
-                    if ((string)cardLabel.Tag == "PlayerCard")
-                    {
-
-                        if (column + 1 <= pnlMain.ColumnCount)
-                        {
-                            pnlMain.SetColumn(cardLabel, column + 1);
-                            column++;
-                        }
-                        else
-                        {
-                            if (row + 1 <= pnlMain.RowCount)
-                            {
-                                pnlMain.SetRow(cardLabel, row + 1);
-                                row++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        */
         private void HostGame_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
@@ -200,7 +112,7 @@ namespace Uno
             string response;
             using (HttpClient httpClient = new HttpClient())
             {
-                string api = "http://ipinfo.io/ip";
+                string api = "https://ipinfo.io/ip";
                 response = await httpClient.GetStringAsync(api);
             }
             AppendLogBox($"Hosting server on {response}:{port}");
@@ -216,7 +128,8 @@ namespace Uno
                 joinedOrHosted = true;
 
                 chatBox.lblTitleExtern.Text = $"Chatbox - {response}:{port}";
-                //chatBox.Show();
+                chatBox.Show();
+                chatBox.Hide();
 
 
                 CustomButton btnStartGame = new CustomButton()
@@ -232,6 +145,15 @@ namespace Uno
                 pnlMultiplayer.SetRowSpan(btnStartGame, 2);
 
                 InitGUIForPlayers();
+
+                btnHostServer.Enabled = false;
+                txtPortHost.Enabled = false;
+                txtUsername.Enabled = false;
+
+                btnJoinServer.Enabled = false;
+                txtIPAddressJoin.Enabled = false;
+                txtPortJoin.Enabled = false;
+
             }
         }
 
@@ -332,6 +254,23 @@ namespace Uno
             playerLabels[playerIndex].Text = player.Name;
         }
 
+        public void RemovePlayerFromGUI(int playerIndex)
+        {
+            playerLabels[playerIndex].Text = "Waiting...";
+
+            int lastEmptyIndex = playerIndex;
+            foreach (CustomLabel label in playerLabels)
+            {
+                if (label.Text != "Waiting...")
+                   if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                   {
+                        playerLabels[lastEmptyIndex].Text = label.Text;
+                        label.Text = "Waiting...";
+                        lastEmptyIndex++;
+                   }
+            }
+        }
+
         private async void JoinGame(IPAddress ip, int port, string username)
         {
             AppendLogBox($"Connecting to {ip}:{port} as {username}");
@@ -342,11 +281,19 @@ namespace Uno
             {
                 currentPlayer = joinServer.Item1;
 
-                AppendLogBox("Connected to server.");
                 joinedOrHosted = true;
 
                 chatBox.lblTitleExtern.Text = $"Chatbox - {ip}:{port}";
-                //chatBox.Show();
+                chatBox.Show();
+                chatBox.Hide();
+
+                btnHostServer.Enabled = false;
+                txtPortHost.Enabled = false;
+                txtUsername.Enabled = false;
+
+                btnJoinServer.Enabled = false;
+                txtIPAddressJoin.Enabled = false;
+                txtPortJoin.Enabled = false;
             }
             else
             {
@@ -360,6 +307,14 @@ namespace Uno
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
             playerDatabase.players.Clear();
+
+            btnHostServer.Enabled = true;
+            txtPortHost.Enabled = true;
+            txtUsername.Enabled = true;
+
+            btnJoinServer.Enabled = true;
+            txtIPAddressJoin.Enabled = true;
+            txtPortJoin.Enabled = true;
         }
 
         public void AppendLogBox(string message)
@@ -372,7 +327,11 @@ namespace Uno
         private void PctrChatBox_Click(object sender, EventArgs e)
         {
             if (joinedOrHosted)
+            {
                 chatBox.Show();
+                chatBox.OpenChatBox();
+            }
+                
             else
                 MessageBox.Show("You must Host or Join a server first.");
         }

@@ -20,7 +20,7 @@ namespace Uno.Classes
             playerInventory = new List<Card>();
         }
 
-        public void DrawCard(Card card)
+        public void AddCardToInventory(Card card)
         {
             playerInventory.Add(card);
         }

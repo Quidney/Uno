@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Windows.Forms;
+using Uno.Class;
 
 namespace Uno.Classes
 {
     public class CardFunctionality
     {
         public TableLayoutPanel pnlCards;
-        public CustomLabel label;
         public List<Card> cardsInPile;
         public PlayerDatabase playerDatabase;
+        private List<Player> players;
+        private Deck deck;
+
+        private ServerHost serverHost;
 
         private Form1 mainForm;
 
@@ -22,7 +27,6 @@ namespace Uno.Classes
         public CardFunctionality()
         {
             cardsInPile = new List<Card>();
-
         }
 
         public void SetReferences(Form1 form1, TableLayoutPanel pnlCards)
@@ -30,115 +34,84 @@ namespace Uno.Classes
             this.mainForm = form1;
             this.playerDatabase = form1.playerDatabase;
             this.pnlCards = pnlCards;
-            label = new CustomLabel()
-            {
-                Dock = DockStyle.Fill,
-                Parent = pnlCards,
-                Text = string.Empty
-            };
-
-            pnlCards.SetRow(label, 1);
-            pnlCards.SetColumn(label, 1);
-
-            pnlCards.SetRowSpan(label, 3);
-            pnlCards.SetColumnSpan(label, 2);
+            this.players = playerDatabase.players;
+            this.deck = form1.deck;
+            this.serverHost = form1.serverHost;
         }
-        public void ThrowCardInPile(object sender, EventArgs e, CustomLabel label, Player currentPlayer)
+        public bool ThrowCardInPile(Card card, Player player)
         {
-            Card lastCardInPile = cardsInPile.LastOrDefault();
-            Card thrownCard = label.AssignedCard;
-
-            switch (thrownCard.Type)
-            {
-                case Card.TypeEnum.Number:
-                    if (thrownCard.Number == lastCardInPile.Number || thrownCard.Color == currentColor)
-                    {
-                        currentPlayer.playerInventory.Remove(thrownCard);
-                        NewCardInPile(thrownCard);
-                        label.Dispose();
-                        currentColor = thrownCard.Color;
-                    }
-                    break;
-                case Card.TypeEnum.Action:
-                    if (thrownCard.Action == lastCardInPile.Action || thrownCard.Color == currentColor)
-                    {
-                        currentPlayer.playerInventory.Remove(thrownCard);
-                        NewCardInPile(thrownCard);
-                        label.Dispose();
-                        currentColor = thrownCard.Color;
-                    }
-                    break;
-                case Card.TypeEnum.Wild:
-                    if (thrownCard.Wild == Card.WildEnum.DrawFour)
-                    {
-
-                    }
-                    else if (thrownCard.Wild == Card.WildEnum.ChangeColor)
-                    {
-
-                    }
-
-                    colorSelectionPanel = new ColorSelectionPanel(mainForm, this);
-                    colorSelectionPanel.Show();
-                    colorSelectionPanel.BringToFront();
-
-                    currentPlayer.playerInventory.Remove(thrownCard);
-                    NewCardInPile(thrownCard);
-                    label.Dispose();
-                    break;
-            }
-        }
-
-        public void NewCardInPile(Card card)
-        {
-            cardsInPile.Add(card);
-
-            label.Text = card.ToString();
-            label.AssignedCard = card;
-
+            bool success = false;
             switch (card.Type)
             {
-                case Card.TypeEnum.Number:
-                    label.TextAlign = ContentAlignment.TopRight;
-                    label.BackColor = card.ToColor();
-                    label.Font = new Font("Arial", 12);
+                case Card.TypeEnum.Number: success = ThrownNumberCard(card, player); break;
+                case Card.TypeEnum.Action: success = ThrownActionCard(card, player); break;
+                case Card.TypeEnum.Wild: success = ThrownWildCard(card, player); break;
+            }
+
+            return success;
+        }
+
+        private bool ThrownNumberCard(Card card, Player player)
+        {
+
+           
+
+            player.playerInventory.Remove(card);
+            cardsInPile.Add(card);
+            return true;
+        }
+        private bool ThrownActionCard(Card card, Player player)
+        {
+
+            player.playerInventory.Remove(card);
+            cardsInPile.Add(card);
+            return true;
+        }
+        private bool ThrownWildCard(Card card, Player player)
+        {
+            bool success = false;
+
+            switch (card.Wild)
+            {
+                case Card.WildEnum.DrawFour:
+                    Player playerToDraw = players[players.IndexOf(player) + 1];
+                    DrawCardsFromDeck(playerToDraw, 4);
+                    OpenColorSelector();
+                    success = true;
                     break;
-                case Card.TypeEnum.Action:
-                    switch (card.Action)
-                    {
-                        case Card.ActionEnum.DrawTwo:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.ActionEnum.Reverse:
-                        case Card.ActionEnum.Skip:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    break;
-                case Card.TypeEnum.Wild:
-                    switch (card.Wild)
-                    {
-                        case Card.WildEnum.DrawFour:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.WildEnum.ChangeColor:
-                            label.TextAlign = ContentAlignment.MiddleCenter;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    label.BackColor = Color.Black;
-                    label.ForeColor = Color.White;
+                case Card.WildEnum.ChangeColor:
+                    OpenColorSelector();
+                    success = true;
                     break;
             }
 
+            if (success)
+            {
+                player.playerInventory.Remove(card);
+                cardsInPile.Add(card);
+            }
+
+            return success;
         }
 
-        public void ChangeGameColor(object sender, EventArgs e, Card.ColorEnum color)
+        public void DrawCardsFromDeck(Player player, int count)
+        {
+            for (int i = 0; i < count; i++) 
+            {
+                Card drawnCard = deck.DrawCard();
+                player.AddCardToInventory(drawnCard);
+                playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                serverHost.SendDataToSpecificClient("DRAW " + drawnCard.ID, client);
+            }
+        }
+
+        public void OpenColorSelector()
+        {
+            colorSelectionPanel = new ColorSelectionPanel(mainForm, this);
+            colorSelectionPanel.Show();
+        }
+
+        public void ChangeGameColor(Card.ColorEnum color)
         {
             currentColor = color;
         }

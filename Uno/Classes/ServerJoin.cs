@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Uno.Class;
 
 namespace Uno.Classes
 {
@@ -19,6 +20,7 @@ namespace Uno.Classes
         Form1 form1;
         ChatBox chatBox;
         PlayerDatabase playerDatabase;
+        Deck deck;
         public ServerJoin()
         {
 
@@ -29,7 +31,7 @@ namespace Uno.Classes
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;
             this.chatBox = form1.chatBox;
-
+            this.deck = form1.deck;
         }
 
         public async Task<(Player, bool)> JoinGame(IPAddress ip, int port, string username)
@@ -105,22 +107,31 @@ namespace Uno.Classes
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
                         chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
-
                         break;
+
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
-
                         form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
                         break;
+
                     case "ERR":
                         int skipSubstringERR = command.Length + 1;
                         string restOfMessageERR = message.Substring(skipSubstringERR);
                         form1.AppendLogBox(restOfMessageERR);
+                        break;
 
+                    case "WELCOME":
+                        form1.AppendLogBox("Connected to server");
+                        break;
+
+                    case "DRAW":
+                        int cardID = Convert.ToInt32(message.Split(' ')[1].Trim());
+                        deck.idToCard.TryGetValue(cardID, out Card cardToDraw);
+                        player.AddCardToInventory(cardToDraw);
                         break;
                     default:
-                        MessageBox.Show("UNKNOWN MESSAGE");
+                        MessageBox.Show("UNKNOWN MESSAGE\nPlease tell the developer what you were doing when this occured.");
                         break;
                 }
             }

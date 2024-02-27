@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,6 +17,9 @@ namespace Uno.Classes
         public Dictionary<string, string> UuidNameDictionary;
         public Dictionary<string, Player> UuidPlayerDictionary;
         public Dictionary<string, Player> NamePlayerDictionary;
+        public Dictionary<Player, TcpClient> PlayerClientDictionary;
+
+        Random random = new Random();
 
         public PlayerDatabase()
         {
@@ -23,6 +27,7 @@ namespace Uno.Classes
             UuidNameDictionary = new Dictionary<string, string>();
             UuidPlayerDictionary = new Dictionary<string, Player>();
             NamePlayerDictionary = new Dictionary<string, Player>();
+            PlayerClientDictionary = new Dictionary<Player, TcpClient>();
         }
 
         public void SetReferences(CustomRichTextBox serverLog)
@@ -66,12 +71,29 @@ namespace Uno.Classes
             UuidPlayerDictionary.Remove(player.Id);
         }
 
+        public void ShufflePlayerOrder()
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                int playerCount = players.Count;
+
+                while (playerCount > 1)
+                {
+                    playerCount--;
+
+                    int randomIndex = random.Next(playerCount + 1);
+
+                    Player player = players[randomIndex];
+                    players[randomIndex] = players[playerCount];
+                    players[playerCount] = player;
+                }
+            }
+        }
+
         public string GetUUIDFromUsername(string username)
         {
-            // Namespace for UUID generation
             string namespaceUUID = "38400000-8cf0-11bd-b23e-10b96e4ef00d";
 
-            // Concatenate namespace and username
             string combined = namespaceUUID + username.ToLower();
 
             // Calculate MD5 hash
@@ -80,7 +102,6 @@ namespace Uno.Classes
                 byte[] inputBytes = Encoding.UTF8.GetBytes(combined);
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
-                // Set version (bits 4-7 of byte 7) and variant (bits 6-7 of byte 9) to appropriate values
                 hashBytes[6] = (byte)((hashBytes[6] & 0x0F) | 0x30); // Set version to 0011 (version 3)
                 hashBytes[8] = (byte)((hashBytes[8] & 0x3F) | 0x80); // Set variant to 10xx (variant 2)
 

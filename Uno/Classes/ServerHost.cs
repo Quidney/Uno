@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Uno.Class;
 
 namespace Uno.Classes
 {
@@ -19,7 +20,9 @@ namespace Uno.Classes
         List<TcpClient> clients;
         Dictionary<TcpClient, Player> playerClientPair;
 
+        CardFunctionality cardFunctionality;
         PlayerDatabase playerDatabase;
+        Deck deck;
 
         Form1 form1;
         ChatBox chatBox;
@@ -35,9 +38,11 @@ namespace Uno.Classes
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;
             this.chatBox = form1.chatBox;
+            this.deck = form1.deck;
+            this.cardFunctionality = form1.cardFunctionality;
         }
 
-        public (Player,bool) HostServer(int port, string username)
+        public (Player, bool) HostServer(int port, string username)
         {
             try
             {
@@ -48,12 +53,12 @@ namespace Uno.Classes
 
                 AcceptClients();
 
-                return (hostPlayer,true);
+                return (hostPlayer, true);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
-                return (null,false);
+                return (null, false);
             }
         }
 
@@ -78,10 +83,10 @@ namespace Uno.Classes
 
         }
 
-        
+
         private async void ClientConnection(object clientInit)
         {
-            
+
             TcpClient client = null;
             NetworkStream stream = null;
             bool sameNameDisconnection = false;
@@ -97,7 +102,7 @@ namespace Uno.Classes
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    (bool,bool) operationSuccess = ProcessMessage(message, client);
+                    (bool, bool) operationSuccess = ProcessMessage(message, client);
                     sameNameDisconnection = operationSuccess.Item2;
                     if (!operationSuccess.Item1)
                     {
@@ -113,7 +118,7 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
-                
+
             }
             catch (Exception ex)
             {
@@ -122,21 +127,30 @@ namespace Uno.Classes
             }
             finally
             {
-                if (!sameNameDisconnection)
+                try
                 {
-                    Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
-                    playerDatabase.RemovePlayer(disconnectedPlayer);
+                    if (!sameNameDisconnection)
+                    {
+                        Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
+                        form1.RemovePlayerFromGUI(playerDatabase.players.IndexOf(disconnectedPlayer));
+                        playerDatabase.RemovePlayer(disconnectedPlayer);
+                    }
+
+                    stream?.Close();
+                    stream?.Dispose();
+                    clients.Remove(client);
+                    client?.Close();
+                    client?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ClientConnection - Finally");
                 }
 
-                stream?.Close();
-                stream?.Dispose();
-                clients.Remove(client);
-                client?.Close();
-                client?.Dispose();
             }
         }
 
-        private (bool,bool) ProcessMessage(string message, TcpClient client)
+        private (bool, bool) ProcessMessage(string message, TcpClient client)
         {
             try
             {
@@ -164,27 +178,64 @@ namespace Uno.Classes
                             if ((playerDatabase.players.Count <= 3))
                             {
                                 Player newPlayer = playerDatabase.AddClientPlayer(senderString);
+                                playerDatabase.PlayerClientDictionary.Add(newPlayer, client);
                                 playerClientPair.Add(client, newPlayer);
                                 form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
-                                BroadcastData($"JOIN {newPlayer.Name}");
+                                SendDataToSpecificClient("WELCOME", client);
+                                SendDataToAllExcept($"JOIN {newPlayer.Name}", client);
 
                                 form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
 
-                                return (true,false);
+                                return (true, false);
                             }
                             else
                             {
                                 SendDataToSpecificClient("ERR Server is full. Disconnecting...", client);
-                                return (false, false);
+                                return (false, true);
                             }
                         }
                         else
                         {
                             SendDataToSpecificClient("ERR Failed to join the server. Reason: A user with the same name already exists.", client);
-                            return (false,true);
+                            return (false, true);
                         }
+
+                    case "PLAY":
+                        int playedCardID = Convert.ToInt32(message.Split(' ')[3].Trim());
+                        if (deck.idToCard.TryGetValue(playedCardID, out Card playedCard))
+                        {
+                            if (playerDatabase.NamePlayerDictionary.TryGetValue(senderString, out Player playingPlayer))
+                            {
+                                if (playingPlayer.playerInventory.Contains(playedCard))
+                                {
+                                    if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
+                                    {
+                                        MessageBox.Show("Card Thrown: " + playedCard.ID);
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("Error while playing card.", "ProcessMessage - Case PLAY");
+                                    }
+                                }
+                                else
+                                {
+                                    SendDataToSpecificClient("ERR You don't have that card in your inventory!!?", client);
+                                    MessageBox.Show("Player played a card that's not in it's inventory.", "ProcessMessage - Case PLAY");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Cannot parse player", "ProcessMessage - Case PLAY");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Wrong CARD ID", "ProcessMessage - Case PLAY");
+                        }
+
+                        return (true, false);
                     default:
-                        MessageBox.Show("UNKNOWN MESSAGE");
+                        MessageBox.Show(message + "Unknown Message");
                         return (true, false);
                 }
             }
@@ -219,6 +270,20 @@ namespace Uno.Classes
 
             byte[] buffer = Encoding.ASCII.GetBytes(message);
             clientStream?.Write(buffer, 0, buffer.Length);
+        }
+
+        public void SendDataToAllExcept(string message, TcpClient clientInit)
+        {
+            foreach (TcpClient client in clients)
+            {
+                if (client != clientInit)
+                {
+                    NetworkStream stream = client.GetStream();
+
+                    byte[] buffer = Encoding.ASCII.GetBytes(message);
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+            }
         }
 
     }
