@@ -331,6 +331,13 @@ namespace Uno
             btnJoinServer.Enabled = true;
             txtIPAddressJoin.Enabled = true;
             txtPortJoin.Enabled = true;
+
+            pctrChatBox.Parent = pnlMultiplayer;
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            Application.DoEvents();
+            pnlMain.Hide();
         }
 
         public void AppendLogBox(string message)

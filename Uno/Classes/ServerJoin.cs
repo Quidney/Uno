@@ -51,9 +51,23 @@ namespace Uno.Classes
 
                 return (player, true);
             }
+            catch (SocketException sEx)
+            {
+                switch (sEx.SocketErrorCode)
+                {
+                    case SocketError.ConnectionRefused:
+                        form1.AppendLogBox("No connection could be made because the target machine actively refused it.");
+                        form1.AppendLogBox("Host is up but is refusing connections. Try double-checking the port.");
+                        break;
+                    case SocketError.TimedOut:
+                        form1.AppendLogBox("Connection Timed Out");
+                        break;
+                }
+                return (null, false);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "JoinGame ex");
                 return (null, false);
             }
         }

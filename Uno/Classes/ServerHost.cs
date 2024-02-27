@@ -119,6 +119,7 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
+                
 
             }
             catch (Exception ex)
