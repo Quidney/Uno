@@ -105,7 +105,7 @@ namespace Uno.Classes
                 client?.Close();
                 client?.Dispose();
                 form1.AppendLogBox("Disconnected from the server.");
-                form1.DisconnectedFromServer();
+                form1.DisconnectedFromServerClient();
             }
         }
 
@@ -168,6 +168,14 @@ namespace Uno.Classes
                         break;
                     case "START":
                         form1.StartGameClient();
+                        break;
+                    case "KICK":
+                        form1.AppendLogBox("Kicked from the server.");
+                        stream?.Close();
+                        stream?.Dispose();
+                        client?.Close();
+                        client?.Dispose();
+                        form1.DisconnectedFromServerClient();
                         break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");

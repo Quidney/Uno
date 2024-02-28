@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
@@ -15,6 +16,7 @@ namespace Uno
         public Player currentPlayer;
         public bool joinedOrHosted = false;
         public bool isHost = false;
+        public bool isStarted = false;
 
         public Deck deck;
         public CardFunctionality cardFunctionality;
@@ -41,7 +43,7 @@ namespace Uno
             this.Text = "Uno!";
 
             deck = new Deck();
-            deck.Shuffle();
+            deck.InitDeck();
 
             cardFunctionality = new CardFunctionality();
 
@@ -65,11 +67,11 @@ namespace Uno
         {
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
-                if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
+                if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
                 {
-                    string username = txtUsername.Text;
+                    string username = txtUsername.Text.Trim();
 
-                    if (int.TryParse(txtPortHost.Text, out int port))
+                    if (int.TryParse(txtPortHost.Text.Trim(), out int port))
                     {
                         HostGame(port, username);
                     }
@@ -90,11 +92,11 @@ namespace Uno
         {
             if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
-                string username = txtUsername.Text;
+                string username = txtUsername.Text.Trim();
 
-                if (IPAddress.TryParse(txtIPAddressJoin.Text, out IPAddress ip))
+                if (IPAddress.TryParse(txtIPAddressJoin.Text.Trim(), out IPAddress ip))
                 {
-                    if (int.TryParse(txtPortJoin.Text, out int port) && port > 0 && port <= 65535)
+                    if (int.TryParse(txtPortJoin.Text.Trim(), out int port) && port > 0 && port <= 65535)
                     {
                         JoinGame(ip, port, username);
                     }
@@ -172,7 +174,8 @@ namespace Uno
 
             }
         }
-
+        CustomLabel[] playerLabels = new CustomLabel[4];
+        CustomPictureBox[] playerPictures = new CustomPictureBox[4];
         private void InitGUIForPlayers()
         {
             Image userIcon = Properties.Resources.User_Icon;
@@ -262,9 +265,14 @@ namespace Uno
             playerLabels[1] = player2Label;
             playerLabels[2] = player3Label;
             playerLabels[3] = player4Label;
+
+            playerPictures[0] = player1PictureBox;
+            playerPictures[1] = player2PictureBox;
+            playerPictures[2] = player3PictureBox;
+            playerPictures[3] = player4PictureBox;
         }
 
-        Label[] playerLabels = new Label[4];
+        
         public void AddPlayerToGUI(int playerIndex, Player player)
         {
             playerLabels[playerIndex].Text = player.Name;
@@ -317,11 +325,12 @@ namespace Uno
             }
         }
 
-        public void DisconnectedFromServer()
+        public void DisconnectedFromServerClient()
         {
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
+            playerDatabase.RemovePlayer(currentPlayer);
             playerDatabase.players.Clear();
 
             btnHostServer.Enabled = true;
@@ -338,6 +347,58 @@ namespace Uno
             pnlMultiplayer.BringToFront();
             Application.DoEvents();
             pnlMain.Hide();
+        }
+
+        public async void DisconnectedFromServerHost()
+        {
+            joinedOrHosted = false;
+            isHost = false;
+            chatBox.lblTitleExtern.Text = string.Empty;
+            chatBox.Hide();
+
+            await serverHost.BroadcastData("KICK");
+
+            Player[] players = new Player[playerDatabase.players.Count];
+            for (int i = 0; i < players.Length; i++)
+            {
+                players[i] = playerDatabase.players[i];
+            }
+            foreach (Player player in players)
+            {
+                playerDatabase.RemovePlayer(player);
+            }
+            foreach (CustomLabel label in playerLabels)
+            {
+                label.Dispose();
+            }
+            foreach (CustomPictureBox picBox in playerPictures)
+            {
+                picBox.Dispose();
+            }
+
+            serverHost.clients.Clear();
+
+            btnHostServer.Enabled = true;
+            txtPortHost.Enabled = true;
+            txtUsername.Enabled = true;
+
+            btnJoinServer.Enabled = true;
+            txtIPAddressJoin.Enabled = true;
+            txtPortJoin.Enabled = true;
+
+            pctrChatBox.Parent = pnlMultiplayer;
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            Application.DoEvents();
+            pnlMain.Hide();
+
+            pctrAdminConsole.Dispose();
+            btnStartGame.Dispose();
+
+            isStarted = false;
+
+            AppendLogBox("Server has been closed because a player has disconnected");
         }
 
         public void AppendLogBox(string message)
@@ -366,6 +427,7 @@ namespace Uno
         }
         private async void StartGame()
         {
+            await deck.Shuffle();
             for (int i = 0; i < 8; i++)
             {
                 foreach (Player player in playerDatabase.players)
@@ -384,6 +446,8 @@ namespace Uno
             pnlMain.BringToFront();
             Application.DoEvents();
             pnlMultiplayer.Hide();
+
+            isStarted = true;
         }
 
         public void StartGameClient()

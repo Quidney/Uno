@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Configuration;
 using System.Drawing;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -29,6 +29,8 @@ namespace Uno
 
         ServerHost serverHost;
 
+        bool shutdown = false;
+
         public AdminConsole()
         {
             InitializeComponent();
@@ -44,58 +46,154 @@ namespace Uno
             this.deck = form1.deck;
         }
 
-        private void btnSendDataToServer_Click(object sender, EventArgs e)
+        private void btnExecuteCommand_Click(object sender, EventArgs e)
         {
             string command = txtCommandInput.Text;
+            AppendCommandBox(command, true);
             txtCommandInput.Text = string.Empty;
 
-            if (command.ToLower().StartsWith("help") || command.ToLower().StartsWith("commands"))
+            if (command.ToLower().Trim() == ("help") || command.ToLower().Trim() == ("commands"))
             {
-                AppendCommandBox("Commands: DRAW, LIST, CLEAR");
-                AppendCommandBox("Do NOT use MSG command from the console.");
+                AppendCommandBox("Commands: data, list, clear/cls, players, exit, shutdown");
             }
-            else if (command.ToLower().StartsWith("list"))
+            else if (command.ToLower().Trim().StartsWith("help") && command.Split(' ').Length > 1)
+            {
+                string[] commands = command.Split(' ');
+                if (commands[1] == "data")
+                {
+                    AppendCommandBox("Usage: data PLAYER COMMAND");
+                    AppendCommandBox("Sends data to a player/client");
+                    AppendCommandBox("Example: data player234 MSG hello friend");
+                    AppendCommandBox("See ServerJoin class for all commands.");
+                }
+                else if (commands[1] == "list")
+                {
+                    AppendCommandBox("Usage: list (player[optional])");
+                    AppendCommandBox("Lists all the cards with their IDs, Or lists the inventory of a player");
+                }
+                else if (commands[1] == "clear" || commands[1] == "cls")
+                {
+                    AppendCommandBox("Usage: clear");
+                    AppendCommandBox("Usage: cls");
+                    AppendCommandBox("Clears the console");
+                }
+                else if (commands[1] == "players")
+                {
+                    AppendCommandBox("Usage: players");
+                    AppendCommandBox("Lists all the players");
+                }
+                else if (commands[1] == "exit")
+                {
+                    AppendCommandBox("Usage: exit");
+                    AppendCommandBox("Closes the console");
+                }
+                else if (commands[1] == "shutdown")
+                {
+                    AppendCommandBox("Usage: shutdown");
+                    AppendCommandBox("Closes the whole application.");
+                }
+            }
+            else if (command.ToLower().Trim() == ("list"))
             {
                 AppendCommandBox("All Cards:");
                 string allCards = string.Empty;
-                foreach (Card card in deck.cardsDeckList)
+                foreach (Card card in deck.playingDeck)
                 {
-                    allCards += $"ID: {card.ID}, Card: {card.Color} {card.ToString()} || ";
+                    allCards += $"ID: {card.ID}, Card: {card.Color} {card} || ";
                 }
                 AppendCommandBox(allCards);
-                AppendCommandBox("Players Cards:");
-                foreach (Player player in playerDatabase.players)
+            }
+            else if (command.ToLower().Trim().StartsWith("list") && command.Split(' ').Length > 1)
+            {
+                string[] commands = command.Split(' ');
+                if (playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player))
                 {
-                    AppendCommandBox("Player: " + player.Name);
+                    AppendCommandBox($"{commands[1]}'s Cards:");
                     string playerCards = string.Empty;
                     foreach (Card card in player.playerInventory)
                     {
-                        playerCards += $"ID: {card.ID}, Card: {card.Color} {card.ToString()} || ";
+                        playerCards += $"ID: {card.ID}, Card: {card.Color} {card} || ";
                     }
                     AppendCommandBox(playerCards);
                 }
-            }
-            else if (command.ToLower().StartsWith("clear"))
-            {
-                txtCommandLog.Clear();
-            }
-            else
-            {
-
-                if (cmbPlayerSelection.SelectedIndex != -1)
+                else
                 {
-                    playerDatabase.NamePlayerDictionary.TryGetValue(cmbPlayerSelection.SelectedItem.ToString().Trim(), out Player player);
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                    serverHost.SendDataToSpecificClient(txtCommandInput.Text, client);
+                    AppendCommandBox($"Specified player \"{commands[1]}\" not found");
+                }
+            }
+            else if (command.ToLower().Trim() == ("players"))
+            {
+                string players = string.Empty;
+                foreach (Player player in playerDatabase.players)
+                {
+                    players += "\"" + player.Name + "\"" + " ";
+                }
+                AppendCommandBox(players.Trim());
+            }
+            else if (command.ToLower().Trim().StartsWith("data"))
+            {
+                if (command.Split(' ').Length > 2)
+                {
+                    string[] commands = command.Split(' ');
+                    if (playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player))
+                    {
+                        playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                        serverHost.SendDataToSpecificClient(command.Substring(commands[0].Length + 1 + commands[1].Length + 1), client);
+                    }
+                    else
+                    {
+                        AppendCommandBox($"Specified player \"{commands[1]}\" not found");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Select a player");
+                    AppendCommandBox("Incorrect Usage: [data PLAYER DATA]");
                 }
             }
+            else if (command.ToLower().Trim() == ("clear") || command.ToLower().Trim() == ("cls"))
+            {
+                txtCommandLog.Clear();
+            }
+            else if (command.ToLower().Trim() == "exit")
+            {
+                this.Hide();
+            }
+            else if (command.ToLower().Trim() == ("shutdown"))
+            {
+                if (shutdown)
+                Application.Exit();
+                else
+                {
+                    AppendCommandBox("Type shutdown again to close the application");
+                    AppendCommandBox("Warning, this will shutdown the server and kick everyone playing.");
+                    shutdown = true;
+                }
+            }
+            else if (command.ToLower().Trim().StartsWith("kick"))
+            {
+                if (command.Split(' ').Length > 1)
+                {
+                    string[] commands = command.Split(' ');
+                    playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player);
+                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+
+                    serverHost.SendDataToSpecificClient("KICK", client);
+                }    
+                else
+                {
+                    AppendCommandBox("Incorrect usage: [kick PLAYER]");
+                }
+                
+            }
+            else
+            {
+                AppendCommandBox($"Command {command} not found. Use \"help\" to list all commands");
+            }
+
+            shutdown = (command.ToLower().Trim() != "shutdown") ? false : shutdown;
         }
 
-        public void AppendCommandBox(string message, Color? color = null, string sender = "Server")
+        public void AppendCommandBox(string message, bool commandInput = false)
         {
 
             CustomRichTextBox txtBox = txtCommandLog;
@@ -103,8 +201,13 @@ namespace Uno
             txtBox.SelectionStart = txtBox.Text.Length;
             txtBox.SelectionLength = 0;
 
-            txtBox.SelectionColor = color ?? Color.Red;
-            txtBox.AppendText($"{sender}: ");
+            if (commandInput)
+            {
+                txtBox.AppendText(Environment.NewLine);
+                txtBox.SelectionColor = Color.Red;
+                txtBox.AppendText(form1.currentPlayer.Name + ": ");
+            }
+
             txtBox.SelectionColor = txtBox.ForeColor;
             txtBox.AppendText(message + Environment.NewLine);
         }
@@ -123,13 +226,13 @@ namespace Uno
             this.Hide();
         }
 
-        private void cmbPlayerSelection_DropDown(object sender, EventArgs e)
+        private void txtCommandInput_KeyPress(object sender, KeyPressEventArgs e)
         {
-            cmbPlayerSelection.Items.Clear();
-
-            foreach (Player player in playerDatabase.players)
+            if (e.KeyChar == (char)Keys.Enter)
             {
-                cmbPlayerSelection.Items.Add(player.Name);
+                e.Handled = true;
+
+                btnExecuteCommand_Click(sender, e);
             }
         }
     }

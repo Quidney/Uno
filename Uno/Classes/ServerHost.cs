@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -18,7 +17,7 @@ namespace Uno.Classes
         Player hostPlayer;
         TcpListener listener;
 
-        List<TcpClient> clients;
+        public List<TcpClient> clients;
         Dictionary<TcpClient, Player> playerClientPair;
 
         CardFunctionality cardFunctionality;
@@ -77,11 +76,15 @@ namespace Uno.Classes
                     newClientThread.Start(client);
                 }
             }
+            catch (ObjectDisposedException)
+            {
+
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "AcceptClients");
+                throw;
             }
-
         }
 
 
@@ -119,7 +122,7 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
-                
+
 
             }
             catch (Exception ex)
@@ -148,6 +151,13 @@ namespace Uno.Classes
                     clients.Remove(client);
                     client?.Close();
                     client?.Dispose();
+
+                    if (form1.isStarted)
+                    {
+                        form1.DisconnectedFromServerHost();
+
+                        listener.Stop();
+                    }
                 }
                 catch (Exception ex)
                 {

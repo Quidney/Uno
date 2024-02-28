@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Uno.Classes;
 
 namespace Uno.Class
@@ -8,9 +9,15 @@ namespace Uno.Class
     public class Deck
     {
         public List<Card> cardsDeckList;
+        public List<Card> playingDeck;
         public Dictionary<int, Card> idToCard;
 
         public Deck()
+        {
+
+        }
+
+        public void InitDeck()
         {
             cardsDeckList = new List<Card>();
             idToCard = new Dictionary<int, Card>();
@@ -96,16 +103,17 @@ namespace Uno.Class
             MessageBox.Show(allCards);
 
             */
+
+            playingDeck = new List<Card>(cardsDeckList);
         }
 
         Random random = new Random();
-        public void Shuffle()
+        public async Task Shuffle()
         {
             //Fisher-Yates shuffle algorithm
-
             for (int i = 0; i < 4; i++)
             {
-                int deckCount = cardsDeckList.Count;
+                int deckCount = playingDeck.Count;
 
                 while (deckCount > 1)
                 {
@@ -113,17 +121,18 @@ namespace Uno.Class
 
                     int randomIndex = random.Next(deckCount + 1);
 
-                    Card card = cardsDeckList[randomIndex];
-                    cardsDeckList[randomIndex] = cardsDeckList[deckCount];
-                    cardsDeckList[deckCount] = card;
+                    Card card = playingDeck[randomIndex];
+                    playingDeck[randomIndex] = playingDeck[deckCount];
+                    playingDeck[deckCount] = card;
+                    await Task.Delay(0);
                 }
             }
         }
 
         public Card DrawCard()
         {
-            Card drawnCard = cardsDeckList.LastOrDefault();
-            cardsDeckList.Remove(drawnCard);
+            Card drawnCard = playingDeck.LastOrDefault();
+            playingDeck.Remove(drawnCard);
             return drawnCard;
         }
     }
