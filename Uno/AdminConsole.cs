@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -110,7 +109,7 @@ namespace Uno
                 {
                     AppendCommandBox($"{commands[1]}'s Cards:");
                     string playerCards = string.Empty;
-                    foreach (Card card in player.playerInventory)
+                    foreach (Card card in player.Inventory)
                     {
                         playerCards += $"ID: {card.ID}, Card: {card.Color} {card} || ";
                     }
@@ -161,7 +160,7 @@ namespace Uno
             else if (command.ToLower().Trim() == ("shutdown"))
             {
                 if (shutdown)
-                Application.Exit();
+                    Application.Exit();
                 else
                 {
                     AppendCommandBox("Type shutdown again to close the application");
@@ -178,12 +177,12 @@ namespace Uno
                     playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
 
                     serverHost.SendDataToSpecificClient("KICK", client);
-                }    
+                }
                 else
                 {
                     AppendCommandBox("Incorrect usage: [kick PLAYER]");
                 }
-                
+
             }
             else
             {

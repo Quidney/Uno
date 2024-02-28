@@ -100,7 +100,7 @@ namespace Uno.Class
                 allCards += card.ToColor().ToString() + " " + card.ToString() + " " + card.ID + "\n";
             }
 
-            MessageBox.Show(allCards);
+            MessageBox.Show(allCards, "Card List");
 
             */
 

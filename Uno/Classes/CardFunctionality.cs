@@ -56,14 +56,14 @@ namespace Uno.Classes
 
            
 
-            player.playerInventory.Remove(card);
+            player.Inventory.Remove(card);
             cardsInPile.Add(card);
             return true;
         }
         private bool ThrownActionCard(Card card, Player player)
         {
 
-            player.playerInventory.Remove(card);
+            player.Inventory.Remove(card);
             cardsInPile.Add(card);
             return true;
         }
@@ -87,7 +87,7 @@ namespace Uno.Classes
 
             if (success)
             {
-                player.playerInventory.Remove(card);
+                player.Inventory.Remove(card);
                 cardsInPile.Add(card);
             }
 

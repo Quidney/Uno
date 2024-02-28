@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
@@ -17,6 +17,7 @@ namespace Uno
         public bool joinedOrHosted = false;
         public bool isHost = false;
         public bool isStarted = false;
+        public bool shuttingDown = false;
 
         public Deck deck;
         public CardFunctionality cardFunctionality;
@@ -61,6 +62,10 @@ namespace Uno
             adminConsole.SetReferences(this);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            pnlMain.Hide();
         }
 
         private void HostGame_Click(object sender, EventArgs e)
@@ -79,12 +84,12 @@ namespace Uno
                 }
                 else
                 {
-                    MessageBox.Show("Username must be between 4 and 24 characters long");
+                    MessageBox.Show("Username must be between 4 and 24 characters long", "Error while hosting");
                 }
             }
             else
             {
-                MessageBox.Show("Please fill both Host Port and Username");
+                MessageBox.Show("Please fill both Host Port and Username", "Error while hosting.");
             }
 
         }
@@ -108,7 +113,7 @@ namespace Uno
             }
             else
             {
-                MessageBox.Show("Username must be between 3 and 24 characters long, and cannot contain whitespaces");
+                MessageBox.Show("Username must be between 3 and 24 characters long, and cannot contain whitespaces", "Error While joining");
             }
         }
         CustomButton btnStartGame;
@@ -155,12 +160,15 @@ namespace Uno
                 {
                     Dock = DockStyle.Fill,
                     Parent = pnlMultiplayer,
-                    SizeMode = PictureBoxSizeMode.Zoom,
-                    Image = Properties.Resources.User_Icon,
+                    SizeMode = PictureBoxSizeMode.CenterImage,
+                    Image = Properties.Resources.Terminal,
+                    BorderStyle = BorderStyle.FixedSingle
                 };
                 pctrAdminConsole.Click += (sender, e) => { adminConsole.Show(); };
 
-                pnlMultiplayer.SetCellPosition(pctrAdminConsole, new TableLayoutPanelCellPosition(1,0));
+                pnlMultiplayer.SetCellPosition(pctrAdminConsole, new TableLayoutPanelCellPosition(2, 0));
+                pnlMultiplayer.SetColumnSpan(pctrAdminConsole, 2);
+                pnlMultiplayer.SetRowSpan(pctrAdminConsole, 2);
 
                 InitGUIForPlayers();
 
@@ -172,20 +180,21 @@ namespace Uno
                 txtIPAddressJoin.Enabled = false;
                 txtPortJoin.Enabled = false;
 
+                shuttingDown = false;
             }
         }
         CustomLabel[] playerLabels = new CustomLabel[4];
         CustomPictureBox[] playerPictures = new CustomPictureBox[4];
         private void InitGUIForPlayers()
         {
-            Image userIcon = Properties.Resources.User_Icon;
+            Image userIcon = Properties.Resources.UserIcon64px;
 
             CustomPictureBox player1PictureBox = new CustomPictureBox()
             {
                 Parent = pnlMultiplayer,
                 Dock = DockStyle.Fill,
                 Image = userIcon,
-                SizeMode = PictureBoxSizeMode.Zoom
+                SizeMode = PictureBoxSizeMode.CenterImage
             };
             pnlMultiplayer.SetCellPosition(player1PictureBox, new TableLayoutPanelCellPosition(1, 18));
             pnlMultiplayer.SetColumnSpan(player1PictureBox, 2);
@@ -205,7 +214,7 @@ namespace Uno
                 Parent = pnlMultiplayer,
                 Dock = DockStyle.Fill,
                 Image = userIcon,
-                SizeMode = PictureBoxSizeMode.Zoom
+                SizeMode = PictureBoxSizeMode.CenterImage
             };
             pnlMultiplayer.SetCellPosition(player2PictureBox, new TableLayoutPanelCellPosition(4, 18));
             pnlMultiplayer.SetColumnSpan(player2PictureBox, 2);
@@ -225,7 +234,7 @@ namespace Uno
                 Parent = pnlMultiplayer,
                 Dock = DockStyle.Fill,
                 Image = userIcon,
-                SizeMode = PictureBoxSizeMode.Zoom
+                SizeMode = PictureBoxSizeMode.CenterImage
 
             };
             pnlMultiplayer.SetCellPosition(player3PictureBox, new TableLayoutPanelCellPosition(7, 18));
@@ -246,7 +255,7 @@ namespace Uno
                 Parent = pnlMultiplayer,
                 Dock = DockStyle.Fill,
                 Image = userIcon,
-                SizeMode = PictureBoxSizeMode.Zoom
+                SizeMode = PictureBoxSizeMode.CenterImage
             };
             pnlMultiplayer.SetCellPosition(player4PictureBox, new TableLayoutPanelCellPosition(10, 18));
             pnlMultiplayer.SetColumnSpan(player4PictureBox, 2);
@@ -272,7 +281,7 @@ namespace Uno
             playerPictures[3] = player4PictureBox;
         }
 
-        
+
         public void AddPlayerToGUI(int playerIndex, Player player)
         {
             playerLabels[playerIndex].Text = player.Name;
@@ -286,12 +295,12 @@ namespace Uno
             foreach (CustomLabel label in playerLabels)
             {
                 if (label.Text != "Waiting...")
-                   if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
-                   {
+                    if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                    {
                         playerLabels[lastEmptyIndex].Text = label.Text;
                         label.Text = "Waiting...";
                         lastEmptyIndex++;
-                   }
+                    }
             }
         }
 
@@ -342,6 +351,7 @@ namespace Uno
             txtPortJoin.Enabled = true;
 
             pctrChatBox.Parent = pnlMultiplayer;
+            pnlMultiplayer.SetCellPosition(pctrChatBox, new TableLayoutPanelCellPosition(0, 0));
 
             pnlMultiplayer.Show();
             pnlMultiplayer.BringToFront();
@@ -351,11 +361,13 @@ namespace Uno
 
         public async void DisconnectedFromServerHost()
         {
+
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
             chatBox.Hide();
 
+            shuttingDown = true;
             await serverHost.BroadcastData("KICK");
 
             Player[] players = new Player[playerDatabase.players.Count];
@@ -387,6 +399,7 @@ namespace Uno
             txtPortJoin.Enabled = true;
 
             pctrChatBox.Parent = pnlMultiplayer;
+            pnlMultiplayer.SetCellPosition(pctrChatBox, new TableLayoutPanelCellPosition(0, 0));
 
             pnlMultiplayer.Show();
             pnlMultiplayer.BringToFront();
@@ -415,9 +428,9 @@ namespace Uno
                 chatBox.Show();
                 chatBox.OpenChatBox();
             }
-                
+
             else
-                MessageBox.Show("You must Host or Join a server first.");
+                MessageBox.Show("You must Host or Join a server first.", "ChatBox");
         }
 
 
@@ -428,7 +441,7 @@ namespace Uno
         private async void StartGame()
         {
             await deck.Shuffle();
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 7; i++)
             {
                 foreach (Player player in playerDatabase.players)
                 {
@@ -448,6 +461,8 @@ namespace Uno
             pnlMultiplayer.Hide();
 
             isStarted = true;
+
+            SetInventoryGUI();
         }
 
         public void StartGameClient()
@@ -458,6 +473,55 @@ namespace Uno
             pnlMain.BringToFront();
             Application.DoEvents();
             pnlMultiplayer.Hide();
+
+            SetInventoryGUI();
+        }
+
+        CustomTableLayoutPanel pnlInventory;
+        public void SetInventoryGUI()
+        {
+
+            MethodInvoker updateUI = delegate
+            {
+                pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
+                pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
+                pnlMain.SetRowSpan(pnlInventory, 2);
+                pnlMain.SetRow(pnlInventory, 16);
+                pnlMain.SetColumn(pnlInventory, 1);
+                pnlInventory.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+            };
+
+            pnlMain.Invoke(updateUI);
+
+            UpdateInventoryGUI();
+        }
+
+        public void UpdateInventoryGUI()
+        {
+            MethodInvoker updateUI = delegate
+            {
+                foreach (Control control in pnlInventory.Controls)
+                {
+                    control.Dispose();
+                }
+
+
+                List<Card> inventory = currentPlayer.Inventory;
+                for (int i = 0; i < inventory.Count; i++)
+                {
+                    pnlInventory.ColumnCount++;
+                    CustomLabel card = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $"{inventory[i]}", BackColor = inventory[i].ToColor() };
+                    pnlInventory.SetColumn(card, i);
+                }
+                pnlInventory.ColumnCount--;
+
+                for (int i = 0; i < pnlInventory.ColumnCount; i++)
+                {
+                    pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
+                }
+            };
+
+            pnlMain.Invoke(updateUI);
         }
     }
 }

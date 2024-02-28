@@ -38,7 +38,7 @@ namespace Uno
         {
             this.form1 = form1;
             this.openChatBox = openChatBox;
-            chatBoxStates = new Image[] {Properties.Resources.Chat_Icon, Properties.Resources.Chat_Icon_NewMessage };
+            chatBoxStates = new Image[] {Properties.Resources.Chat, Properties.Resources.ChatNewMessage };
         }
 
         private void btnSendDataToServer_Click(object sender, EventArgs e)

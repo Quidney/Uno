@@ -107,11 +107,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Chat_Icon-NewMessage.png" />
-    <Content Include="Resources\Chat_Icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\User_Icon.png" />
+    <None Include="Resources\UserIcon64px.png" />
+    <None Include="Resources\UserIcon.png" />
+    <None Include="Resources\Terminal.png" />
+    <None Include="Resources\UnoBack.png" />
+    <None Include="Resources\Chat.png" />
+    <None Include="Resources\ChatNewMessage.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

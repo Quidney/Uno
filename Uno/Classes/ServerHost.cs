@@ -57,7 +57,7 @@ namespace Uno.Classes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "Host Server");
                 return (null, false);
             }
         }
@@ -128,21 +128,24 @@ namespace Uno.Classes
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ClientConnection");
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString(), "ClientConnection - Exception");
             }
             finally
             {
                 try
                 {
-                    if (!sameNameDisconnection)
+                    if (!form1.shuttingDown)
                     {
-                        Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
-                        form1.RemovePlayerFromGUI(playerDatabase.players.IndexOf(disconnectedPlayer));
-                        playerDatabase.RemovePlayer(disconnectedPlayer);
-
-                        if (playerDatabase.players.Count < 2)
+                        if (!sameNameDisconnection)
                         {
-                            form1.StartGameButtonState(false);
+                            Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
+                            form1.RemovePlayerFromGUI(playerDatabase.players.IndexOf(disconnectedPlayer));
+                            playerDatabase.RemovePlayer(disconnectedPlayer);
+
+                            if (playerDatabase.players.Count < 2)
+                            {
+                                form1.StartGameButtonState(false);
+                            }
                         }
                     }
 
@@ -228,11 +231,11 @@ namespace Uno.Classes
                         {
                             if (playerDatabase.NamePlayerDictionary.TryGetValue(senderString, out Player playingPlayer))
                             {
-                                if (playingPlayer.playerInventory.Contains(playedCard))
+                                if (playingPlayer.Inventory.Contains(playedCard))
                                 {
                                     if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
                                     {
-                                        MessageBox.Show("Card Thrown: " + playedCard.ID);
+                                        MessageBox.Show("Card Thrown: " + playedCard.ID, "ServerHost - Case PLAY");
                                     }
                                     else
                                     {
@@ -257,7 +260,7 @@ namespace Uno.Classes
 
                         return (true, false);
                     default:
-                        MessageBox.Show(message + "Unknown Message");
+                        form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);
                         return (true, false);
                 }
             }

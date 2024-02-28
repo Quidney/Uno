@@ -11,18 +11,18 @@ namespace Uno.Classes
         public string Name { get; set; }
         public string Id { get; set; }
         public bool IsHost { get; set; }
-        public List<Card> playerInventory;
+        public List<Card> Inventory;
 
         public Player(string id, string name)
         {
             this.Id = id;
             this.Name = name;
-            playerInventory = new List<Card>();
+            Inventory = new List<Card>();
         }
 
         public void AddCardToInventory(Card card)
         {
-            playerInventory.Add(card);
+            Inventory.Add(card);
         }
 
         public override string ToString()

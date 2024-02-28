@@ -86,6 +86,7 @@ namespace Uno.Classes
                     ProcessReceivedData(receivedData);
                 }
             }
+            catch (ObjectDisposedException) { }
             catch (ArgumentException argEx)
             {
                 form1.AppendLogBox($"You have disconnected. (Reason: {argEx.Message})");
@@ -96,7 +97,7 @@ namespace Uno.Classes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ServerConnection - ServerJoin - Exception");
             }
             finally
             {
@@ -134,7 +135,7 @@ namespace Uno.Classes
             try
             {
                 string command = message.Split(' ')[0].Trim();
-                //MessageBox.Show($"\"{message}\"");
+                //MessageBox.Show($"\"{message}\"", "ProcessMessage - ServerJoin");
                 switch (command)
                 {
                     case "MSG":
@@ -161,7 +162,7 @@ namespace Uno.Classes
                         break;
 
                     case "DRAW":
-                        string cardIdStr = message.Split(' ')[1]; 
+                        string cardIdStr = message.Split(' ')[1];
                         int cardID = Convert.ToInt32(cardIdStr);
                         deck.idToCard.TryGetValue(cardID, out Card cardToDraw);
                         player.AddCardToInventory(cardToDraw);
@@ -202,7 +203,7 @@ namespace Uno.Classes
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "SendDataToServer - ServerJoin");
             }
         }
     }
