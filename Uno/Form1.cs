@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
+using Uno.Properties;
 
 namespace Uno
 {
@@ -28,17 +30,27 @@ namespace Uno
         public ChatBox chatBox;
         public AdminConsole adminConsole;
 
+        public Card lastCardPlayed;
+
+        public bool myTurn = false;
+
         public Form1()
         {
             InitializeComponent();
-
             InitMethod();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            Application.Exit();
         }
 
         void InitMethod()
         {
-            chatBox = new ChatBox();
             adminConsole = new AdminConsole();
+            chatBox = new ChatBox();
+
 
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Uno!";
@@ -138,7 +150,9 @@ namespace Uno
                 AppendLogBox("Server is running.");
                 joinedOrHosted = true;
 
-                chatBox.lblTitleExtern.Text = $"Chatbox - {response}:{port}";
+                chatBox.lblTitleExtern.Text = $"       Chatbox - {currentPlayer.Name} - {response}:{port}";
+                chatBox.lblTitleExtern.Image = Resources.Chat;
+                chatBox.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
                 chatBox.Show();
                 chatBox.Hide();
 
@@ -164,6 +178,9 @@ namespace Uno
                     Image = Properties.Resources.Terminal,
                     BorderStyle = BorderStyle.FixedSingle
                 };
+                adminConsole.lblTitleExtern.Text = $"       Admin Console - {currentPlayer.Name}";
+                adminConsole.lblTitleExtern.Image = Properties.Resources.Terminal;
+                adminConsole.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
                 pctrAdminConsole.Click += (sender, e) => { adminConsole.Show(); };
 
                 pnlMultiplayer.SetCellPosition(pctrAdminConsole, new TableLayoutPanelCellPosition(2, 0));
@@ -187,7 +204,7 @@ namespace Uno
         CustomPictureBox[] playerPictures = new CustomPictureBox[4];
         private void InitGUIForPlayers()
         {
-            Image userIcon = Properties.Resources.UserIcon64px;
+            Image userIcon = Resources.UserIcon64px;
 
             CustomPictureBox player1PictureBox = new CustomPictureBox()
             {
@@ -316,7 +333,9 @@ namespace Uno
 
                 joinedOrHosted = true;
 
-                chatBox.lblTitleExtern.Text = $"Chatbox - {ip}:{port}";
+                chatBox.lblTitleExtern.Text = $"       Chatbox - {currentPlayer.Name} - {ip}:{port}";
+                chatBox.lblTitleExtern.Image = Resources.Chat;
+                chatBox.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
                 chatBox.Show();
                 chatBox.Hide();
 
@@ -416,9 +435,19 @@ namespace Uno
 
         public void AppendLogBox(string message)
         {
-            CustomRichTextBox txtBox = txtServerLog;
-
-            txtBox.AppendText(message + Environment.NewLine);
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    CustomRichTextBox txtBox = txtServerLog;
+                    txtBox.AppendText(message + Environment.NewLine);
+                }));
+            }
+            else
+            {
+                CustomRichTextBox txtBox = txtServerLog;
+                txtBox.AppendText(message + Environment.NewLine);
+            }
         }
 
         private void PctrChatBox_Click(object sender, EventArgs e)
@@ -428,7 +457,6 @@ namespace Uno
                 chatBox.Show();
                 chatBox.OpenChatBox();
             }
-
             else
                 MessageBox.Show("You must Host or Join a server first.", "ChatBox");
         }
@@ -441,6 +469,11 @@ namespace Uno
         private async void StartGame()
         {
             await deck.Shuffle();
+
+            lastCardPlayed = deck.playingDeck.LastOrDefault();
+            deck.playingDeck.Remove(lastCardPlayed);
+            await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
+
             for (int i = 0; i < 7; i++)
             {
                 foreach (Player player in playerDatabase.players)
@@ -478,50 +511,77 @@ namespace Uno
         }
 
         CustomTableLayoutPanel pnlInventory;
+        CustomLabel cardOnTopPile;
         public void SetInventoryGUI()
         {
+            if (pnlInventory != null)
+                pnlInventory.Dispose();
+            if (cardOnTopPile != null)
+                cardOnTopPile.Dispose();
 
-            MethodInvoker updateUI = delegate
-            {
-                pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
-                pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
-                pnlMain.SetRowSpan(pnlInventory, 2);
-                pnlMain.SetRow(pnlInventory, 16);
-                pnlMain.SetColumn(pnlInventory, 1);
-                pnlInventory.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            };
+            pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
+            pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
+            pnlMain.SetRowSpan(pnlInventory, 2);
+            pnlMain.SetRow(pnlInventory, 16);
+            pnlMain.SetColumn(pnlInventory, 1);
+            pnlInventory.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
 
-            pnlMain.Invoke(updateUI);
+            cardOnTopPile = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlMain };
+            pnlMain.SetColumnSpan(cardOnTopPile, 2);
+            pnlMain.SetRowSpan(cardOnTopPile, 2);
+            pnlMain.SetCellPosition(cardOnTopPile, new TableLayoutPanelCellPosition(11, 10));
 
             UpdateInventoryGUI();
         }
-
         public void UpdateInventoryGUI()
         {
-            MethodInvoker updateUI = delegate
+            foreach (Control control in pnlInventory.Controls)
             {
-                foreach (Control control in pnlInventory.Controls)
-                {
-                    control.Dispose();
-                }
+                control.Dispose();
+            }
 
+            cardOnTopPile.Text = lastCardPlayed.ToString();
+            cardOnTopPile.BackColor = lastCardPlayed.ToColor();
+            if (lastCardPlayed.ToColor() == Color.Black)
+                cardOnTopPile.ForeColor = Color.White;
 
                 List<Card> inventory = currentPlayer.Inventory;
-                for (int i = 0; i < inventory.Count; i++)
+            pnlInventory.ColumnCount = 1;
+            pnlInventory.RowCount = 1;
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                pnlInventory.ColumnCount++;
+                CustomLabel card = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $"{inventory[i]}", BackColor = inventory[i].ToColor(), Tag = inventory[i].ID };
+                if (card.BackColor == Color.Black)
+                    card.ForeColor = Color.White;
+                int cardID = (int)card.Tag;
+                card.Click += async (sender, e) =>
                 {
-                    pnlInventory.ColumnCount++;
-                    CustomLabel card = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $"{inventory[i]}", BackColor = inventory[i].ToColor() };
-                    pnlInventory.SetColumn(card, i);
-                }
-                pnlInventory.ColumnCount--;
+                    string message = $"PLAY {currentPlayer.Name} {cardID}";
+                    deck.idToCard.TryGetValue(cardID, out Card cardCard);
 
-                for (int i = 0; i < pnlInventory.ColumnCount; i++)
-                {
-                    pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
-                }
-            };
+                    if (await cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
+                    {
+                        if (currentPlayer.IsHost)
+                        {
+                            await serverHost.BroadcastData(message);
+                        }
+                        else
+                        {
+                            await serverJoin.SendDataToServer(message);
+                        }
+                    }
+                    SetInventoryGUI();
+                };
+                pnlInventory.SetColumn(card, i);
+            }
+            pnlInventory.ColumnCount--;
 
-            pnlMain.Invoke(updateUI);
+            pnlInventory.ColumnStyles.Clear();
+            for (int i = 0; i < pnlInventory.ColumnCount; i++)
+            {
+                pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
+            }
         }
     }
 }

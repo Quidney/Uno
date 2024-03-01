@@ -87,7 +87,6 @@ namespace Uno.Classes
             }
         }
 
-
         private async void ClientConnection(object clientInit)
         {
 
@@ -106,7 +105,7 @@ namespace Uno.Classes
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
                     string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                    (bool, bool) operationSuccess = ProcessMessage(message, client);
+                    (bool, bool) operationSuccess = await ProcessMessage(message, client);
                     sameNameDisconnection = operationSuccess.Item2;
                     if (!operationSuccess.Item1)
                     {
@@ -122,8 +121,6 @@ namespace Uno.Classes
             {
                 Player disconnectedPlayer = playerDatabase.players[clients.IndexOf(client) + 1];
                 form1.AppendLogBox($"{disconnectedPlayer.Name} has disconnected.");
-
-
             }
             catch (Exception ex)
             {
@@ -170,7 +167,7 @@ namespace Uno.Classes
             }
         }
 
-        private (bool, bool) ProcessMessage(string message, TcpClient client)
+        private async Task<(bool, bool)> ProcessMessage(string message, TcpClient client)
         {
             try
             {
@@ -202,7 +199,7 @@ namespace Uno.Classes
                                 playerClientPair.Add(client, newPlayer);
                                 form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
                                 SendDataToSpecificClient("WELCOME", client);
-                                SendDataToAllExcept($"JOIN {newPlayer.Name}", client);
+                                await SendDataToAllExcept($"JOIN {newPlayer.Name}", client);
 
                                 form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
 
@@ -226,20 +223,24 @@ namespace Uno.Classes
                         }
 
                     case "PLAY":
-                        int playedCardID = Convert.ToInt32(message.Split(' ')[3].Trim());
+                        int playedCardID = Convert.ToInt32(message.Split(' ')[2].Trim());
                         if (deck.idToCard.TryGetValue(playedCardID, out Card playedCard))
                         {
                             if (playerDatabase.NamePlayerDictionary.TryGetValue(senderString, out Player playingPlayer))
                             {
                                 if (playingPlayer.Inventory.Contains(playedCard))
                                 {
-                                    if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
+                                    if (await cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
                                     {
-                                        MessageBox.Show("Card Thrown: " + playedCard.ID, "ServerHost - Case PLAY");
+                                       await SendDataToAllExcept($"PLAY {playingPlayer.Name} {playedCardID}", client);
+                                        if (form1.InvokeRequired)
+                                            form1.Invoke(new Action(form1.SetInventoryGUI));
+                                        else
+                                            form1.SetInventoryGUI();
                                     }
                                     else
                                     {
-                                        MessageBox.Show("Error while playing card.", "ProcessMessage - Case PLAY");
+                                        SendDataToSpecificClient("ERR HUH?!!?!?", client);
                                     }
                                 }
                                 else
@@ -259,6 +260,10 @@ namespace Uno.Classes
                         }
 
                         return (true, false);
+                    case "DRAW4":
+                        playerDatabase.NamePlayerDictionary.TryGetValue(message.Split(' ')[1], out Player playerDraw4);
+                        cardFunctionality.Draw4(playerDraw4);
+                        return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);
                         return (true, false);
@@ -266,9 +271,17 @@ namespace Uno.Classes
             }
             catch (ArgumentException argEx)
             {
-                form1.AppendLogBox($"A user tried to connect with an already existing name. ({argEx.Message})");
-                SendDataToSpecificClient("ERR A user with the same name aleady exists", client);
-                return (false, true);
+                if (argEx.Message.Contains ("same key"))
+                {
+                    form1.AppendLogBox($"A user tried to connect with an already existing name. ({argEx.Message})");
+                    SendDataToSpecificClient("ERR A user with the same name aleady exists", client);
+                    return (false, true);
+                }
+                else
+                {
+                    throw;
+                }
+                
             }
             catch (Exception ex)
             {
@@ -305,7 +318,7 @@ namespace Uno.Classes
             await clientStream?.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        public async void SendDataToAllExcept(string message, TcpClient clientInit)
+        public async Task SendDataToAllExcept(string message, TcpClient clientInit)
         {
             foreach (TcpClient client in clients)
             {

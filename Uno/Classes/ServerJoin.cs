@@ -20,6 +20,7 @@ namespace Uno.Classes
         Form1 form1;
         ChatBox chatBox;
         PlayerDatabase playerDatabase;
+        CardFunctionality cardFunctionality;
         Deck deck;
         public ServerJoin()
         {
@@ -32,6 +33,7 @@ namespace Uno.Classes
             this.playerDatabase = form1.playerDatabase;
             this.chatBox = form1.chatBox;
             this.deck = form1.deck;
+            this.cardFunctionality = form1.cardFunctionality;
         }
 
         public async Task<(Player, bool)> JoinGame(IPAddress ip, int port, string username)
@@ -45,7 +47,7 @@ namespace Uno.Classes
                 Thread joinServerThread = new Thread(ServerConnection);
                 joinServerThread.Start();
 
-                SendDataToServer($"JOIN {username}");
+                await SendDataToServer($"JOIN {username}");
 
                 player = playerDatabase.AddClientPlayer(username);
 
@@ -168,7 +170,28 @@ namespace Uno.Classes
                         player.AddCardToInventory(cardToDraw);
                         break;
                     case "START":
-                        form1.StartGameClient();
+                        if (form1.InvokeRequired)
+                        {
+                            form1.Invoke(new Action(form1.StartGameClient));
+                        }
+                        else
+                            form1.StartGameClient();
+                        break;
+                    case "PLAY":
+                        deck.idToCard.TryGetValue(Convert.ToInt32(message.Split(' ')[2]), out Card card);
+                        cardFunctionality.ThrowCardInPileForClient(card);
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(form1.SetInventoryGUI));
+                        else 
+                            form1.SetInventoryGUI();
+                        break;
+                    case "PILE":
+                        deck.idToCard.TryGetValue(Convert.ToInt32(message.Split(' ')[1]), out Card cardOnPile);
+                        form1.lastCardPlayed = cardOnPile;
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(form1.SetInventoryGUI));
+                        else
+                            form1.SetInventoryGUI();
                         break;
                     case "KICK":
                         form1.AppendLogBox("Kicked from the server.");
@@ -187,15 +210,14 @@ namespace Uno.Classes
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "ProcessMessage - Client");
             }
-
         }
 
-        public void SendDataToServer(string message)
+        public async Task SendDataToServer(string message)
         {
             try
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(message);
-                stream.Write(buffer, 0, buffer.Length);
+                await stream.WriteAsync(buffer, 0, buffer.Length);
             }
             catch (IOException)
             {

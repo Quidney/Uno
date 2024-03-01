@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminConsole));
             this.pnlChatBox = new Uno.Classes.CustomTableLayoutPanel();
             this.lblTitle = new Uno.Classes.CustomLabel();
             this.btnMinimize = new Uno.Classes.CustomButton();
@@ -62,7 +63,7 @@
             this.pnlChatBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 43F));
             this.pnlChatBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.pnlChatBox.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 43F));
-            this.pnlChatBox.Size = new System.Drawing.Size(1059, 923);
+            this.pnlChatBox.Size = new System.Drawing.Size(850, 750);
             this.pnlChatBox.TabIndex = 0;
             // 
             // lblTitle
@@ -75,7 +76,7 @@
             this.lblTitle.Location = new System.Drawing.Point(4, 0);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(891, 43);
+            this.lblTitle.Size = new System.Drawing.Size(714, 43);
             this.lblTitle.TabIndex = 22;
             this.lblTitle.Text = "Admin Console - ";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -84,11 +85,12 @@
             // btnMinimize
             // 
             this.btnMinimize.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnMinimize.FlatAppearance.BorderSize = 0;
             this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMinimize.Location = new System.Drawing.Point(903, 4);
+            this.btnMinimize.Location = new System.Drawing.Point(726, 4);
             this.btnMinimize.Margin = new System.Windows.Forms.Padding(4);
             this.btnMinimize.Name = "btnMinimize";
-            this.btnMinimize.Size = new System.Drawing.Size(44, 35);
+            this.btnMinimize.Size = new System.Drawing.Size(34, 35);
             this.btnMinimize.TabIndex = 21;
             this.btnMinimize.Text = "🗕";
             this.btnMinimize.UseVisualStyleBackColor = true;
@@ -96,11 +98,12 @@
             // btnMaximize
             // 
             this.btnMaximize.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnMaximize.FlatAppearance.BorderSize = 0;
             this.btnMaximize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMaximize.Location = new System.Drawing.Point(955, 4);
+            this.btnMaximize.Location = new System.Drawing.Point(768, 4);
             this.btnMaximize.Margin = new System.Windows.Forms.Padding(4);
             this.btnMaximize.Name = "btnMaximize";
-            this.btnMaximize.Size = new System.Drawing.Size(44, 35);
+            this.btnMaximize.Size = new System.Drawing.Size(34, 35);
             this.btnMaximize.TabIndex = 20;
             this.btnMaximize.Text = "🗖";
             this.btnMaximize.UseVisualStyleBackColor = true;
@@ -108,12 +111,13 @@
             // btnClose
             // 
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Location = new System.Drawing.Point(1007, 4);
+            this.btnClose.Location = new System.Drawing.Point(810, 4);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(48, 35);
+            this.btnClose.Size = new System.Drawing.Size(36, 35);
             this.btnClose.TabIndex = 19;
             this.btnClose.Text = "✖";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -130,7 +134,7 @@
             this.txtCommandLog.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtCommandLog.Name = "txtCommandLog";
             this.txtCommandLog.ReadOnly = true;
-            this.txtCommandLog.Size = new System.Drawing.Size(1053, 833);
+            this.txtCommandLog.Size = new System.Drawing.Size(844, 660);
             this.txtCommandLog.TabIndex = 18;
             this.txtCommandLog.Text = "For Developer use only. Use with caution.\nWe\'re not responsible for unstability a" +
     "nd lost data.\n\nType Help for command list\n";
@@ -141,10 +145,10 @@
             this.pnlChatBox.SetColumnSpan(this.txtCommandInput, 2);
             this.txtCommandInput.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtCommandInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCommandInput.Location = new System.Drawing.Point(3, 882);
+            this.txtCommandInput.Location = new System.Drawing.Point(3, 709);
             this.txtCommandInput.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtCommandInput.Name = "txtCommandInput";
-            this.txtCommandInput.Size = new System.Drawing.Size(893, 34);
+            this.txtCommandInput.Size = new System.Drawing.Size(716, 34);
             this.txtCommandInput.TabIndex = 17;
             this.txtCommandInput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCommandInput_KeyPress);
             // 
@@ -153,10 +157,10 @@
             this.pnlChatBox.SetColumnSpan(this.btnExecuteCommand, 3);
             this.btnExecuteCommand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnExecuteCommand.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExecuteCommand.Location = new System.Drawing.Point(902, 882);
+            this.btnExecuteCommand.Location = new System.Drawing.Point(725, 709);
             this.btnExecuteCommand.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnExecuteCommand.Name = "btnExecuteCommand";
-            this.btnExecuteCommand.Size = new System.Drawing.Size(154, 39);
+            this.btnExecuteCommand.Size = new System.Drawing.Size(122, 39);
             this.btnExecuteCommand.TabIndex = 15;
             this.btnExecuteCommand.Text = "Send Message";
             this.btnExecuteCommand.UseVisualStyleBackColor = true;
@@ -166,12 +170,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1059, 923);
+            this.ClientSize = new System.Drawing.Size(850, 750);
             this.Controls.Add(this.pnlChatBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "AdminConsole";
-            this.Text = "ChatBox";
+            this.Text = "Terminal";
             this.pnlChatBox.ResumeLayout(false);
             this.pnlChatBox.PerformLayout();
             this.ResumeLayout(false);

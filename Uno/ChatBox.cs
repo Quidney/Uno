@@ -41,7 +41,7 @@ namespace Uno
             chatBoxStates = new Image[] {Properties.Resources.Chat, Properties.Resources.ChatNewMessage };
         }
 
-        private void btnSendDataToServer_Click(object sender, EventArgs e)
+        private async void btnSendDataToServer_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtMessageBox.Text))
             {
@@ -51,23 +51,15 @@ namespace Uno
                 switch (form1.isHost)
                 {
                     case true:
-                        BroadcastMessage();
+                        await form1.serverHost.BroadcastData("MSG " + form1.currentPlayer.Name + " " + message);
                         break;
                     case false:
-                        form1.serverJoin.SendDataToServer("MSG " + form1.currentPlayer.Name + " " + message);
+                        await form1.serverJoin.SendDataToServer("MSG " + form1.currentPlayer.Name + " " + message);
                         break;
                 }
 
                 txtMessageBox.Text = string.Empty;
-
             }
-        }
-
-        private async void BroadcastMessage()
-        {
-            string message = txtMessageBox.Text;
-
-            await form1.serverHost.BroadcastData("MSG " + form1.currentPlayer.Name + " " + message);
         }
 
         public void OpenChatBox()
@@ -106,6 +98,16 @@ namespace Uno
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Hide();
+        }
+
+        private void txtMessageBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                e.Handled = true;
+
+                btnSendDataToServer_Click(sender, e);
+            }
         }
     }
 }

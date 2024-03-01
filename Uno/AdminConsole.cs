@@ -29,11 +29,11 @@ namespace Uno
         ServerHost serverHost;
 
         bool shutdown = false;
+        bool kick = false;
 
         public AdminConsole()
         {
             InitializeComponent();
-
             lblTitleExtern = lblTitle;
         }
 
@@ -51,10 +51,12 @@ namespace Uno
             AppendCommandBox(command, true);
             txtCommandInput.Text = string.Empty;
 
+            //HELP
             if (command.ToLower().Trim() == ("help") || command.ToLower().Trim() == ("commands"))
             {
                 AppendCommandBox("Commands: data, list, clear/cls, players, exit, shutdown");
             }
+            //HELP + COMMAND
             else if (command.ToLower().Trim().StartsWith("help") && command.Split(' ').Length > 1)
             {
                 string[] commands = command.Split(' ');
@@ -92,6 +94,7 @@ namespace Uno
                     AppendCommandBox("Closes the whole application.");
                 }
             }
+            //LIST
             else if (command.ToLower().Trim() == ("list"))
             {
                 AppendCommandBox("All Cards:");
@@ -102,6 +105,7 @@ namespace Uno
                 }
                 AppendCommandBox(allCards);
             }
+            //LIST + PLAYER
             else if (command.ToLower().Trim().StartsWith("list") && command.Split(' ').Length > 1)
             {
                 string[] commands = command.Split(' ');
@@ -120,6 +124,7 @@ namespace Uno
                     AppendCommandBox($"Specified player \"{commands[1]}\" not found");
                 }
             }
+            //PLAYERS
             else if (command.ToLower().Trim() == ("players"))
             {
                 string players = string.Empty;
@@ -129,6 +134,7 @@ namespace Uno
                 }
                 AppendCommandBox(players.Trim());
             }
+            //DATA
             else if (command.ToLower().Trim().StartsWith("data"))
             {
                 if (command.Split(' ').Length > 2)
@@ -149,34 +155,60 @@ namespace Uno
                     AppendCommandBox("Incorrect Usage: [data PLAYER DATA]");
                 }
             }
+            //CLEAR
             else if (command.ToLower().Trim() == ("clear") || command.ToLower().Trim() == ("cls"))
             {
                 txtCommandLog.Clear();
             }
+            //EXIT
             else if (command.ToLower().Trim() == "exit")
             {
                 this.Hide();
             }
+            //SHUTDOWN
             else if (command.ToLower().Trim() == ("shutdown"))
             {
                 if (shutdown)
                     Application.Exit();
                 else
                 {
+                    AppendCommandBox("[WARNING!], this will shutdown the server and kick everyone playing.");
                     AppendCommandBox("Type shutdown again to close the application");
-                    AppendCommandBox("Warning, this will shutdown the server and kick everyone playing.");
                     shutdown = true;
                 }
             }
+            //KICK
             else if (command.ToLower().Trim().StartsWith("kick"))
             {
                 if (command.Split(' ').Length > 1)
                 {
-                    string[] commands = command.Split(' ');
-                    playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player);
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                    if (form1.isStarted)
+                    {
+                        if (kick)
+                        {
+                            string[] commands = command.Split(' ');
+                            playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player);
+                            playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
 
-                    serverHost.SendDataToSpecificClient("KICK", client);
+                            serverHost.SendDataToSpecificClient("KICK", client);
+                        }
+                        else
+                        {
+                            AppendCommandBox("[WARNING!] Kicking a player while the game is started is going to terminate the server");
+                            AppendCommandBox("Type \"kick\" again in order to kick");
+                            kick = true;
+                        }
+
+                    }
+                    else
+                    {
+                        string[] commands = command.Split(' ');
+                        playerDatabase.NamePlayerDictionary.TryGetValue(commands[1], out Player player);
+                        playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+
+                        serverHost.SendDataToSpecificClient("KICK", client);
+                    }
+
                 }
                 else
                 {
@@ -190,6 +222,7 @@ namespace Uno
             }
 
             shutdown = (command.ToLower().Trim() != "shutdown") ? false : shutdown;
+            kick = (!command.ToLower().Trim().StartsWith("kick")) ? false : kick;
         }
 
         public void AppendCommandBox(string message, bool commandInput = false)
