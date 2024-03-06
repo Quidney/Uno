@@ -45,10 +45,10 @@
             this.txtServerLog = new Uno.Classes.CustomTextBox();
             this.lblJoin = new Uno.Classes.CustomLabel();
             this.lblHost = new Uno.Classes.CustomLabel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pbLogo = new System.Windows.Forms.PictureBox();
             this.pnlMain.SuspendLayout();
             this.pnlMultiplayer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlMain
@@ -185,7 +185,7 @@
             this.pnlMultiplayer.Controls.Add(this.txtServerLog, 17, 1);
             this.pnlMultiplayer.Controls.Add(this.lblJoin, 1, 4);
             this.pnlMultiplayer.Controls.Add(this.lblHost, 11, 4);
-            this.pnlMultiplayer.Controls.Add(this.pictureBox1, 4, 13);
+            this.pnlMultiplayer.Controls.Add(this.pbLogo, 4, 13);
             this.pnlMultiplayer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMultiplayer.Location = new System.Drawing.Point(0, 0);
             this.pnlMultiplayer.Name = "pnlMultiplayer";
@@ -393,18 +393,18 @@
             this.lblHost.Text = "HOST";
             this.lblHost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // pictureBox1
+            // pbLogo
             // 
-            this.pnlMultiplayer.SetColumnSpan(this.pictureBox1, 9);
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::Uno.Properties.Resources.UNO_Logo_svg;
-            this.pictureBox1.Location = new System.Drawing.Point(207, 432);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pnlMultiplayer.SetRowSpan(this.pictureBox1, 11);
-            this.pictureBox1.Size = new System.Drawing.Size(453, 357);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 13;
-            this.pictureBox1.TabStop = false;
+            this.pnlMultiplayer.SetColumnSpan(this.pbLogo, 9);
+            this.pbLogo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbLogo.Image = global::Uno.Properties.Resources.UNO_Logo_svg;
+            this.pbLogo.Location = new System.Drawing.Point(207, 432);
+            this.pbLogo.Name = "pbLogo";
+            this.pnlMultiplayer.SetRowSpan(this.pbLogo, 11);
+            this.pbLogo.Size = new System.Drawing.Size(453, 357);
+            this.pbLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbLogo.TabIndex = 13;
+            this.pbLogo.TabStop = false;
             // 
             // frmUno
             // 
@@ -420,7 +420,7 @@
             this.pnlMain.ResumeLayout(false);
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -444,7 +444,7 @@
         private Classes.CustomTextBox txtServerLog;
         private Classes.CustomLabel lblJoin;
         private Classes.CustomLabel lblHost;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pbLogo;
     }
 }
 
