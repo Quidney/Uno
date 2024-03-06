@@ -45,6 +45,9 @@ namespace Uno
             playerDatabase.SetReferences(txtServerLog);
 
             txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+
+            playerDatabase.AddClientPlayer("Singleplayer");
+            currentPlayer = playerDatabase.players.LastOrDefault();
         }
 
         void StartGame()
