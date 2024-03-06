@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -18,6 +19,10 @@ namespace Uno
         CardFunctionality cardFunctionality;
         PlayerDatabase playerDatabase;
         Server server;
+
+        public int seconden { get; set; }
+        public bool YourTurn { get; set; }
+        public bool OtherTurn { get; set; }
 
         public frmUno()
         {
@@ -44,7 +49,7 @@ namespace Uno
             server.SetReferences(playerDatabase, txtServerLog, cardFunctionality);
             playerDatabase.SetReferences(txtServerLog);
 
-            txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+            //txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
         }
 
         void StartGame()
@@ -52,6 +57,27 @@ namespace Uno
             PlaceOneCardOnThePile();
             GiveStartingCards();
         }
+        private void timerTurn_Tick(object sender, EventArgs e)
+        {
+            if (YourTurn == true && OtherTurn == false)
+            {
+                if (seconden > 0)
+                {
+                    lblTimer.Text = seconden--.ToString();
+                    lblTimer.Update();
+                }
+                if (seconden < 0 && lblTimer.Text == "0") { EndTime(); }
+            }
+        }
+
+        private void StartTime() 
+        {
+            YourTurn = true; OtherTurn = false; // Currently here for testing purposes
+            seconden = 15; lblTimer.Text = seconden.ToString(); timerTurn.Start();
+            if (lblTimer.Visible == false) { lblTimer.Visible = true; }
+        }
+
+        private void EndTime() { seconden = 0; timerTurn.Stop(); YourTurn = false; OtherTurn = true; }
 
         void PlaceOneCardOnThePile()
         {
@@ -66,7 +92,7 @@ namespace Uno
             for (int i = 0; i < 7; i++)
             {
                 Card card = deck.cardsDeckList.LastOrDefault();
-                currentPlayer.DrawCard(card);
+                // currentPlayer.DrawCard(card);
                 deck.cardsDeckList.Remove(card);
 
                 AddCardToGUI(card);
@@ -76,6 +102,7 @@ namespace Uno
         private void BtnStartGame_Click(object sender, EventArgs e)
         {
             StartGame();
+            StartTime();
             (sender as Button).Dispose();
         }
         private void DrawCard(object sender, EventArgs e)
@@ -92,7 +119,7 @@ namespace Uno
             }
 
             Card drawnCard = deck.cardsDeckList.LastOrDefault();
-            currentPlayer.DrawCard(drawnCard);
+            // currentPlayer.DrawCard(drawnCard);
             deck.cardsDeckList.Remove(drawnCard);
 
             AddCardToGUI(drawnCard);
@@ -150,7 +177,6 @@ namespace Uno
             }
 
             label.Click += (sender, e) => cardFunctionality.ThrowCardInPile(sender, e, label, currentPlayer);
-
             pnlMain.SetRow(label, 18);
             pnlMain.SetColumn(label, 1);
 

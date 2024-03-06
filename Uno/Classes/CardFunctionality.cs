@@ -13,7 +13,7 @@ namespace Uno.Classes
         public List<Card> cardsInPile;
         public PlayerDatabase playerDatabase;
 
-        private Form1 mainForm;
+        private frmUno mainForm;
 
         public Card.ColorEnum currentColor;
 
@@ -25,7 +25,7 @@ namespace Uno.Classes
 
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, Form1 form1)
+        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, frmUno form1)
         {
             this.playerDatabase = playerDatabase;
             this.pnlCards = pnlCards;
@@ -55,7 +55,7 @@ namespace Uno.Classes
                 case Card.TypeEnum.Number:
                     if (thrownCard.Number == lastCardInPile.Number || thrownCard.Color == currentColor)
                     {
-                        currentPlayer.playerInventory.Remove(thrownCard);
+                        // currentPlayer.playerInventory.Remove(thrownCard);
                         NewCardInPile(thrownCard);
                         label.Dispose();
                         currentColor = thrownCard.Color;
@@ -64,7 +64,7 @@ namespace Uno.Classes
                 case Card.TypeEnum.Action:
                     if (thrownCard.Action == lastCardInPile.Action || thrownCard.Color == currentColor)
                     {
-                        currentPlayer.playerInventory.Remove(thrownCard);
+                        // currentPlayer.playerInventory.Remove(thrownCard);
                         NewCardInPile(thrownCard);
                         label.Dispose();
                         currentColor = thrownCard.Color;
@@ -84,7 +84,7 @@ namespace Uno.Classes
                     colorSelectionPanel.Show();
                     colorSelectionPanel.BringToFront();
 
-                    currentPlayer.playerInventory.Remove(thrownCard);
+                    // currentPlayer.playerInventory.Remove(thrownCard);
                     NewCardInPile(thrownCard);
                     label.Dispose();
                     break;
