@@ -13,7 +13,7 @@ namespace Uno.Classes
         public List<Card> cardsInPile;
         public PlayerDatabase playerDatabase;
 
-        private Form1 mainForm;
+        private frmUno mainForm;
 
         public Card.ColorEnum currentColor;
 
@@ -25,7 +25,7 @@ namespace Uno.Classes
 
         }
 
-        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, Form1 form1)
+        public void SetReferences(PlayerDatabase playerDatabase, TableLayoutPanel pnlCards, frmUno form1)
         {
             this.playerDatabase = playerDatabase;
             this.pnlCards = pnlCards;

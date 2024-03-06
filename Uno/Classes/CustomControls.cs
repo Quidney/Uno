@@ -38,7 +38,7 @@ namespace Uno.Classes
 
     public class ColorSelectionPanel : Panel
     {
-        public ColorSelectionPanel(Form1 mainForm, CardFunctionality cardFunctionalityInit) : base()
+        public ColorSelectionPanel(frmUno mainForm, CardFunctionality cardFunctionalityInit) : base()
         {
             Parent = mainForm;
 
