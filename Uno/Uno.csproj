@@ -114,5 +114,8 @@
     <None Include="Resources\Chat.png" />
     <None Include="Resources\ChatNewMessage.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\UNO_Logo.svg.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
