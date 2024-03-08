@@ -312,6 +312,8 @@
             this.btnJoinServer.Text = "Join";
             this.btnJoinServer.UseVisualStyleBackColor = false;
             this.btnJoinServer.Click += new System.EventHandler(this.JoinGame_Click);
+            this.btnJoinServer.MouseEnter += new System.EventHandler(this.enterHover);
+            this.btnJoinServer.MouseLeave += new System.EventHandler(this.leaveHover);
             // 
             // btnHostServer
             // 
@@ -328,6 +330,7 @@
             this.btnHostServer.Text = "Host";
             this.btnHostServer.UseVisualStyleBackColor = false;
             this.btnHostServer.Click += new System.EventHandler(this.HostGame_Click);
+            this.btnHostServer.MouseEnter += new System.EventHandler(this.enterHover);
             // 
             // txtServerLog
             // 
@@ -406,8 +409,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(982, 762);
-            this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlMultiplayer);
+            this.Controls.Add(this.pnlMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";

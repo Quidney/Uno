@@ -166,7 +166,7 @@ namespace Uno
                 };
                 btnStartGame.Click += (sender, e) => StartGame();
 
-                pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(6, 13));
+                pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(7, 13));
                 pnlMultiplayer.SetColumnSpan(btnStartGame, 3);
                 pnlMultiplayer.SetRowSpan(btnStartGame, 2);
 
@@ -213,7 +213,7 @@ namespace Uno
                 Image = userIcon,
                 SizeMode = PictureBoxSizeMode.CenterImage
             };
-            pnlMultiplayer.SetCellPosition(player1PictureBox, new TableLayoutPanelCellPosition(1, 18));
+            pnlMultiplayer.SetCellPosition(player1PictureBox, new TableLayoutPanelCellPosition(3, 18));
             pnlMultiplayer.SetColumnSpan(player1PictureBox, 2);
             pnlMultiplayer.SetRowSpan(player1PictureBox, 3);
             CustomLabel player1Label = new CustomLabel()
@@ -223,7 +223,7 @@ namespace Uno
                 Text = currentPlayer.Name,
                 TextAlign = ContentAlignment.MiddleCenter
             };
-            pnlMultiplayer.SetCellPosition(player1Label, new TableLayoutPanelCellPosition(1, 21));
+            pnlMultiplayer.SetCellPosition(player1Label, new TableLayoutPanelCellPosition(3, 21));
             pnlMultiplayer.SetColumnSpan(player1Label, 2);
 
             CustomPictureBox player2PictureBox = new CustomPictureBox()
@@ -233,7 +233,7 @@ namespace Uno
                 Image = userIcon,
                 SizeMode = PictureBoxSizeMode.CenterImage
             };
-            pnlMultiplayer.SetCellPosition(player2PictureBox, new TableLayoutPanelCellPosition(4, 18));
+            pnlMultiplayer.SetCellPosition(player2PictureBox, new TableLayoutPanelCellPosition(6, 18));
             pnlMultiplayer.SetColumnSpan(player2PictureBox, 2);
             pnlMultiplayer.SetRowSpan(player2PictureBox, 3);
             CustomLabel player2Label = new CustomLabel()
@@ -243,7 +243,7 @@ namespace Uno
                 Text = "Waiting...",
                 TextAlign = ContentAlignment.MiddleCenter
             };
-            pnlMultiplayer.SetCellPosition(player2Label, new TableLayoutPanelCellPosition(4, 21));
+            pnlMultiplayer.SetCellPosition(player2Label, new TableLayoutPanelCellPosition(6, 21));
             pnlMultiplayer.SetColumnSpan(player2Label, 2);
 
             CustomPictureBox player3PictureBox = new CustomPictureBox()
@@ -254,7 +254,7 @@ namespace Uno
                 SizeMode = PictureBoxSizeMode.CenterImage
 
             };
-            pnlMultiplayer.SetCellPosition(player3PictureBox, new TableLayoutPanelCellPosition(7, 18));
+            pnlMultiplayer.SetCellPosition(player3PictureBox, new TableLayoutPanelCellPosition(9, 18));
             pnlMultiplayer.SetColumnSpan(player3PictureBox, 2);
             pnlMultiplayer.SetRowSpan(player3PictureBox, 3);
             CustomLabel player3Label = new CustomLabel()
@@ -264,7 +264,7 @@ namespace Uno
                 Text = "Waiting...",
                 TextAlign = ContentAlignment.MiddleCenter
             };
-            pnlMultiplayer.SetCellPosition(player3Label, new TableLayoutPanelCellPosition(7, 21));
+            pnlMultiplayer.SetCellPosition(player3Label, new TableLayoutPanelCellPosition(9, 21));
             pnlMultiplayer.SetColumnSpan(player3Label, 2);
 
             CustomPictureBox player4PictureBox = new CustomPictureBox()
@@ -274,7 +274,7 @@ namespace Uno
                 Image = userIcon,
                 SizeMode = PictureBoxSizeMode.CenterImage
             };
-            pnlMultiplayer.SetCellPosition(player4PictureBox, new TableLayoutPanelCellPosition(10, 18));
+            pnlMultiplayer.SetCellPosition(player4PictureBox, new TableLayoutPanelCellPosition(12, 18));
             pnlMultiplayer.SetColumnSpan(player4PictureBox, 2);
             pnlMultiplayer.SetRowSpan(player4PictureBox, 3);
             CustomLabel player4Label = new CustomLabel()
@@ -284,7 +284,7 @@ namespace Uno
                 Text = "Waiting...",
                 TextAlign = ContentAlignment.MiddleCenter
             };
-            pnlMultiplayer.SetCellPosition(player4Label, new TableLayoutPanelCellPosition(10, 21));
+            pnlMultiplayer.SetCellPosition(player4Label, new TableLayoutPanelCellPosition(12, 21));
             pnlMultiplayer.SetColumnSpan(player4Label, 2);
 
             playerLabels[0] = player1Label;
@@ -582,6 +582,16 @@ namespace Uno
             {
                 pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
             }
+        }
+
+        private void enterHover(object sender, EventArgs e)
+        {
+
+        }
+
+        private void leaveHover(object sender, EventArgs e)
+        {
+
         }
     }
 }

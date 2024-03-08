@@ -117,5 +117,12 @@
   <ItemGroup>
     <None Include="Resources\UNO_Logo.svg.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\BlackCards\" />
+    <Folder Include="Resources\BlueCards\" />
+    <Folder Include="Resources\GreenCards\" />
+    <Folder Include="Resources\RedCards\" />
+    <Folder Include="Resources\YellowCards\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
