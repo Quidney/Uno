@@ -24,7 +24,7 @@ namespace Uno.Classes
         PlayerDatabase playerDatabase;
         Deck deck;
 
-        Form1 form1;
+        frmUno form1;
         ChatBox chatBox;
 
         public ServerHost()
@@ -33,7 +33,7 @@ namespace Uno.Classes
             playerClientPair = new Dictionary<TcpClient, Player>();
         }
 
-        public void SetReferences(Form1 form1)
+        public void SetReferences(frmUno form1)
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;

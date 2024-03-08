@@ -17,7 +17,7 @@ namespace Uno.Classes
         TcpClient client;
         NetworkStream stream;
 
-        Form1 form1;
+        frmUno form1;
         ChatBox chatBox;
         PlayerDatabase playerDatabase;
         CardFunctionality cardFunctionality;
@@ -27,7 +27,7 @@ namespace Uno.Classes
 
         }
 
-        public void SetReferences(Form1 form1)
+        public void SetReferences(frmUno form1)
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;

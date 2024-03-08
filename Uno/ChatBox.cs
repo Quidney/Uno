@@ -22,7 +22,7 @@ namespace Uno
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
-        Form1 form1;
+        frmUno form1;
         public CustomLabel lblTitleExtern;
 
         public bool newMessage = false;
@@ -34,7 +34,7 @@ namespace Uno
             lblTitleExtern = lblTitle;
         }
 
-        public void SetReferences(Form1 form1, CustomPictureBox openChatBox)
+        public void SetReferences(frmUno form1, CustomPictureBox openChatBox)
         {
             this.form1 = form1;
             this.openChatBox = openChatBox;

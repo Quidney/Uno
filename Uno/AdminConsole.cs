@@ -19,7 +19,7 @@ namespace Uno
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
 
-        Form1 form1;
+        frmUno form1;
         public CustomLabel lblTitleExtern;
         PlayerDatabase playerDatabase;
         Deck deck;
@@ -37,7 +37,7 @@ namespace Uno
             lblTitleExtern = lblTitle;
         }
 
-        public void SetReferences(Form1 form1)
+        public void SetReferences(frmUno form1)
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;

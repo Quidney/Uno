@@ -42,7 +42,7 @@ namespace Uno.Classes
 
     public class ColorSelectionPanel : Panel
     {
-        public ColorSelectionPanel(Form1 form1) : base()
+        public ColorSelectionPanel(frmUno form1) : base()
         {
             if (form1.InvokeRequired)
             {
