@@ -63,11 +63,72 @@ namespace Uno.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Chat {
+            get {
+                object obj = ResourceManager.GetObject("Chat", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ChatNewMessage {
+            get {
+                object obj = ResourceManager.GetObject("ChatNewMessage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Terminal {
+            get {
+                object obj = ResourceManager.GetObject("Terminal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap UNO_Logo_svg {
             get {
                 object obj = ResourceManager.GetObject("UNO_Logo.svg", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UnoBack {
+            get {
+                object obj = ResourceManager.GetObject("UnoBack", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UserIcon {
+            get {
+                object obj = ResourceManager.GetObject("UserIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap UserIcon64px {
+            get {
+                object obj = ResourceManager.GetObject("UserIcon64px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
     }
 }

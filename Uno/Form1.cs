@@ -1,24 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
+using Uno.Properties;
 
 namespace Uno
 {
     public partial class frmUno : Form
     {
-        Player currentPlayer;
-        Deck deck;
-        CardFunctionality cardFunctionality;
-        PlayerDatabase playerDatabase;
-        Server server;
+        public Player currentPlayer;
+        public bool joinedOrHosted = false;
+        public bool isHost = false;
+        public bool isStarted = false;
+        public bool shuttingDown = false;
+
+        public Deck deck;
+        public CardFunctionality cardFunctionality;
+        public PlayerDatabase playerDatabase;
+        public ServerHost serverHost;
+        public ServerJoin serverJoin;
+
+        public ChatBox chatBox;
+        public AdminConsole adminConsole;
+
+        public Card lastCardPlayed;
+
+        public bool myTurn = false;
 
         public int seconden { get; set; }
         public bool YourTurn { get; set; }
@@ -27,275 +44,560 @@ namespace Uno
         public frmUno()
         {
             InitializeComponent();
-
             InitMethod();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            Application.Exit();
         }
 
         void InitMethod()
         {
+            adminConsole = new AdminConsole();
+            chatBox = new ChatBox();
+
+
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Uno!";
 
             deck = new Deck();
-            deck.Shuffle();
+            deck.InitDeck();
 
             cardFunctionality = new CardFunctionality();
 
             playerDatabase = new PlayerDatabase();
 
-            server = new Server();
+            serverHost = new ServerHost();
+            serverJoin = new ServerJoin();
 
-            cardFunctionality.SetReferences(playerDatabase, pnlMain, this);
-            server.SetReferences(playerDatabase, txtServerLog, cardFunctionality);
+            cardFunctionality.SetReferences(this, pnlMain);
+            serverHost.SetReferences(this);
+            serverJoin.SetReferences(this);
             playerDatabase.SetReferences(txtServerLog);
 
-            //txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+            chatBox.SetReferences(this, pctrChatBox);
+            adminConsole.SetReferences(this);
+
+            txtServerLog.AppendText($"Server Log: {Environment.NewLine}");
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            pnlMain.Hide();
         }
 
-        void StartGame()
-        {
-            PlaceOneCardOnThePile();
-            GiveStartingCards();
-        }
-        private void timerTurn_Tick(object sender, EventArgs e)
-        {
-            if (YourTurn == true && OtherTurn == false)
-            {
-                if (seconden > 0)
-                {
-                    lblTimer.Text = seconden--.ToString();
-                    lblTimer.Update();
-                }
-                if (seconden < 0 && lblTimer.Text == "0") { EndTime(); }
-            }
-        }
-
-        private void StartTime() 
-        {
-            YourTurn = true; OtherTurn = false; // Currently here for testing purposes
-            seconden = 15; lblTimer.Text = seconden.ToString(); timerTurn.Start();
-            if (lblTimer.Visible == false) { lblTimer.Visible = true; }
-        }
-
-        private void EndTime() { seconden = 0; timerTurn.Stop(); YourTurn = false; OtherTurn = true; }
-
-        void PlaceOneCardOnThePile()
-        {
-            Card card = deck.cardsDeckList.LastOrDefault();
-            cardFunctionality.NewCardInPile(card);
-            deck.cardsDeckList.Remove(card);
-            cardFunctionality.currentColor = card.Color;
-        }
-
-        void GiveStartingCards()
-        {
-            for (int i = 0; i < 7; i++)
-            {
-                Card card = deck.cardsDeckList.LastOrDefault();
-                // currentPlayer.DrawCard(card);
-                deck.cardsDeckList.Remove(card);
-
-                AddCardToGUI(card);
-            }
-        }
-
-        private void BtnStartGame_Click(object sender, EventArgs e)
-        {
-            StartGame();
-            StartTime();
-            (sender as Button).Dispose();
-        }
-        private void DrawCard(object sender, EventArgs e)
-        {
-            if (deck.cardsDeckList.Count < 1)
-            {
-                foreach (Card card in cardFunctionality.cardsInPile)
-                {
-                    deck.cardsDeckList.Add(card);
-                }
-                cardFunctionality.cardsInPile = new List<Card>();
-
-                deck.Shuffle();
-            }
-
-            Card drawnCard = deck.cardsDeckList.LastOrDefault();
-            // currentPlayer.DrawCard(drawnCard);
-            deck.cardsDeckList.Remove(drawnCard);
-
-            AddCardToGUI(drawnCard);
-
-        }
-
-        private void AddCardToGUI(Card card)
-        {
-            CustomLabel label = new CustomLabel()
-            {
-                Dock = DockStyle.Fill,
-                Parent = pnlMain,
-                Text = card.ToString(),
-                AssignedCard = card,
-                Tag = "PlayerCard"
-            };
-
-            switch (card.Type)
-            {
-                case Card.TypeEnum.Number:
-                    label.TextAlign = ContentAlignment.TopRight;
-                    label.BackColor = card.ToColor();
-                    label.Font = new Font("Arial", 12);
-                    break;
-                case Card.TypeEnum.Action:
-                    switch (card.Action)
-                    {
-                        case Card.ActionEnum.DrawTwo:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.ActionEnum.Reverse: case Card.ActionEnum.Skip:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.BackColor = card.ToColor();
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    break;
-                case Card.TypeEnum.Wild:
-                    switch (card.Wild)
-                    {
-                        case Card.WildEnum.DrawFour:
-                            label.TextAlign = ContentAlignment.TopRight;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                        case Card.WildEnum.ChangeColor:
-                            label.TextAlign = ContentAlignment.MiddleCenter;
-                            label.Font = new Font("Arial", 12);
-                            break;
-                    }
-                    label.BackColor = Color.Black;
-                    label.ForeColor = Color.White;
-                    break;
-            }
-
-            label.Click += (sender, e) => cardFunctionality.ThrowCardInPile(sender, e, label, currentPlayer);
-            pnlMain.SetRow(label, 18);
-            pnlMain.SetColumn(label, 1);
-
-            pnlMain.SetRowSpan(label, 3);
-            pnlMain.SetColumnSpan(label, 2);
-
-
-            int row = 15;
-            int column = 0;
-
-            foreach (Control control in pnlMain.Controls)
-            {
-                if (control is CustomLabel cardLabel)
-                {
-                    if ((string)cardLabel.Tag == "PlayerCard")
-                    {
-
-                        if (column + 1 <= pnlMain.ColumnCount)
-                        {
-                            pnlMain.SetColumn(cardLabel, column + 1);
-                            column++;
-                        }
-                        else
-                        {
-                            if (row + 1 <= pnlMain.RowCount)
-                            {
-                                pnlMain.SetRow(cardLabel, row + 1);
-                                row++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void LimitPortInput(object sender, KeyPressEventArgs e)
-        {
-            CustomTextBox txtBox = sender as CustomTextBox;
-
-            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-            else if (txtBox.Text.Length >= txtBox.MaxLength)
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void LimitPortInput_MaxLimit(object sender, EventArgs e)
-        {
-            int port;
-            CustomTextBox txtBox = sender as CustomTextBox;
-
-            if (!int.TryParse(txtBox.Text, out port) || port < 0 || port > 65535)
-            {
-                if (txtBox.Text.Length > 0)
-                {
-                    txtBox.Text = txtBox.Text.Substring(0, txtBox.Text.Length - 1);
-                    txtBox.SelectionStart = txtBox.Text.Length;
-                }
-            }
-        }
-
-        private void HostGame(object sender, EventArgs e)
+        private void HostGame_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
-                if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 4)
+                if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
                 {
-                    try
-                    {
-                        int portToHost = Convert.ToInt32(txtPortHost.Text);
+                    string username = txtUsername.Text.Trim();
 
-                        server.CreateServer(portToHost);
-
-                        playerDatabase.AddHostPlayer(txtUsername.Text);
-                    }
-                    catch (Exception ex)
+                    if (int.TryParse(txtPortHost.Text.Trim(), out int port))
                     {
-                        txtServerLog.AppendText($"{ex.Message}{Environment.NewLine}");
-                        return;
+                        HostGame(port, username);
                     }
-                    
+                    else MessageBox.Show("Invalid Port!", "Error while hosting", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
-                    MessageBox.Show("Username must be between 4 and 24 characters long");
+                    MessageBox.Show("Username must be between 4 and 24 characters long", "Error while hosting");
                 }
             }
             else
             {
-                MessageBox.Show("Please fill both Host Port and Username");
+                MessageBox.Show("Please fill both Host Port and Username", "Error while hosting.");
             }
-            
+
+        }
+        private void JoinGame_Click(object sender, EventArgs e)
+        {
+            if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
+            {
+                string username = txtUsername.Text.Trim();
+
+                if (IPAddress.TryParse(txtIPAddressJoin.Text.Trim(), out IPAddress ip))
+                {
+                    if (int.TryParse(txtPortJoin.Text.Trim(), out int port) && port > 0 && port <= 65535)
+                    {
+                        JoinGame(ip, port, username);
+                    }
+                    else
+                        MessageBox.Show("Invalid Port!", "Error while joining", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                    MessageBox.Show("Invalid IPAddress!", "Error while joining", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show("Username must be between 3 and 24 characters long, and cannot contain whitespaces", "Error While joining");
+            }
+        }
+        CustomButton btnStartGame;
+        CustomPictureBox pctrAdminConsole;
+        private async void HostGame(int port, string username)
+        {
+            string response;
+            using (HttpClient httpClient = new HttpClient())
+            {
+                string api = "https://ipinfo.io/ip";
+                response = await httpClient.GetStringAsync(api);
+            }
+            AppendLogBox($"Hosting server on {response}:{port}");
+
+            (Player, bool) hostServer = serverHost.HostServer(port, username);
+
+            if (hostServer.Item2)
+            {
+                currentPlayer = hostServer.Item1;
+                isHost = currentPlayer.IsHost;
+
+                AppendLogBox("Server is running.");
+                joinedOrHosted = true;
+
+                chatBox.lblTitleExtern.Text = $"       Chatbox - {currentPlayer.Name} - {response}:{port}";
+                chatBox.lblTitleExtern.Image = Resources.Chat;
+                chatBox.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
+                chatBox.Show();
+                chatBox.Hide();
+
+
+                btnStartGame = new CustomButton()
+                {
+                    Text = "Start the Game",
+                    Enabled = false,
+                    Parent = pnlMultiplayer,
+                    Dock = DockStyle.Fill,
+                };
+                btnStartGame.Click += (sender, e) => StartGame();
+
+                pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(7, 13));
+                pnlMultiplayer.SetColumnSpan(btnStartGame, 3);
+                pnlMultiplayer.SetRowSpan(btnStartGame, 2);
+
+                pctrAdminConsole = new CustomPictureBox()
+                {
+                    Dock = DockStyle.Fill,
+                    Parent = pnlMultiplayer,
+                    SizeMode = PictureBoxSizeMode.CenterImage,
+                    Image = Properties.Resources.Terminal,
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+                adminConsole.lblTitleExtern.Text = $"       Admin Console - {currentPlayer.Name}";
+                adminConsole.lblTitleExtern.Image = Properties.Resources.Terminal;
+                adminConsole.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
+                pctrAdminConsole.Click += (sender, e) => { adminConsole.Show(); };
+
+                pnlMultiplayer.SetCellPosition(pctrAdminConsole, new TableLayoutPanelCellPosition(2, 0));
+                pnlMultiplayer.SetColumnSpan(pctrAdminConsole, 2);
+                pnlMultiplayer.SetRowSpan(pctrAdminConsole, 2);
+
+                InitGUIForPlayers();
+
+                btnHostServer.Enabled = false;
+                txtPortHost.Enabled = false;
+                txtUsername.Enabled = false;
+
+                btnJoinServer.Enabled = false;
+                txtIPAddressJoin.Enabled = false;
+                txtPortJoin.Enabled = false;
+
+                shuttingDown = false;
+            }
+        }
+        CustomLabel[] playerLabels = new CustomLabel[4];
+        CustomPictureBox[] playerPictures = new CustomPictureBox[4];
+        private void InitGUIForPlayers()
+        {
+            Image userIcon = Resources.UserIcon64px;
+
+            CustomPictureBox player1PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.CenterImage
+            };
+            pnlMultiplayer.SetCellPosition(player1PictureBox, new TableLayoutPanelCellPosition(3, 18));
+            pnlMultiplayer.SetColumnSpan(player1PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player1PictureBox, 3);
+            CustomLabel player1Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = currentPlayer.Name,
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player1Label, new TableLayoutPanelCellPosition(3, 21));
+            pnlMultiplayer.SetColumnSpan(player1Label, 2);
+
+            CustomPictureBox player2PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.CenterImage
+            };
+            pnlMultiplayer.SetCellPosition(player2PictureBox, new TableLayoutPanelCellPosition(6, 18));
+            pnlMultiplayer.SetColumnSpan(player2PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player2PictureBox, 3);
+            CustomLabel player2Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player2Label, new TableLayoutPanelCellPosition(6, 21));
+            pnlMultiplayer.SetColumnSpan(player2Label, 2);
+
+            CustomPictureBox player3PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.CenterImage
+
+            };
+            pnlMultiplayer.SetCellPosition(player3PictureBox, new TableLayoutPanelCellPosition(9, 18));
+            pnlMultiplayer.SetColumnSpan(player3PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player3PictureBox, 3);
+            CustomLabel player3Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player3Label, new TableLayoutPanelCellPosition(9, 21));
+            pnlMultiplayer.SetColumnSpan(player3Label, 2);
+
+            CustomPictureBox player4PictureBox = new CustomPictureBox()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Image = userIcon,
+                SizeMode = PictureBoxSizeMode.CenterImage
+            };
+            pnlMultiplayer.SetCellPosition(player4PictureBox, new TableLayoutPanelCellPosition(12, 18));
+            pnlMultiplayer.SetColumnSpan(player4PictureBox, 2);
+            pnlMultiplayer.SetRowSpan(player4PictureBox, 3);
+            CustomLabel player4Label = new CustomLabel()
+            {
+                Parent = pnlMultiplayer,
+                Dock = DockStyle.Fill,
+                Text = "Waiting...",
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+            pnlMultiplayer.SetCellPosition(player4Label, new TableLayoutPanelCellPosition(12, 21));
+            pnlMultiplayer.SetColumnSpan(player4Label, 2);
+
+            playerLabels[0] = player1Label;
+            playerLabels[1] = player2Label;
+            playerLabels[2] = player3Label;
+            playerLabels[3] = player4Label;
+
+            playerPictures[0] = player1PictureBox;
+            playerPictures[1] = player2PictureBox;
+            playerPictures[2] = player3PictureBox;
+            playerPictures[3] = player4PictureBox;
         }
 
-        private void JoinGame(object sender, EventArgs e)
+        public void AddPlayerToGUI(int playerIndex, Player player)
         {
-            try
+            playerLabels[playerIndex].Text = player.Name;
+        }
+
+        public void RemovePlayerFromGUI(int playerIndex)
+        {
+            playerLabels[playerIndex].Text = "Waiting...";
+
+            int lastEmptyIndex = playerIndex;
+            foreach (CustomLabel label in playerLabels)
             {
-                TcpClient client = new TcpClient();
-                string ip = txtIPAddressJoin.Text;
-                int port = Convert.ToInt32(txtPortJoin.Text);
-                client.Connect(ip, port);
-
-                NetworkStream stream = client.GetStream();
-
-                string joinMessage = "JOIN " + txtUsername.Text;
-                byte[] joinMessageBytes = Encoding.ASCII.GetBytes(joinMessage);
-                stream.Write(joinMessageBytes, 0, joinMessageBytes.Length);
-
-
-                currentPlayer = playerDatabase.players.FirstOrDefault(item => item.Name == txtUsername.Text);
+                if (label.Text != "Waiting...")
+                    if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                    {
+                        playerLabels[lastEmptyIndex].Text = label.Text;
+                        label.Text = "Waiting...";
+                        lastEmptyIndex++;
+                    }
             }
-            catch (Exception ex)
+        }
+
+        private async void JoinGame(IPAddress ip, int port, string username)
+        {
+            AppendLogBox($"Connecting to {ip}:{port} as {username}");
+
+            (Player, bool) joinServer = await Task.Run(() => serverJoin.JoinGame(ip, port, username));
+
+            if (joinServer.Item2)
             {
-                txtServerLog.AppendText($"Error: JoinGame: {ex.Message}{Environment.NewLine}");
+                currentPlayer = joinServer.Item1;
+
+                joinedOrHosted = true;
+
+                chatBox.lblTitleExtern.Text = $"       Chatbox - {currentPlayer.Name} - {ip}:{port}";
+                chatBox.lblTitleExtern.Image = Resources.Chat;
+                chatBox.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
+                chatBox.Show();
+                chatBox.Hide();
+
+                btnHostServer.Enabled = false;
+                txtPortHost.Enabled = false;
+                txtUsername.Enabled = false;
+
+                btnJoinServer.Enabled = false;
+                txtIPAddressJoin.Enabled = false;
+                txtPortJoin.Enabled = false;
             }
+            else
+            {
+                AppendLogBox("Failed to join the server.");
+            }
+        }
+
+        public void DisconnectedFromServerClient()
+        {
+            joinedOrHosted = false;
+            isHost = false;
+            chatBox.lblTitleExtern.Text = string.Empty;
+            playerDatabase.RemovePlayer(currentPlayer);
+            playerDatabase.players.Clear();
+
+            btnHostServer.Enabled = true;
+            txtPortHost.Enabled = true;
+            txtUsername.Enabled = true;
+
+            btnJoinServer.Enabled = true;
+            txtIPAddressJoin.Enabled = true;
+            txtPortJoin.Enabled = true;
+
+            pctrChatBox.Parent = pnlMultiplayer;
+            pnlMultiplayer.SetCellPosition(pctrChatBox, new TableLayoutPanelCellPosition(0, 0));
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            Application.DoEvents();
+            pnlMain.Hide();
+        }
+
+        public async void DisconnectedFromServerHost()
+        {
+
+            joinedOrHosted = false;
+            isHost = false;
+            chatBox.lblTitleExtern.Text = string.Empty;
+            chatBox.Hide();
+
+            shuttingDown = true;
+            await serverHost.BroadcastData("KICK");
+
+            Player[] players = new Player[playerDatabase.players.Count];
+            for (int i = 0; i < players.Length; i++)
+            {
+                players[i] = playerDatabase.players[i];
+            }
+            foreach (Player player in players)
+            {
+                playerDatabase.RemovePlayer(player);
+            }
+            foreach (CustomLabel label in playerLabels)
+            {
+                label.Dispose();
+            }
+            foreach (CustomPictureBox picBox in playerPictures)
+            {
+                picBox.Dispose();
+            }
+
+            serverHost.clients.Clear();
+
+            btnHostServer.Enabled = true;
+            txtPortHost.Enabled = true;
+            txtUsername.Enabled = true;
+
+            btnJoinServer.Enabled = true;
+            txtIPAddressJoin.Enabled = true;
+            txtPortJoin.Enabled = true;
+
+            pctrChatBox.Parent = pnlMultiplayer;
+            pnlMultiplayer.SetCellPosition(pctrChatBox, new TableLayoutPanelCellPosition(0, 0));
+
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            Application.DoEvents();
+            pnlMain.Hide();
+
+            pctrAdminConsole.Dispose();
+            btnStartGame.Dispose();
+
+            isStarted = false;
+
+            AppendLogBox("Server has been closed because a player has disconnected");
+        }
+
+        public void AppendLogBox(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action(() =>
+                {
+                    CustomRichTextBox txtBox = txtServerLog;
+                    txtBox.AppendText(message + Environment.NewLine);
+                }));
+            }
+            else
+            {
+                CustomRichTextBox txtBox = txtServerLog;
+                txtBox.AppendText(message + Environment.NewLine);
+            }
+        }
+
+        private void PctrChatBox_Click(object sender, EventArgs e)
+        {
+            if (joinedOrHosted)
+            {
+                chatBox.Show();
+                chatBox.OpenChatBox();
+            }
+            else
+                MessageBox.Show("You must Host or Join a server first.", "ChatBox");
+        }
+
+
+        public void StartGameButtonState(bool state)
+        {
+            btnStartGame.Enabled = state;
+        }
+        private async void StartGame()
+        {
+            await deck.Shuffle();
+
+            lastCardPlayed = deck.playingDeck.LastOrDefault();
+            deck.playingDeck.Remove(lastCardPlayed);
+            await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
+
+            for (int i = 0; i < 7; i++)
+            {
+                foreach (Player player in playerDatabase.players)
+                {
+                    //Draw Card, Player, Int Card Count
+                    cardFunctionality.DrawCardsFromDeck(player, 1);
+                }
+            }
+
+            pctrChatBox.Parent = pnlMain;
+            pctrAdminConsole.Parent = pnlMain;
+
+            await serverHost.BroadcastData("START");
+
+            pnlMain.Show();
+            pnlMain.BringToFront();
+            Application.DoEvents();
+            pnlMultiplayer.Hide();
+
+            isStarted = true;
+
+            SetInventoryGUI();
+        }
+
+        public void StartGameClient()
+        {
+            pctrChatBox.Parent = pnlMain;
+
+            pnlMain.Show();
+            pnlMain.BringToFront();
+            Application.DoEvents();
+            pnlMultiplayer.Hide();
+
+            SetInventoryGUI();
+        }
+
+        CustomTableLayoutPanel pnlInventory;
+        CustomLabel cardOnTopPile;
+        public void SetInventoryGUI()
+        {
+            if (pnlInventory != null)
+                pnlInventory.Dispose();
+            if (cardOnTopPile != null)
+                cardOnTopPile.Dispose();
+
+            pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
+            pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
+            pnlMain.SetRowSpan(pnlInventory, 2);
+            pnlMain.SetRow(pnlInventory, 16);
+            pnlMain.SetColumn(pnlInventory, 1);
+            pnlInventory.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+
+            cardOnTopPile = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlMain };
+            pnlMain.SetColumnSpan(cardOnTopPile, 2);
+            pnlMain.SetRowSpan(cardOnTopPile, 2);
+            pnlMain.SetCellPosition(cardOnTopPile, new TableLayoutPanelCellPosition(11, 10));
+
+            UpdateInventoryGUI();
+        }
+        public void UpdateInventoryGUI()
+        {
+            foreach (Control control in pnlInventory.Controls)
+            {
+                control.Dispose();
+            }
+
+            cardOnTopPile.Text = lastCardPlayed.ToString();
+            cardOnTopPile.BackColor = lastCardPlayed.ToColor();
+            if (lastCardPlayed.ToColor() == Color.Black)
+                cardOnTopPile.ForeColor = Color.White;
+
+                List<Card> inventory = currentPlayer.Inventory;
+            pnlInventory.ColumnCount = 1;
+            pnlInventory.RowCount = 1;
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                pnlInventory.ColumnCount++;
+                CustomLabel card = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $"{inventory[i]}", BackColor = inventory[i].ToColor(), Tag = inventory[i].ID };
+                if (card.BackColor == Color.Black)
+                    card.ForeColor = Color.White;
+                int cardID = (int)card.Tag;
+                card.Click += async (sender, e) =>
+                {
+                    string message = $"PLAY {currentPlayer.Name} {cardID}";
+                    deck.idToCard.TryGetValue(cardID, out Card cardCard);
+
+                    if (await cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
+                    {
+                        if (currentPlayer.IsHost)
+                        {
+                            await serverHost.BroadcastData(message);
+                        }
+                        else
+                        {
+                            await serverJoin.SendDataToServer(message);
+                        }
+                    }
+                    SetInventoryGUI();
+                };
+                pnlInventory.SetColumn(card, i);
+            }
+            pnlInventory.ColumnCount--;
+
+            pnlInventory.ColumnStyles.Clear();
+            for (int i = 0; i < pnlInventory.ColumnCount; i++)
+            {
+                pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
+            }
+        }
+
+        private void enterHover(object sender, EventArgs e)
+        {
+
+        }
+
+        private void leaveHover(object sender, EventArgs e)
+        {
+
         }
     }
 }
