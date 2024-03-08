@@ -230,7 +230,7 @@ namespace Uno.Classes
                             {
                                 if (playingPlayer.Inventory.Contains(playedCard))
                                 {
-                                    if (await cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
+                                    if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
                                     {
                                        await SendDataToAllExcept($"PLAY {playingPlayer.Name} {playedCardID}", client);
                                         if (form1.InvokeRequired)
@@ -262,7 +262,6 @@ namespace Uno.Classes
                         return (true, false);
                     case "DRAW4":
                         playerDatabase.NamePlayerDictionary.TryGetValue(message.Split(' ')[1], out Player playerDraw4);
-                        cardFunctionality.Draw4(playerDraw4);
                         return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);

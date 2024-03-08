@@ -6,9 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -207,8 +204,8 @@ namespace Uno
                 shuttingDown = false;
             }
         }
-        CustomLabel[] playerLabels = new CustomLabel[4];
-        CustomPictureBox[] playerPictures = new CustomPictureBox[4];
+        readonly CustomLabel[] playerLabels = new CustomLabel[4];
+        readonly CustomPictureBox[] playerPictures = new CustomPictureBox[4];
         private void InitGUIForPlayers()
         {
             Image userIcon = Resources.UserIcon64px;
@@ -520,10 +517,8 @@ namespace Uno
         CustomLabel cardOnTopPile;
         public void SetInventoryGUI()
         {
-            if (pnlInventory != null)
-                pnlInventory.Dispose();
-            if (cardOnTopPile != null)
-                cardOnTopPile.Dispose();
+            pnlInventory?.Dispose();
+            cardOnTopPile?.Dispose();
 
             pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
             pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
@@ -551,7 +546,7 @@ namespace Uno
             if (lastCardPlayed.ToColor() == Color.Black)
                 cardOnTopPile.ForeColor = Color.White;
 
-                List<Card> inventory = currentPlayer.Inventory;
+            List<Card> inventory = currentPlayer.Inventory;
             pnlInventory.ColumnCount = 1;
             pnlInventory.RowCount = 1;
             for (int i = 0; i < inventory.Count; i++)
@@ -566,7 +561,7 @@ namespace Uno
                     string message = $"PLAY {currentPlayer.Name} {cardID}";
                     deck.idToCard.TryGetValue(cardID, out Card cardCard);
 
-                    if (await cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
+                    if (cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
                     {
                         if (currentPlayer.IsHost)
                         {
