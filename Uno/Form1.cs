@@ -6,6 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -13,7 +16,7 @@ using Uno.Properties;
 
 namespace Uno
 {
-    public partial class Form1 : Form
+    public partial class frmUno : Form
     {
         public Player currentPlayer;
         public bool joinedOrHosted = false;
@@ -34,7 +37,11 @@ namespace Uno
 
         public bool myTurn = false;
 
-        public Form1()
+        public int seconden { get; set; }
+        public bool YourTurn { get; set; }
+        public bool OtherTurn { get; set; }
+
+        public frmUno()
         {
             InitializeComponent();
             InitMethod();
@@ -297,7 +304,6 @@ namespace Uno
             playerPictures[2] = player3PictureBox;
             playerPictures[3] = player4PictureBox;
         }
-
 
         public void AddPlayerToGUI(int playerIndex, Player player)
         {

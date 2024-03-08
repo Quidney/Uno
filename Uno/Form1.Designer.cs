@@ -1,6 +1,6 @@
 ﻿namespace Uno
 {
-    partial class Form1
+    partial class frmUno
     {
         /// <summary>
         /// Required designer variable.
@@ -245,6 +245,8 @@
             // 
             // lblPortJoin
             // 
+            this.timerTurn.Interval = 1000;
+            this.timerTurn.Tick += new System.EventHandler(this.timerTurn_Tick);
             this.lblPortJoin.AssignedCard = null;
             this.lblPortJoin.AutoSize = true;
             this.pnlMultiplayer.SetColumnSpan(this.lblPortJoin, 5);
