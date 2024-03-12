@@ -15,10 +15,12 @@ namespace Uno.Classes
         private List<Player> players;
         private Deck deck;
 
+
         private ServerHost serverHost;
         private ServerJoin serverJoin;
 
         private Form1 form1;
+
 
         public Card.ColorEnum currentColor;
 
@@ -28,6 +30,7 @@ namespace Uno.Classes
         {
             cardsInPile = new List<Card>();
         }
+
 
         public void SetReferences(Form1 form1, TableLayoutPanel pnlCards)
         {

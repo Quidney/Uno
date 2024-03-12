@@ -129,5 +129,6 @@ namespace Uno.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
     }
 }
