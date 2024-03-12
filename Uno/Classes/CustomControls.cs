@@ -138,9 +138,7 @@ namespace Uno.Classes
                 lblBlue.Click += (sender, e) => cardFunctionality.ChangeGameColor(Card.ColorEnum.Blue);
                 lblBlue.Click += cardFunctionality.CloseColorSelector;
             }
-
         }
-
     }
 
     public class CustomTableLayoutPanel : TableLayoutPanel

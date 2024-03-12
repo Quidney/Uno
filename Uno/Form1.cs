@@ -15,6 +15,8 @@ namespace Uno
 {
     public partial class frmUno : Form
     {
+        Random random = new Random();
+
         public Player currentPlayer;
         public bool joinedOrHosted = false;
         public bool isHost = false;
@@ -86,6 +88,13 @@ namespace Uno
 
         private void HostGame_Click(object sender, EventArgs e)
         {
+            #if DEBUG
+            if (string.IsNullOrEmpty(txtUsername.Text))
+            {
+                txtUsername.Text = "User" + random.Next(0, 1000);
+            }
+            if (string.IsNullOrEmpty(txtPortHost.Text)) txtPortHost.Text = "1224";
+            #endif
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
                 if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
@@ -111,6 +120,14 @@ namespace Uno
         }
         private void JoinGame_Click(object sender, EventArgs e)
         {
+            #if DEBUG
+            if (string.IsNullOrEmpty(txtUsername.Text))
+            {
+                txtUsername.Text = "User" + random.Next(0, 1000);
+            }
+            if (string.IsNullOrEmpty(txtIPAddressJoin.Text)) txtIPAddressJoin.Text = "127.0.0.1";
+            if (string.IsNullOrEmpty(txtPortJoin.Text)) txtPortJoin.Text = "1224";
+            #endif
             if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
                 string username = txtUsername.Text.Trim();
@@ -474,6 +491,7 @@ namespace Uno
             await deck.Shuffle();
 
             lastCardPlayed = deck.playingDeck.LastOrDefault();
+            cardFunctionality.currentColor = lastCardPlayed.Color;
             deck.playingDeck.Remove(lastCardPlayed);
             await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
 

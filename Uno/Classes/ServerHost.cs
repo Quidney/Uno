@@ -260,8 +260,10 @@ namespace Uno.Classes
                         }
 
                         return (true, false);
-                    case "DRAW4":
-                        playerDatabase.NamePlayerDictionary.TryGetValue(message.Split(' ')[1], out Player playerDraw4);
+                    case "CHANGECOLOR":
+                        Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
+                        cardFunctionality.currentColor = colorToChange;
+                        await SendDataToAllExcept(message, client);
                         return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);

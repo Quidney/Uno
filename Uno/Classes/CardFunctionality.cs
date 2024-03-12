@@ -41,6 +41,7 @@ namespace Uno.Classes
         }
         public bool ThrowCardInPile(Card card, Player player)
         {
+            if (form1.lastCardPlayed.Color != Card.ColorEnum.Black) currentColor = form1.lastCardPlayed.Color;
             bool success = false;
             switch (card.Type)
             {
@@ -83,6 +84,22 @@ namespace Uno.Classes
         {
             if (card.Color == currentColor || card.Action == form1.lastCardPlayed.Action)
             {
+                if (card.Action == Card.ActionEnum.DrawTwo)
+                {
+                    if (form1.currentPlayer.IsHost)
+                    {
+                        int indexOfPlayer = playerDatabase.players.IndexOf(player);
+                        if (indexOfPlayer + 1 == playerDatabase.players.Count)
+                        {
+                            DrawCardsFromDeck(playerDatabase.players[0], 2);
+                        }
+                        else
+                        {
+                            DrawCardsFromDeck(playerDatabase.players[indexOfPlayer + 1], 2);
+                        }
+                    }
+                }
+                
                 player.Inventory.Remove(card);
                 cardsInPile.Add(card);
                 return true;
@@ -110,7 +127,6 @@ namespace Uno.Classes
                         {
                             DrawCardsFromDeck(playerDatabase.players[indexOfPlayer + 1], 4);
                         }
-                        
                     }
                     
                     if (form1.currentPlayer == player)
@@ -164,11 +180,18 @@ namespace Uno.Classes
             colorSelectionPanel.BringToFront();
         }
 
-        public void ChangeGameColor(Card.ColorEnum color)
+        public async void ChangeGameColor(Card.ColorEnum color)
         {
             currentColor = color;
+            if (form1.currentPlayer.IsHost)
+            {
+                await serverHost.BroadcastData("CHANGECOLOR " + color.ToString());
+            }
+            else
+            {
+                await serverJoin.SendDataToServer("CHANGECOLOR " + color.ToString());
+            }
         }
-
         public void CloseColorSelector(object sender, EventArgs e)
         {
             colorSelectionPanel.Dispose();
