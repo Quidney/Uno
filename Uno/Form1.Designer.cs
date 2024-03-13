@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUno));
             this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
             this.pnlMultiplayer = new Uno.Classes.CustomTableLayoutPanel();
             this.lblUsername = new Uno.Classes.CustomLabel();
@@ -245,8 +245,6 @@
             // 
             // lblPortJoin
             // 
-            this.timerTurn.Interval = 1000;
-            this.timerTurn.Tick += new System.EventHandler(this.timerTurn_Tick);
             this.lblPortJoin.AssignedCard = null;
             this.lblPortJoin.AutoSize = true;
             this.pnlMultiplayer.SetColumnSpan(this.lblPortJoin, 5);

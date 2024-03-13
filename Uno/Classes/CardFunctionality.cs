@@ -19,7 +19,7 @@ namespace Uno.Classes
         private ServerHost serverHost;
         private ServerJoin serverJoin;
 
-        private Form1 form1;
+        private frmUno form1;
 
 
         public Card.ColorEnum currentColor;
@@ -32,7 +32,7 @@ namespace Uno.Classes
         }
 
 
-        public void SetReferences(Form1 form1, TableLayoutPanel pnlCards)
+        public void SetReferences(frmUno form1, TableLayoutPanel pnlCards)
         {
             this.form1 = form1;
             this.playerDatabase = form1.playerDatabase;
