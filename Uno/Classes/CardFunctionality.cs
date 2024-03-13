@@ -42,6 +42,8 @@ namespace Uno.Classes
         }
         public bool ThrowCardInPile(Card card, Player player)
         {
+            currentColor = form1.lastCardPlayed.Color;
+
             if (form1.currentPlayer.IsHost && player != form1.currentPlayer) canPlay = true;
 
             if (canPlay)
@@ -59,12 +61,17 @@ namespace Uno.Classes
                     form1.lastCardPlayed = card;
                     if (card.Color != Card.ColorEnum.Black)
                         currentColor = card.Color;
+
+                    canPlay = false;
+
+                    if (form1.isHost)
+                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip);
+
+                    if (form1.InvokeRequired)
+                        form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
+                    else
+                        form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
                 }
-
-                canPlay = false;
-
-                if (form1.isHost)
-                    PlayerTurn(player);
 
                 return success;
             }
@@ -78,6 +85,7 @@ namespace Uno.Classes
         {
             int playerIndex = playerDatabase.players.IndexOf(player);
             int next;
+
             if (!skip)
                 next = (playerIndex + 1) % playerDatabase.players.Count;
             else
@@ -85,29 +93,18 @@ namespace Uno.Classes
 
             Player turnPlayer = playerDatabase.players[next];
 
-            if (playerDatabase.players.IndexOf(player) + 1 >= playerDatabase.players.Count)
+            if (form1.currentPlayer != turnPlayer)
             {
-                if (playerDatabase.players[0] != form1.currentPlayer)
-                {
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                    serverHost.SendDataToSpecificClient("TURN", client);
-                }
-                else
-                {
-                    canPlay = true;
-                }
+                MessageBox.Show("Giving turn to: " + turnPlayer.Name, form1.currentPlayer.IsHost.ToString());
+                bool canGetClient = playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
+                MessageBox.Show(canGetClient.ToString());
+                serverHost.SendDataToSpecificClient("TURN", client);
             }
             else
             {
-                if (playerDatabase.players[playerDatabase.players.IndexOf(player) + 1] != form1.currentPlayer)
-                {
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                    serverHost.SendDataToSpecificClient("TURN", client);
-                }
-                else
-                {
-                    canPlay = true;
-                }
+                MessageBox.Show("Host's Turn!");
+                form1.Text += " YOUR TURN!!!";
+                canPlay = true;
             }
         }
 
@@ -128,8 +125,8 @@ namespace Uno.Classes
             {
                 return false;
             }
-
         }
+
         private bool ThrownActionCard(Card card, Player player)
         {
             if (card.Color == currentColor || card.Action == form1.lastCardPlayed.Action)
@@ -178,25 +175,20 @@ namespace Uno.Classes
                             DrawCardsFromDeck(playerDatabase.players[indexOfPlayer + 1], 4);
                         }
                     }
-
-                    if (form1.currentPlayer == player)
-                    {
-                        if (form1.InvokeRequired)
-                            form1.Invoke(new Action(OpenColorSelector));
-                        else
-                            OpenColorSelector();
-                    }
-
                     success = true;
                     break;
                 case Card.WildEnum.ChangeColor:
-                    if (form1.InvokeRequired)
-                        form1.Invoke(new Action(OpenColorSelector));
-                    else
-                        OpenColorSelector();
-                    OpenColorSelector();
                     success = true;
                     break;
+            }
+
+
+            if (form1.currentPlayer == player)
+            {
+                if (form1.InvokeRequired)
+                    form1.Invoke(new Action(OpenColorSelector));
+                else
+                    OpenColorSelector();
             }
 
             if (success)

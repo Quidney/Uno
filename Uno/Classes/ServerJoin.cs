@@ -208,6 +208,10 @@ namespace Uno.Classes
                         break;
                     case "TURN":
                         cardFunctionality.canPlay = true;
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
+                        else
+                            form1.Text += " YOUR TURN!!!";
                         break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");

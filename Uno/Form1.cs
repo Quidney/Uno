@@ -537,6 +537,7 @@ namespace Uno
             else
             {
                 cardFunctionality.canPlay = true;
+                Text += " YOUR TURN!!!";
             }
 
             for (int i = 0; i < 7; i++)
