@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
 
@@ -24,6 +23,8 @@ namespace Uno.Classes
 
         ColorSelectionPanel colorSelectionPanel;
 
+        public bool canPlay = false;
+
         public CardFunctionality()
         {
             cardsInPile = new List<Card>();
@@ -41,24 +42,73 @@ namespace Uno.Classes
         }
         public bool ThrowCardInPile(Card card, Player player)
         {
-            if (form1.lastCardPlayed.Color != Card.ColorEnum.Black) currentColor = form1.lastCardPlayed.Color;
-            bool success = false;
-            switch (card.Type)
-            {
-                case Card.TypeEnum.Number: success = ThrownNumberCard(card, player); break;
-                case Card.TypeEnum.Action: success = ThrownActionCard(card, player); break;
-                case Card.TypeEnum.Wild: success = ThrownWildCard(card, player); break;
-            }
+            if (form1.currentPlayer.IsHost && player != form1.currentPlayer) canPlay = true;
 
-            if (success)
+            if (canPlay)
             {
-                form1.lastCardPlayed = card;
-                if (card.Color != Card.ColorEnum.Black)
-                    currentColor = card.Color;
-            }
-                
+                bool success = false;
+                switch (card.Type)
+                {
+                    case Card.TypeEnum.Number: success = ThrownNumberCard(card, player); break;
+                    case Card.TypeEnum.Action: success = ThrownActionCard(card, player); break;
+                    case Card.TypeEnum.Wild: success = ThrownWildCard(card, player); break;
+                }
 
-            return success;
+                if (success)
+                {
+                    form1.lastCardPlayed = card;
+                    if (card.Color != Card.ColorEnum.Black)
+                        currentColor = card.Color;
+                }
+
+                canPlay = false;
+
+                if (form1.isHost)
+                    PlayerTurn(player);
+
+                return success;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void PlayerTurn(Player player, bool skip = false)
+        {
+            int playerIndex = playerDatabase.players.IndexOf(player);
+            int next;
+            if (!skip)
+                next = (playerIndex + 1) % playerDatabase.players.Count;
+            else
+                next = (playerIndex + 2) % playerDatabase.players.Count;
+
+            Player turnPlayer = playerDatabase.players[next];
+
+            if (playerDatabase.players.IndexOf(player) + 1 >= playerDatabase.players.Count)
+            {
+                if (playerDatabase.players[0] != form1.currentPlayer)
+                {
+                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                    serverHost.SendDataToSpecificClient("TURN", client);
+                }
+                else
+                {
+                    canPlay = true;
+                }
+            }
+            else
+            {
+                if (playerDatabase.players[playerDatabase.players.IndexOf(player) + 1] != form1.currentPlayer)
+                {
+                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
+                    serverHost.SendDataToSpecificClient("TURN", client);
+                }
+                else
+                {
+                    canPlay = true;
+                }
+            }
         }
 
         public void ThrowCardInPileForClient(Card card)
@@ -99,7 +149,7 @@ namespace Uno.Classes
                         }
                     }
                 }
-                
+
                 player.Inventory.Remove(card);
                 cardsInPile.Add(card);
                 return true;
@@ -128,7 +178,7 @@ namespace Uno.Classes
                             DrawCardsFromDeck(playerDatabase.players[indexOfPlayer + 1], 4);
                         }
                     }
-                    
+
                     if (form1.currentPlayer == player)
                     {
                         if (form1.InvokeRequired)
@@ -136,7 +186,7 @@ namespace Uno.Classes
                         else
                             OpenColorSelector();
                     }
-                  
+
                     success = true;
                     break;
                 case Card.WildEnum.ChangeColor:

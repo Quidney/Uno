@@ -206,6 +206,9 @@ namespace Uno.Classes
                         client?.Dispose();
                         form1.DisconnectedFromServerClient();
                         break;
+                    case "TURN":
+                        cardFunctionality.canPlay = true;
+                        break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");
                         break;

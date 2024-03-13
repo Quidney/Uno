@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
@@ -321,23 +322,48 @@ namespace Uno
 
         public void AddPlayerToGUI(int playerIndex, Player player)
         {
+            if (this.InvokeRequired)
+                this.Invoke(new Action(() => playerLabels[playerIndex].Text = player.Name));
+                else
             playerLabels[playerIndex].Text = player.Name;
         }
 
         public void RemovePlayerFromGUI(int playerIndex)
         {
-            playerLabels[playerIndex].Text = "Waiting...";
-
-            int lastEmptyIndex = playerIndex;
-            foreach (CustomLabel label in playerLabels)
+            if (this.InvokeRequired)
             {
-                if (label.Text != "Waiting...")
-                    if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                this.Invoke(new Action(() =>
+                {
+                    playerLabels[playerIndex].Text = "Waiting...";
+
+                    int lastEmptyIndex = playerIndex;
+                    foreach (CustomLabel label in playerLabels)
                     {
-                        playerLabels[lastEmptyIndex].Text = label.Text;
-                        label.Text = "Waiting...";
-                        lastEmptyIndex++;
+                        if (label.Text != "Waiting...")
+                            if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                            {
+                                playerLabels[lastEmptyIndex].Text = label.Text;
+                                label.Text = "Waiting...";
+                                lastEmptyIndex++;
+                            }
                     }
+                }));
+            }
+            else
+            {
+                playerLabels[playerIndex].Text = "Waiting...";
+
+                int lastEmptyIndex = playerIndex;
+                foreach (CustomLabel label in playerLabels)
+                {
+                    if (label.Text != "Waiting...")
+                        if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                        {
+                            playerLabels[lastEmptyIndex].Text = label.Text;
+                            label.Text = "Waiting...";
+                            lastEmptyIndex++;
+                        }
+                }
             }
         }
 
@@ -400,7 +426,6 @@ namespace Uno
 
         public async void DisconnectedFromServerHost()
         {
-
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -484,16 +509,35 @@ namespace Uno
 
         public void StartGameButtonState(bool state)
         {
-            btnStartGame.Enabled = state;
+            if (this.InvokeRequired)
+                this.Invoke(new Action(() => { btnStartGame.Enabled = state; }));
+            else
+                btnStartGame.Enabled = state;
+
         }
         private async void StartGame()
         {
             await deck.Shuffle();
 
-            lastCardPlayed = deck.playingDeck.LastOrDefault();
+            do
+            {
+                lastCardPlayed = deck.playingDeck.LastOrDefault();
+                deck.playingDeck.Remove(lastCardPlayed);
+            } while (lastCardPlayed.Color == Card.ColorEnum.Black);
+           
             cardFunctionality.currentColor = lastCardPlayed.Color;
-            deck.playingDeck.Remove(lastCardPlayed);
             await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
+
+            int startingPlayer = random.Next(0, playerDatabase.players.Count);
+            if (playerDatabase.players[startingPlayer] != currentPlayer) 
+            {
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[startingPlayer], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+            }
+            else
+            {
+                cardFunctionality.canPlay = true;
+            }
 
             for (int i = 0; i < 7; i++)
             {

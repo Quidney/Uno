@@ -309,14 +309,26 @@ namespace Uno.Classes
 
         public async void SendDataToSpecificClient(string message, TcpClient client)
         {
-            NetworkStream clientStream = client?.GetStream();
+            try
+            {
+                if (client != null)
+                {
+                    NetworkStream clientStream = client.GetStream();
 
-            string delimiter = "\n";
+                    string delimiter = "\n";
 
-            string messageWithDelimiter = message + delimiter;
+                    string messageWithDelimiter = message + delimiter;
 
-            byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
-            await clientStream?.WriteAsync(buffer, 0, buffer.Length);
+                    byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                    await clientStream?.WriteAsync(buffer, 0, buffer.Length);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "SendDataToSpecificClient - ServerHost");
+            }
+          
         }
 
         public async Task SendDataToAllExcept(string message, TcpClient clientInit)
