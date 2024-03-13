@@ -230,7 +230,7 @@ namespace Uno.Classes
                             {
                                 if (playingPlayer.Inventory.Contains(playedCard))
                                 {
-                                    if (await cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
+                                    if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
                                     {
                                        await SendDataToAllExcept($"PLAY {playingPlayer.Name} {playedCardID}", client);
                                         if (form1.InvokeRequired)
@@ -260,9 +260,10 @@ namespace Uno.Classes
                         }
 
                         return (true, false);
-                    case "DRAW4":
-                        playerDatabase.NamePlayerDictionary.TryGetValue(message.Split(' ')[1], out Player playerDraw4);
-                        cardFunctionality.Draw4(playerDraw4);
+                    case "CHANGECOLOR":
+                        Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
+                        cardFunctionality.currentColor = colorToChange;
+                        await SendDataToAllExcept(message, client);
                         return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);
@@ -308,14 +309,26 @@ namespace Uno.Classes
 
         public async void SendDataToSpecificClient(string message, TcpClient client)
         {
-            NetworkStream clientStream = client?.GetStream();
+            try
+            {
+                if (client != null)
+                {
+                    NetworkStream clientStream = client.GetStream();
 
-            string delimiter = "\n";
+                    string delimiter = "\n";
 
-            string messageWithDelimiter = message + delimiter;
+                    string messageWithDelimiter = message + delimiter;
 
-            byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
-            await clientStream?.WriteAsync(buffer, 0, buffer.Length);
+                    byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                    await clientStream?.WriteAsync(buffer, 0, buffer.Length);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "SendDataToSpecificClient - ServerHost");
+            }
+          
         }
 
         public async Task SendDataToAllExcept(string message, TcpClient clientInit)

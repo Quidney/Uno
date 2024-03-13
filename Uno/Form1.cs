@@ -5,10 +5,8 @@ using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
@@ -18,6 +16,8 @@ namespace Uno
 {
     public partial class frmUno : Form
     {
+        Random random = new Random();
+
         public Player currentPlayer;
         public bool joinedOrHosted = false;
         public bool isHost = false;
@@ -89,6 +89,13 @@ namespace Uno
 
         private void HostGame_Click(object sender, EventArgs e)
         {
+            #if DEBUG
+            if (string.IsNullOrEmpty(txtUsername.Text))
+            {
+                txtUsername.Text = "User" + random.Next(0, 1000);
+            }
+            if (string.IsNullOrEmpty(txtPortHost.Text)) txtPortHost.Text = "1224";
+            #endif
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
                 if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
@@ -114,6 +121,14 @@ namespace Uno
         }
         private void JoinGame_Click(object sender, EventArgs e)
         {
+            #if DEBUG
+            if (string.IsNullOrEmpty(txtUsername.Text))
+            {
+                txtUsername.Text = "User" + random.Next(0, 1000);
+            }
+            if (string.IsNullOrEmpty(txtIPAddressJoin.Text)) txtIPAddressJoin.Text = "127.0.0.1";
+            if (string.IsNullOrEmpty(txtPortJoin.Text)) txtPortJoin.Text = "1224";
+            #endif
             if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
                 string username = txtUsername.Text.Trim();
@@ -207,8 +222,8 @@ namespace Uno
                 shuttingDown = false;
             }
         }
-        CustomLabel[] playerLabels = new CustomLabel[4];
-        CustomPictureBox[] playerPictures = new CustomPictureBox[4];
+        readonly CustomLabel[] playerLabels = new CustomLabel[4];
+        readonly CustomPictureBox[] playerPictures = new CustomPictureBox[4];
         private void InitGUIForPlayers()
         {
             Image userIcon = Resources.UserIcon64px;
@@ -307,23 +322,48 @@ namespace Uno
 
         public void AddPlayerToGUI(int playerIndex, Player player)
         {
+            if (this.InvokeRequired)
+                this.Invoke(new Action(() => playerLabels[playerIndex].Text = player.Name));
+                else
             playerLabels[playerIndex].Text = player.Name;
         }
 
         public void RemovePlayerFromGUI(int playerIndex)
         {
-            playerLabels[playerIndex].Text = "Waiting...";
-
-            int lastEmptyIndex = playerIndex;
-            foreach (CustomLabel label in playerLabels)
+            if (this.InvokeRequired)
             {
-                if (label.Text != "Waiting...")
-                    if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                this.Invoke(new Action(() =>
+                {
+                    playerLabels[playerIndex].Text = "Waiting...";
+
+                    int lastEmptyIndex = playerIndex;
+                    foreach (CustomLabel label in playerLabels)
                     {
-                        playerLabels[lastEmptyIndex].Text = label.Text;
-                        label.Text = "Waiting...";
-                        lastEmptyIndex++;
+                        if (label.Text != "Waiting...")
+                            if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                            {
+                                playerLabels[lastEmptyIndex].Text = label.Text;
+                                label.Text = "Waiting...";
+                                lastEmptyIndex++;
+                            }
                     }
+                }));
+            }
+            else
+            {
+                playerLabels[playerIndex].Text = "Waiting...";
+
+                int lastEmptyIndex = playerIndex;
+                foreach (CustomLabel label in playerLabels)
+                {
+                    if (label.Text != "Waiting...")
+                        if (Array.IndexOf(playerLabels, label) > lastEmptyIndex)
+                        {
+                            playerLabels[lastEmptyIndex].Text = label.Text;
+                            label.Text = "Waiting...";
+                            lastEmptyIndex++;
+                        }
+                }
             }
         }
 
@@ -386,7 +426,6 @@ namespace Uno
 
         public async void DisconnectedFromServerHost()
         {
-
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -470,15 +509,35 @@ namespace Uno
 
         public void StartGameButtonState(bool state)
         {
-            btnStartGame.Enabled = state;
+            if (this.InvokeRequired)
+                this.Invoke(new Action(() => { btnStartGame.Enabled = state; }));
+            else
+                btnStartGame.Enabled = state;
+
         }
         private async void StartGame()
         {
             await deck.Shuffle();
 
-            lastCardPlayed = deck.playingDeck.LastOrDefault();
-            deck.playingDeck.Remove(lastCardPlayed);
+            do
+            {
+                lastCardPlayed = deck.playingDeck.LastOrDefault();
+                deck.playingDeck.Remove(lastCardPlayed);
+            } while (lastCardPlayed.Color == Card.ColorEnum.Black);
+           
+            cardFunctionality.currentColor = lastCardPlayed.Color;
             await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
+
+            int startingPlayer = random.Next(0, playerDatabase.players.Count);
+            if (playerDatabase.players[startingPlayer] != currentPlayer) 
+            {
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[startingPlayer], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+            }
+            else
+            {
+                cardFunctionality.canPlay = true;
+            }
 
             for (int i = 0; i < 7; i++)
             {
@@ -520,10 +579,8 @@ namespace Uno
         CustomLabel cardOnTopPile;
         public void SetInventoryGUI()
         {
-            if (pnlInventory != null)
-                pnlInventory.Dispose();
-            if (cardOnTopPile != null)
-                cardOnTopPile.Dispose();
+            pnlInventory?.Dispose();
+            cardOnTopPile?.Dispose();
 
             pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
             pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
@@ -551,7 +608,7 @@ namespace Uno
             if (lastCardPlayed.ToColor() == Color.Black)
                 cardOnTopPile.ForeColor = Color.White;
 
-                List<Card> inventory = currentPlayer.Inventory;
+            List<Card> inventory = currentPlayer.Inventory;
             pnlInventory.ColumnCount = 1;
             pnlInventory.RowCount = 1;
             for (int i = 0; i < inventory.Count; i++)
@@ -566,7 +623,7 @@ namespace Uno
                     string message = $"PLAY {currentPlayer.Name} {cardID}";
                     deck.idToCard.TryGetValue(cardID, out Card cardCard);
 
-                    if (await cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
+                    if (cardFunctionality.ThrowCardInPile(cardCard, currentPlayer))
                     {
                         if (currentPlayer.IsHost)
                         {

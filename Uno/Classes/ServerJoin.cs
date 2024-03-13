@@ -188,10 +188,15 @@ namespace Uno.Classes
                     case "PILE":
                         deck.idToCard.TryGetValue(Convert.ToInt32(message.Split(' ')[1]), out Card cardOnPile);
                         form1.lastCardPlayed = cardOnPile;
+                        cardFunctionality.currentColor = form1.lastCardPlayed.Color;
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(form1.SetInventoryGUI));
                         else
                             form1.SetInventoryGUI();
+                        break;
+                    case "CHANGECOLOR":
+                        Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
+                        cardFunctionality.currentColor = colorToChange;
                         break;
                     case "KICK":
                         form1.AppendLogBox("Kicked from the server.");
@@ -200,6 +205,9 @@ namespace Uno.Classes
                         client?.Close();
                         client?.Dispose();
                         form1.DisconnectedFromServerClient();
+                        break;
+                    case "TURN":
+                        cardFunctionality.canPlay = true;
                         break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");
