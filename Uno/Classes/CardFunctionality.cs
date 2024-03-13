@@ -25,6 +25,8 @@ namespace Uno.Classes
 
         public bool canPlay = false;
 
+        public CustomLabel currentColorLabel;
+
         public CardFunctionality()
         {
             cardsInPile = new List<Card>();
@@ -39,11 +41,15 @@ namespace Uno.Classes
             this.deck = form1.deck;
             this.serverHost = form1.serverHost;
             this.serverJoin = form1.serverJoin;
+
+            currentColorLabel = new CustomLabel()
+            {
+                Parent = pnlCards,
+                Text = string.Empty,
+            };
         }
         public bool ThrowCardInPile(Card card, Player player)
         {
-            currentColor = form1.lastCardPlayed.Color;
-
             if (form1.currentPlayer.IsHost && player != form1.currentPlayer) canPlay = true;
 
             if (canPlay)
@@ -71,6 +77,8 @@ namespace Uno.Classes
                         form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
                     else
                         form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+
+                    currentColorLabel.Text = currentColor.ToString();
                 }
 
                 return success;
@@ -111,6 +119,7 @@ namespace Uno.Classes
         public void ThrowCardInPileForClient(Card card)
         {
             form1.lastCardPlayed = card;
+            currentColor = card.Color;
         }
 
         private bool ThrownNumberCard(Card card, Player player)
@@ -218,8 +227,12 @@ namespace Uno.Classes
         public void OpenColorSelector()
         {
             colorSelectionPanel = new ColorSelectionPanel(form1);
-            colorSelectionPanel.Show();
-            colorSelectionPanel.BringToFront();
+            DialogResult colorDialog = colorSelectionPanel.ShowDialog();
+
+            colorSelectionPanel.Dispose();
+
+            if (colorDialog != DialogResult.OK)
+                OpenColorSelector();
         }
 
         public async void ChangeGameColor(Card.ColorEnum color)
@@ -233,10 +246,6 @@ namespace Uno.Classes
             {
                 await serverJoin.SendDataToServer("CHANGECOLOR " + color.ToString());
             }
-        }
-        public void CloseColorSelector(object sender, EventArgs e)
-        {
-            colorSelectionPanel.Dispose();
         }
     }
 }

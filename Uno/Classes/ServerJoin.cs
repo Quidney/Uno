@@ -197,6 +197,11 @@ namespace Uno.Classes
                     case "CHANGECOLOR":
                         Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
                         cardFunctionality.currentColor = colorToChange;
+                        if (form1.InvokeRequired)
+                            form1.Invoke((Action)(() => cardFunctionality.currentColorLabel.Text = colorToChange.ToString()));
+                        else
+                            cardFunctionality.currentColorLabel.Text = colorToChange.ToString();
+
                         break;
                     case "KICK":
                         form1.AppendLogBox("Kicked from the server.");
