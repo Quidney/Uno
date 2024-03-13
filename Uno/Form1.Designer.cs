@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUno));
+            this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
             this.pnlMultiplayer = new Uno.Classes.CustomTableLayoutPanel();
             this.lblUsername = new Uno.Classes.CustomLabel();
             this.txtUsername = new Uno.Classes.CustomTextBox();
