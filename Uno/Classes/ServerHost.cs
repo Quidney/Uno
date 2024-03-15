@@ -265,6 +265,11 @@ namespace Uno.Classes
                         cardFunctionality.currentColor = colorToChange;
                         await SendDataToAllExcept(message, client);
                         return (true, false);
+                    case "DECK":
+                        string playerNameDeck = message.Split(' ')[1];
+                        playerDatabase.NamePlayerDictionary.TryGetValue(playerNameDeck, out Player player);
+                        cardFunctionality.DrawCardsFromDeck(player, 1);
+                        return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);
                         return (true, false);

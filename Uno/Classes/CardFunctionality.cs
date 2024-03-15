@@ -71,7 +71,7 @@ namespace Uno.Classes
                     canPlay = false;
 
                     if (form1.isHost)
-                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip);
+                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
 
                     if (form1.InvokeRequired)
                         form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
@@ -89,10 +89,13 @@ namespace Uno.Classes
             }
         }
 
-        public void PlayerTurn(Player player, bool skip = false)
+        public void PlayerTurn(Player player, bool skip, bool reverse)
         {
             int playerIndex = playerDatabase.players.IndexOf(player);
             int next;
+
+            if (reverse)
+                playerDatabase.players.Reverse();
 
             if (!skip)
                 next = (playerIndex + 1) % playerDatabase.players.Count;

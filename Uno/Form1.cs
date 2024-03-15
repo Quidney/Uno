@@ -578,10 +578,12 @@ namespace Uno
 
         CustomTableLayoutPanel pnlInventory;
         CustomLabel cardOnTopPile;
+        CustomPictureBox deckToDrawFrom;
         public void SetInventoryGUI()
         {
             pnlInventory?.Dispose();
             cardOnTopPile?.Dispose();
+            deckToDrawFrom?.Dispose();
 
             pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
             pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
@@ -594,6 +596,12 @@ namespace Uno
             pnlMain.SetColumnSpan(cardOnTopPile, 2);
             pnlMain.SetRowSpan(cardOnTopPile, 2);
             pnlMain.SetCellPosition(cardOnTopPile, new TableLayoutPanelCellPosition(11, 10));
+
+            deckToDrawFrom = new CustomPictureBox() { Dock = DockStyle.Fill, Parent = pnlMain };
+            deckToDrawFrom.SizeMode = PictureBoxSizeMode.Zoom;
+            pnlMain.SetColumnSpan(deckToDrawFrom, 2);
+            pnlMain.SetRowSpan(deckToDrawFrom, 2);
+            pnlMain.SetCellPosition(deckToDrawFrom, new TableLayoutPanelCellPosition(15, 10));
 
             UpdateInventoryGUI();
         }
@@ -608,6 +616,26 @@ namespace Uno
             cardOnTopPile.BackColor = lastCardPlayed.ToColor();
             if (lastCardPlayed.ToColor() == Color.Black)
                 cardOnTopPile.ForeColor = Color.White;
+
+            if (deck.playingDeck.Count > 0)
+                deckToDrawFrom.Image = Resources.UNO_Logo_svg;
+            else
+                deckToDrawFrom.Image = Resources.Terminal;
+
+            deckToDrawFrom.Click += async (sender, e) =>
+            {
+                string message = $"DECK {currentPlayer.Name}";
+
+                if (!currentPlayer.IsHost)
+                {
+                    await serverJoin.SendDataToServer(message);
+                }
+                else
+                {
+                    cardFunctionality.DrawCardsFromDeck(currentPlayer, 1);
+                }
+                SetInventoryGUI();
+            };
 
             List<Card> inventory = currentPlayer.Inventory;
             pnlInventory.ColumnCount = 1;

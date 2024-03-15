@@ -144,7 +144,10 @@ namespace Uno.Classes
                         string senderString = message.Split(' ')[1].Trim();
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
-                        chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
+                        if (chatBox.InvokeRequired)
+                            chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString); }));
+                        else
+                            chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
                         break;
 
                     case "JOIN":
@@ -217,6 +220,9 @@ namespace Uno.Classes
                             form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
                         else
                             form1.Text += " YOUR TURN!!!";
+                        break;
+                    case "CHEATS":
+                        chatBox.AppendChatBox("THE ADMIN USED COMMANDS TO LOOK AT A PLAYERS CARDS!", Color.Red, "SERVER");
                         break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");
