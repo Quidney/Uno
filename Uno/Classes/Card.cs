@@ -10,6 +10,7 @@ namespace Uno.Classes
         public ColorEnum Color { get; set; }
         public int Number { get; set; } = -1;
         public int ID { get; set; }
+        public Image Image { get; set; }
 
 
         //Normal Card Constructor

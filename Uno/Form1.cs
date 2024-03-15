@@ -614,11 +614,10 @@ namespace Uno
             for (int i = 0; i < inventory.Count; i++)
             {
                 pnlInventory.ColumnCount++;
-                CustomLabel card = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $"{inventory[i]}", BackColor = inventory[i].ToColor(), Tag = inventory[i].ID };
-                if (card.BackColor == Color.Black)
-                    card.ForeColor = Color.White;
-                int cardID = (int)card.Tag;
-                card.Click += async (sender, e) =>
+                CustomLabel cardlabel = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $" ", Image = inventory[i].Image, Tag = inventory[i].ID };
+
+                int cardID = (int)cardlabel.Tag;
+                cardlabel.Click += async (sender, e) =>
                 {
                     string message = $"PLAY {currentPlayer.Name} {cardID}";
                     deck.idToCard.TryGetValue(cardID, out Card cardCard);
@@ -636,7 +635,6 @@ namespace Uno
                     }
                     SetInventoryGUI();
                 };
-                pnlInventory.SetColumn(card, i);
             }
             pnlInventory.ColumnCount--;
 
