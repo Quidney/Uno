@@ -91,11 +91,11 @@ namespace Uno.Classes
 
         public void PlayerTurn(Player player, bool skip, bool reverse)
         {
-            int playerIndex = playerDatabase.players.IndexOf(player);
-            int next;
-
             if (reverse)
                 playerDatabase.players.Reverse();
+
+            int playerIndex = playerDatabase.players.IndexOf(player);
+            int next;
 
             if (!skip)
                 next = (playerIndex + 1) % playerDatabase.players.Count;
@@ -119,6 +119,7 @@ namespace Uno.Classes
         public void ThrowCardInPileForClient(Card card)
         {
             form1.lastCardPlayed = card;
+            if (card.Color != Card.ColorEnum.Black)
             currentColor = card.Color;
         }
 

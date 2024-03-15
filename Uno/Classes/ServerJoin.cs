@@ -153,17 +153,28 @@ namespace Uno.Classes
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
-                        form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageJOIN + " has joined the server!"); }));
+                        else
+                            form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
                         break;
 
                     case "ERR":
                         int skipSubstringERR = command.Length + 1;
                         string restOfMessageERR = message.Substring(skipSubstringERR);
-                        form1.AppendLogBox(restOfMessageERR);
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageERR); }));
+                        else
+                            form1.AppendLogBox(restOfMessageERR);
+
                         break;
 
                     case "WELCOME":
-                        form1.AppendLogBox("Connected to server");
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox("Connected to server"); }));
+                        else
+                            form1.AppendLogBox("Connected to server");
+
                         break;
 
                     case "DRAW":
@@ -185,7 +196,7 @@ namespace Uno.Classes
                         cardFunctionality.ThrowCardInPileForClient(card);
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(form1.SetInventoryGUI));
-                        else 
+                        else
                             form1.SetInventoryGUI();
                         break;
                     case "PILE":
@@ -207,12 +218,23 @@ namespace Uno.Classes
 
                         break;
                     case "KICK":
-                        form1.AppendLogBox("Kicked from the server.");
+
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox("Kicked from the server."); }));
+                        else
+                            form1.AppendLogBox("Kicked from the server.");
                         stream?.Close();
                         stream?.Dispose();
                         client?.Close();
                         client?.Dispose();
-                        form1.DisconnectedFromServerClient();
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() =>
+                            {
+                                form1.DisconnectedFromServerClient();
+                            }));
+                        else
+                            form1.DisconnectedFromServerClient();
+
                         break;
                     case "TURN":
                         cardFunctionality.canPlay = true;
