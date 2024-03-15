@@ -25,6 +25,8 @@ namespace Uno.Classes
 
         public bool canPlay = false;
 
+        public CustomLabel currentColorLabel;
+
         public CardFunctionality()
         {
             cardsInPile = new List<Card>();
@@ -39,6 +41,12 @@ namespace Uno.Classes
             this.deck = form1.deck;
             this.serverHost = form1.serverHost;
             this.serverJoin = form1.serverJoin;
+
+            currentColorLabel = new CustomLabel()
+            {
+                Parent = pnlCards,
+                Text = string.Empty,
+            };
         }
         public bool ThrowCardInPile(Card card, Player player)
         {
@@ -59,12 +67,19 @@ namespace Uno.Classes
                     form1.lastCardPlayed = card;
                     if (card.Color != Card.ColorEnum.Black)
                         currentColor = card.Color;
+
+                    canPlay = false;
+
+                    if (form1.isHost)
+                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
+
+                    if (form1.InvokeRequired)
+                        form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
+                    else
+                        form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+
+                    currentColorLabel.Text = currentColor.ToString();
                 }
-
-                canPlay = false;
-
-                if (form1.isHost)
-                    PlayerTurn(player);
 
                 return success;
             }
@@ -74,10 +89,14 @@ namespace Uno.Classes
             }
         }
 
-        public void PlayerTurn(Player player, bool skip = false)
+        public void PlayerTurn(Player player, bool skip, bool reverse)
         {
+            if (reverse)
+                playerDatabase.players.Reverse();
+
             int playerIndex = playerDatabase.players.IndexOf(player);
             int next;
+
             if (!skip)
                 next = (playerIndex + 1) % playerDatabase.players.Count;
             else
@@ -85,35 +104,23 @@ namespace Uno.Classes
 
             Player turnPlayer = playerDatabase.players[next];
 
-            if (playerDatabase.players.IndexOf(player) + 1 >= playerDatabase.players.Count)
+            if (form1.currentPlayer != turnPlayer)
             {
-                if (playerDatabase.players[0] != form1.currentPlayer)
-                {
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                    serverHost.SendDataToSpecificClient("TURN", client);
-                }
-                else
-                {
-                    canPlay = true;
-                }
+                playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
             }
             else
-            {
-                if (playerDatabase.players[playerDatabase.players.IndexOf(player) + 1] != form1.currentPlayer)
-                {
-                    playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
-                    serverHost.SendDataToSpecificClient("TURN", client);
-                }
-                else
-                {
-                    canPlay = true;
-                }
+            { 
+                form1.Text += " YOUR TURN!!!";
+                canPlay = true;
             }
         }
 
         public void ThrowCardInPileForClient(Card card)
         {
             form1.lastCardPlayed = card;
+            if (card.Color != Card.ColorEnum.Black)
+            currentColor = card.Color;
         }
 
         private bool ThrownNumberCard(Card card, Player player)
@@ -128,8 +135,8 @@ namespace Uno.Classes
             {
                 return false;
             }
-
         }
+
         private bool ThrownActionCard(Card card, Player player)
         {
             if (card.Color == currentColor || card.Action == form1.lastCardPlayed.Action)
@@ -178,25 +185,20 @@ namespace Uno.Classes
                             DrawCardsFromDeck(playerDatabase.players[indexOfPlayer + 1], 4);
                         }
                     }
-
-                    if (form1.currentPlayer == player)
-                    {
-                        if (form1.InvokeRequired)
-                            form1.Invoke(new Action(OpenColorSelector));
-                        else
-                            OpenColorSelector();
-                    }
-
                     success = true;
                     break;
                 case Card.WildEnum.ChangeColor:
-                    if (form1.InvokeRequired)
-                        form1.Invoke(new Action(OpenColorSelector));
-                    else
-                        OpenColorSelector();
-                    OpenColorSelector();
                     success = true;
                     break;
+            }
+
+
+            if (form1.currentPlayer == player)
+            {
+                if (form1.InvokeRequired)
+                    form1.Invoke(new Action(OpenColorSelector));
+                else
+                    OpenColorSelector();
             }
 
             if (success)
@@ -226,8 +228,12 @@ namespace Uno.Classes
         public void OpenColorSelector()
         {
             colorSelectionPanel = new ColorSelectionPanel(form1);
-            colorSelectionPanel.Show();
-            colorSelectionPanel.BringToFront();
+            DialogResult colorDialog = colorSelectionPanel.ShowDialog();
+
+            colorSelectionPanel.Dispose();
+
+            if (colorDialog != DialogResult.OK)
+                OpenColorSelector();
         }
 
         public async void ChangeGameColor(Card.ColorEnum color)
@@ -241,10 +247,6 @@ namespace Uno.Classes
             {
                 await serverJoin.SendDataToServer("CHANGECOLOR " + color.ToString());
             }
-        }
-        public void CloseColorSelector(object sender, EventArgs e)
-        {
-            colorSelectionPanel.Dispose();
         }
     }
 }

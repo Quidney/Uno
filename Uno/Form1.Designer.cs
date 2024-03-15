@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUno));
-            this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
             this.pnlMultiplayer = new Uno.Classes.CustomTableLayoutPanel();
             this.lblUsername = new Uno.Classes.CustomLabel();
             this.txtUsername = new Uno.Classes.CustomTextBox();
@@ -354,7 +353,7 @@
             this.pictureBox1.Name = "pictureBox1";
             this.pnlMultiplayer.SetRowSpan(this.pictureBox1, 4);
             this.pictureBox1.Size = new System.Drawing.Size(237, 144);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
             // 
