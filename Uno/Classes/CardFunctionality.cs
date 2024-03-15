@@ -103,14 +103,11 @@ namespace Uno.Classes
 
             if (form1.currentPlayer != turnPlayer)
             {
-                MessageBox.Show("Giving turn to: " + turnPlayer.Name, form1.currentPlayer.IsHost.ToString());
-                bool canGetClient = playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
-                MessageBox.Show(canGetClient.ToString());
+                playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
             }
             else
-            {
-                MessageBox.Show("Host's Turn!");
+            { 
                 form1.Text += " YOUR TURN!!!";
                 canPlay = true;
             }
