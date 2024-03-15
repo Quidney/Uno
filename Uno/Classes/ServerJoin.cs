@@ -144,23 +144,37 @@ namespace Uno.Classes
                         string senderString = message.Split(' ')[1].Trim();
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
-                        chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
+                        if (chatBox.InvokeRequired)
+                            chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString); }));
+                        else
+                            chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderString);
                         break;
 
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
-                        form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageJOIN + " has joined the server!"); }));
+                        else
+                            form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
                         break;
 
                     case "ERR":
                         int skipSubstringERR = command.Length + 1;
                         string restOfMessageERR = message.Substring(skipSubstringERR);
-                        form1.AppendLogBox(restOfMessageERR);
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageERR); }));
+                        else
+                            form1.AppendLogBox(restOfMessageERR);
+
                         break;
 
                     case "WELCOME":
-                        form1.AppendLogBox("Connected to server");
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox("Connected to server"); }));
+                        else
+                            form1.AppendLogBox("Connected to server");
+
                         break;
 
                     case "DRAW":
@@ -182,7 +196,7 @@ namespace Uno.Classes
                         cardFunctionality.ThrowCardInPileForClient(card);
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(form1.SetInventoryGUI));
-                        else 
+                        else
                             form1.SetInventoryGUI();
                         break;
                     case "PILE":
@@ -197,17 +211,40 @@ namespace Uno.Classes
                     case "CHANGECOLOR":
                         Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
                         cardFunctionality.currentColor = colorToChange;
+                        if (form1.InvokeRequired)
+                            form1.Invoke((Action)(() => cardFunctionality.currentColorLabel.Text = colorToChange.ToString()));
+                        else
+                            cardFunctionality.currentColorLabel.Text = colorToChange.ToString();
+
                         break;
                     case "KICK":
-                        form1.AppendLogBox("Kicked from the server.");
+
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox("Kicked from the server."); }));
+                        else
+                            form1.AppendLogBox("Kicked from the server.");
                         stream?.Close();
                         stream?.Dispose();
                         client?.Close();
                         client?.Dispose();
-                        form1.DisconnectedFromServerClient();
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() =>
+                            {
+                                form1.DisconnectedFromServerClient();
+                            }));
+                        else
+                            form1.DisconnectedFromServerClient();
+
                         break;
                     case "TURN":
                         cardFunctionality.canPlay = true;
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
+                        else
+                            form1.Text += " YOUR TURN!!!";
+                        break;
+                    case "CHEATS":
+                        chatBox.AppendChatBox("THE ADMIN USED COMMANDS TO LOOK AT A PLAYERS CARDS!", Color.Red, "SERVER");
                         break;
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");

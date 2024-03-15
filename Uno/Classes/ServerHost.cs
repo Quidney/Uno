@@ -232,7 +232,7 @@ namespace Uno.Classes
                                 {
                                     if (cardFunctionality.ThrowCardInPile(playedCard, playingPlayer))
                                     {
-                                       await SendDataToAllExcept($"PLAY {playingPlayer.Name} {playedCardID}", client);
+                                        await SendDataToAllExcept($"PLAY {playingPlayer.Name} {playedCardID}", client);
                                         if (form1.InvokeRequired)
                                             form1.Invoke(new Action(form1.SetInventoryGUI));
                                         else
@@ -265,6 +265,11 @@ namespace Uno.Classes
                         cardFunctionality.currentColor = colorToChange;
                         await SendDataToAllExcept(message, client);
                         return (true, false);
+                    case "DECK":
+                        string playerNameDeck = message.Split(' ')[1];
+                        playerDatabase.NamePlayerDictionary.TryGetValue(playerNameDeck, out Player player);
+                        cardFunctionality.DrawCardsFromDeck(player, 1);
+                        return (true, false);
                     default:
                         form1.AppendLogBox("Unknown Message Received: " + message + " by: " + client);
                         return (true, false);
@@ -272,7 +277,7 @@ namespace Uno.Classes
             }
             catch (ArgumentException argEx)
             {
-                if (argEx.Message.Contains ("same key"))
+                if (argEx.Message.Contains("same key"))
                 {
                     form1.AppendLogBox($"A user tried to connect with an already existing name. ({argEx.Message})");
                     SendDataToSpecificClient("ERR A user with the same name aleady exists", client);
@@ -282,7 +287,7 @@ namespace Uno.Classes
                 {
                     throw;
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -311,24 +316,19 @@ namespace Uno.Classes
         {
             try
             {
-                if (client != null)
-                {
-                    NetworkStream clientStream = client.GetStream();
+                NetworkStream clientStream = client.GetStream();
 
-                    string delimiter = "\n";
+                string delimiter = "\n";
 
-                    string messageWithDelimiter = message + delimiter;
+                string messageWithDelimiter = message + delimiter;
 
-                    byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
-                    await clientStream?.WriteAsync(buffer, 0, buffer.Length);
-                }
-                
+                byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                await clientStream?.WriteAsync(buffer, 0, buffer.Length);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "\n" + ex.StackTrace, "SendDataToSpecificClient - ServerHost");
             }
-          
         }
 
         public async Task SendDataToAllExcept(string message, TcpClient clientInit)

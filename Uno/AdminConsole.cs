@@ -45,7 +45,7 @@ namespace Uno
             this.deck = form1.deck;
         }
 
-        private void btnExecuteCommand_Click(object sender, EventArgs e)
+        private async void btnExecuteCommand_Click(object sender, EventArgs e)
         {
             string command = txtCommandInput.Text;
             AppendCommandBox(command, true);
@@ -118,6 +118,7 @@ namespace Uno
                         playerCards += $"ID: {card.ID}, Card: {card.Color} {card} || ";
                     }
                     AppendCommandBox(playerCards);
+                    await serverHost.BroadcastData("CHEATS");
                 }
                 else
                 {
