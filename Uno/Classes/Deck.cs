@@ -9,7 +9,7 @@ namespace Uno.Class
 {
     public class Deck
     {
-        public List<Card> cardsDeckList;
+        private List<Card> cardsDeckList;
         public List<Card> playingDeck;
         public Dictionary<int, Card> idToCard;
 

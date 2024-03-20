@@ -73,10 +73,32 @@ namespace Uno.Classes
                     if (form1.isHost)
                         PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
 
-                    if (form1.InvokeRequired)
-                        form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
-                    else
-                        form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+                    if (form1.currentPlayer == player)
+                    {
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
+                        else
+                            form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+                    }
+
+                    if (form1.currentPlayer.IsHost)
+                    {
+                        if (player.Inventory.Count == 0)
+                            if (!player.SaidUno)
+                            {
+                                for (int i = 0; i < 4; i++)
+                                    DrawCardsFromDeck(player, 1);
+                            }
+                            else
+                            {
+                                MessageBox.Show(player.ToString() + " Won!!");
+                            }
+                        else if (player.Inventory.Count != 1)
+                        {
+                            player.SaidUno = false;
+                        }
+                    }
+                   
 
                     currentColorLabel.Text = currentColor.ToString();
                 }
@@ -110,7 +132,7 @@ namespace Uno.Classes
                 serverHost.SendDataToSpecificClient("TURN", client);
             }
             else
-            { 
+            {
                 form1.Text += " YOUR TURN!!!";
                 canPlay = true;
             }
@@ -120,7 +142,7 @@ namespace Uno.Classes
         {
             form1.lastCardPlayed = card;
             if (card.Color != Card.ColorEnum.Black)
-            currentColor = card.Color;
+                currentColor = card.Color;
         }
 
         private bool ThrownNumberCard(Card card, Player player)

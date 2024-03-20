@@ -11,6 +11,7 @@ namespace Uno.Classes
         public string Name { get; set; }
         public string Id { get; set; }
         public bool IsHost { get; set; }
+        public bool SaidUno { get; set; }
         public List<Card> Inventory;
 
         public Player(string id, string name)

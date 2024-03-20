@@ -183,12 +183,18 @@ namespace Uno.Classes
                         playerDatabase.NamePlayerDictionary.TryGetValue(senderString, out Player senderPlayer);
                         int indexPlayer = playerDatabase.players.IndexOf(senderPlayer);
 
+                        if (chatBox.InvokeRequired)
+                            chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name); }));
+                        else
                         chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name);
+                        if (restOfMessageMSG.ToLower().Contains("uno") && senderPlayer.Inventory.Count == 1)
+                        {
+                            senderPlayer.SaidUno = true;
+                        }
                         return (true, false);
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
-
 
                         if (!playerDatabase.NamePlayerDictionary.TryGetValue(restOfMessageJOIN, out Player existingPlayer))
                         {
@@ -197,11 +203,19 @@ namespace Uno.Classes
                                 Player newPlayer = playerDatabase.AddClientPlayer(senderString);
                                 playerDatabase.PlayerClientDictionary.Add(newPlayer, client);
                                 playerClientPair.Add(client, newPlayer);
+
+                                if (form1.InvokeRequired)
+                                    form1.Invoke(new Action(() => { form1.AppendLogBox($"{newPlayer.Name} has joined the server!"); }));
+                                else
                                 form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
+
                                 SendDataToSpecificClient("WELCOME", client);
                                 await SendDataToAllExcept($"JOIN {newPlayer.Name}", client);
 
-                                form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
+                                if (form1.InvokeRequired)
+                                    form1.Invoke(new Action(() => { form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer); }));
+                                else
+                                    form1.AddPlayerToGUI(playerDatabase.players.Count - 1, newPlayer);
 
                                 if (playerDatabase.players.Count > 1 && playerDatabase.players.Count < 5)
                                 {
@@ -316,7 +330,7 @@ namespace Uno.Classes
         {
             try
             {
-                NetworkStream clientStream = client.GetStream();
+                NetworkStream clientStream = client?.GetStream();
 
                 string delimiter = "\n";
 

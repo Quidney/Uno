@@ -42,6 +42,7 @@ namespace Uno.Classes
 
     public class ColorSelectionPanel : Form
     {
+        bool selectedColor = false;
         public ColorSelectionPanel(frmUno form1) : base()
         {
             if (form1.InvokeRequired)
@@ -53,6 +54,12 @@ namespace Uno.Classes
                 ContructPanel();
             }
 
+            void ColorSelection_FormClosing(object sender, FormClosingEventArgs e)
+            {
+                if (!selectedColor)
+                e.Cancel = true;
+            }
+
             void ContructPanel()
             {
                 Text = "Select Color:";
@@ -60,7 +67,8 @@ namespace Uno.Classes
                 StartPosition = FormStartPosition.CenterScreen;
                 MaximizeBox = false;
                 MinimizeBox = false;
-                
+
+                this.FormClosing += ColorSelection_FormClosing;
 
                 CardFunctionality cardFunctionality = form1.cardFunctionality;
 
@@ -135,25 +143,29 @@ namespace Uno.Classes
 
                 lblRed.Click += ((sender, e) => 
                 { 
-                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Red); 
+                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Red);
+                    selectedColor = true;
                     this.DialogResult = DialogResult.OK;
                 });
 
                 lblGreen.Click += ((sender, e) => 
                 { 
-                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Green); 
+                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Green);
+                    selectedColor = true;
                     this.DialogResult = DialogResult.OK;
                 });
 
                 lblYellow.Click += ((sender, e) => 
                 { 
-                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Yellow); 
+                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Yellow);
+                    selectedColor = true;
                     this.DialogResult = DialogResult.OK;
                 });
 
                 lblBlue.Click += ((sender, e) => 
                 { 
-                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Blue); 
+                    cardFunctionality.ChangeGameColor(Card.ColorEnum.Blue);
+                    selectedColor = true;
                     this.DialogResult = DialogResult.OK;
                 });
             }
