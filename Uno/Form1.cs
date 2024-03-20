@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -45,19 +46,21 @@ namespace Uno
         {
             InitializeComponent();
             InitMethod();
+            pnlMain.Paint += set_background;
+            pnlMultiplayer.Paint += set_background;
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
             Application.Exit();
+
         }
 
         void InitMethod()
         {
             adminConsole = new AdminConsole();
             chatBox = new ChatBox();
-
 
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "Uno!";
@@ -94,7 +97,7 @@ namespace Uno
             {
                 txtUsername.Text = "User" + random.Next(0, 1000);
             }
-            if (string.IsNullOrEmpty(txtPortHost.Text)) txtPortHost.Text = "1224";
+            if (string.IsNullOrEmpty(txtPortHost.Text)) txtPortHost.Text = "5565";
             #endif
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
@@ -127,7 +130,7 @@ namespace Uno
                 txtUsername.Text = "User" + random.Next(0, 1000);
             }
             if (string.IsNullOrEmpty(txtIPAddressJoin.Text)) txtIPAddressJoin.Text = "127.0.0.1";
-            if (string.IsNullOrEmpty(txtPortJoin.Text)) txtPortJoin.Text = "1224";
+            if (string.IsNullOrEmpty(txtPortJoin.Text)) txtPortJoin.Text = "5565";
             #endif
             if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
@@ -587,15 +590,14 @@ namespace Uno
 
             pnlInventory = new CustomTableLayoutPanel() { Dock = DockStyle.Fill, Parent = pnlMain, ColumnCount = 1, RowCount = 1 };
             pnlMain.SetColumnSpan(pnlInventory, pnlMain.ColumnCount - 2);
-            pnlMain.SetRowSpan(pnlInventory, 2);
+            pnlMain.SetRowSpan(pnlInventory, 3);
             pnlMain.SetRow(pnlInventory, 16);
             pnlMain.SetColumn(pnlInventory, 1);
-            pnlInventory.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
 
             cardOnTopPile = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlMain };
             pnlMain.SetColumnSpan(cardOnTopPile, 2);
-            pnlMain.SetRowSpan(cardOnTopPile, 2);
-            pnlMain.SetCellPosition(cardOnTopPile, new TableLayoutPanelCellPosition(11, 10));
+            pnlMain.SetRowSpan(cardOnTopPile, 6);
+            pnlMain.SetCellPosition(cardOnTopPile, new TableLayoutPanelCellPosition(11, 8));
 
             deckToDrawFrom = new CustomPictureBox() { Dock = DockStyle.Fill, Parent = pnlMain };
             deckToDrawFrom.SizeMode = PictureBoxSizeMode.Zoom;
@@ -603,22 +605,37 @@ namespace Uno
             pnlMain.SetRowSpan(deckToDrawFrom, 2);
             pnlMain.SetCellPosition(deckToDrawFrom, new TableLayoutPanelCellPosition(15, 10));
 
+
             UpdateInventoryGUI();
         }
         public void UpdateInventoryGUI()
         {
             foreach (Control control in pnlInventory.Controls)
             {
-                control.Dispose();
+                control.Dispose();  
             }
 
-            cardOnTopPile.Text = lastCardPlayed.ToString();
-            cardOnTopPile.BackColor = lastCardPlayed.ToColor();
+            Image originalImageTopPile = lastCardPlayed.Image;
+            int widthTopPileCard = 57;
+            int heightTopPileCard = 86;
+
+            Image resizedImageTopPile = new Bitmap(originalImageTopPile, new Size(widthTopPileCard, heightTopPileCard));
+
+            cardOnTopPile.Image = resizedImageTopPile;
+
             if (lastCardPlayed.ToColor() == Color.Black)
                 cardOnTopPile.ForeColor = Color.White;
 
             if (deck.playingDeck.Count > 0)
-                deckToDrawFrom.Image = Resources.UNO_Logo_svg;
+            {
+                Image originalImageDeck = Resources.backCard;
+                int widthDeckCard = 57;
+                int heightDeckCard = 86;
+
+                Image resizedImageDeck = new Bitmap(originalImageDeck, new Size(widthDeckCard, heightDeckCard));
+
+                deckToDrawFrom.Image = resizedImageDeck;
+            }
             else
                 deckToDrawFrom.Image = Resources.Terminal;
 
@@ -642,8 +659,15 @@ namespace Uno
             pnlInventory.RowCount = 1;
             for (int i = 0; i < inventory.Count; i++)
             {
+
+                Image originalImageInventory = inventory[i].Image;
+                int widthInventoryCard = 57;
+                int heightInventoryCard = 86;
+
+                Image resizedImageInventory = new Bitmap(originalImageInventory, new Size(widthInventoryCard, heightInventoryCard));
+
                 pnlInventory.ColumnCount++;
-                CustomLabel cardlabel = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $" ", Image = inventory[i].Image, Tag = inventory[i].ID };
+                CustomLabel cardlabel = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $" ", Image = resizedImageInventory, Tag = inventory[i].ID};
 
                 int cardID = (int)cardlabel.Tag;
                 cardlabel.Click += async (sender, e) =>
@@ -672,6 +696,17 @@ namespace Uno
             {
                 pnlInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / pnlInventory.ColumnCount));
             }
+        }
+
+        private void set_background(Object sender, PaintEventArgs e)
+        {
+            Graphics graphics = e.Graphics;
+
+            Rectangle gradient_rectangle = new Rectangle(0, 0, Width, Height);
+
+            Brush b = new LinearGradientBrush(gradient_rectangle, Color.FromArgb(255, 70, 70), Color.FromArgb(176, 0, 0), 65f);
+
+            graphics.FillRectangle(b, gradient_rectangle);
         }
 
         private void enterHover(object sender, EventArgs e)

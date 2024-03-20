@@ -63,6 +63,16 @@ namespace Uno.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap backCard {
+            get {
+                object obj = ResourceManager.GetObject("backCard", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap black_pick_color {
             get {
                 object obj = ResourceManager.GetObject("black_pick_color", resourceCulture);

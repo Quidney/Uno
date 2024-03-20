@@ -279,5 +279,8 @@
   <ItemGroup>
     <None Include="Resources\YellowCards\yellow_zero.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\backCard.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
