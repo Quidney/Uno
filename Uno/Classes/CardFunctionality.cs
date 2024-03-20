@@ -84,6 +84,7 @@ namespace Uno.Classes
                     if (form1.currentPlayer.IsHost)
                     {
                         if (player.Inventory.Count == 0)
+                        {
                             if (!player.SaidUno)
                             {
                                 for (int i = 0; i < 4; i++)
@@ -93,12 +94,8 @@ namespace Uno.Classes
                             {
                                 MessageBox.Show(player.ToString() + " Won!!");
                             }
-                        else if (player.Inventory.Count != 1)
-                        {
-                            player.SaidUno = false;
                         }
                     }
-                   
 
                     currentColorLabel.Text = currentColor.ToString();
                 }
@@ -239,7 +236,9 @@ namespace Uno.Classes
                 Card drawnCard = deck.DrawCard();
                 player.AddCardToInventory(drawnCard);
 
-                if (!player.IsHost)
+                player.SaidUno = false;
+
+                if (form1.currentPlayer.IsHost && !player.IsHost)
                 {
                     playerDatabase.PlayerClientDictionary.TryGetValue(player, out TcpClient client);
                     serverHost.SendDataToSpecificClient("DRAW " + drawnCard.ID, client);

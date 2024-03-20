@@ -190,6 +190,10 @@ namespace Uno.Classes
                         if (restOfMessageMSG.ToLower().Contains("uno") && senderPlayer.Inventory.Count == 1)
                         {
                             senderPlayer.SaidUno = true;
+                            if (chatBox.InvokeRequired)
+                                chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
+                            else
+                                chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
                         }
                         return (true, false);
                     case "JOIN":
