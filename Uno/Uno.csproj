@@ -118,12 +118,169 @@
     <None Include="Resources\UNO_Logo.svg.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\BlackCards\" />
-    <Folder Include="Resources\BlueCards\" />
-    <Folder Include="Resources\GreenCards\" />
-    <Folder Include="Resources\RedCards\" />
-    <Folder Include="Resources\YellowCards\" />
+    <None Include="Resources\GreenCards\green_zero.png" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="Resources\BlackCards\black_pick_color.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlackCards\black_plus_four.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_zero.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_eight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_five.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_four.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_nine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_one.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_plus_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_reverse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_seven.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_six.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_skip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_three.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BlueCards\blue_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_eight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_five.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_four.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_nine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_one.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_plus_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_reverse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_seven.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_six.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_skip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_three.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GreenCards\green_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_eight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_five.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_four.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_nine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_one.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_plus_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_reverse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_seven.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_six.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_skip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_three.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedCards\red_zero.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_eight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_five.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_four.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_nine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_one.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_plus_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_reverse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_seven.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_six.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_skip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_three.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_two.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\YellowCards\yellow_zero.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\backCard.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

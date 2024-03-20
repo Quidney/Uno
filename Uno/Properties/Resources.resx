@@ -139,4 +139,169 @@
   <data name="UNO_Logo.svg" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\UNO_Logo.svg.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="black_pick_color" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlackCards\black_pick_color.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="black_plus_four" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlackCards\black_plus_four.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_eight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_eight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_five" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_five.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_four" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_four.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_nine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_nine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_one" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_one.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_plus_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_plus_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_reverse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_reverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_seven" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_seven.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_six" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_six.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_three" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_three.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="blue_zero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BlueCards\blue_zero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_eight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_eight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_five" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_five.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_four" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_four.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_nine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_nine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_one" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_one.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_plus_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_plus_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_reverse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_reverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_seven" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_seven.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_six" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_six.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_three" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_three.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="green_zero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GreenCards\green_zero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_eight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_eight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_five" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_five.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_four" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_four.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_nine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_nine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_one" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_one.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_plus_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_plus_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_reverse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_reverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_seven" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_seven.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_six" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_six.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_three" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_three.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="red_zero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RedCards\red_zero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_eight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_eight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_five" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_five.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_four" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_four.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_nine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_nine.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_one" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_one.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_plus_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_plus_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_reverse" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_reverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_seven" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_seven.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_six" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_six.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_skip.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_three" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_three.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_two" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_two.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="yellow_zero" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\YellowCards\yellow_zero.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="backCard" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\backCard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
