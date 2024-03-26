@@ -92,13 +92,13 @@ namespace Uno
 
         private void HostGame_Click(object sender, EventArgs e)
         {
-            #if DEBUG
+#if DEBUG
             if (string.IsNullOrEmpty(txtUsername.Text))
             {
                 txtUsername.Text = "User" + random.Next(0, 1000);
             }
             if (string.IsNullOrEmpty(txtPortHost.Text)) txtPortHost.Text = "5565";
-            #endif
+#endif
             if (!string.IsNullOrEmpty(txtPortHost.Text) && !string.IsNullOrEmpty(txtUsername.Text))
             {
                 if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
@@ -124,14 +124,14 @@ namespace Uno
         }
         private void JoinGame_Click(object sender, EventArgs e)
         {
-            #if DEBUG
+#if DEBUG
             if (string.IsNullOrEmpty(txtUsername.Text))
             {
                 txtUsername.Text = "User" + random.Next(0, 1000);
             }
             if (string.IsNullOrEmpty(txtIPAddressJoin.Text)) txtIPAddressJoin.Text = "127.0.0.1";
             if (string.IsNullOrEmpty(txtPortJoin.Text)) txtPortJoin.Text = "5565";
-            #endif
+#endif
             if (txtUsername.Text.Length <= 24 && txtUsername.Text.Length > 2 && !txtUsername.Text.Contains(' '))
             {
                 string username = txtUsername.Text.Trim();
@@ -327,8 +327,8 @@ namespace Uno
         {
             if (this.InvokeRequired)
                 this.Invoke(new Action(() => playerLabels[playerIndex].Text = player.Name));
-                else
-            playerLabels[playerIndex].Text = player.Name;
+            else
+                playerLabels[playerIndex].Text = player.Name;
         }
 
         public void RemovePlayerFromGUI(int playerIndex)
@@ -502,6 +502,15 @@ namespace Uno
         {
             if (joinedOrHosted)
             {
+                if (chatBox == null || chatBox.IsDisposed)
+                {
+                    chatBox = new ChatBox();
+                    chatBox.SetReferences(this, pctrChatBox);
+
+                    chatBox.lblTitleExtern.Text = $"       Chatbox - {currentPlayer.Name}";
+                    chatBox.lblTitleExtern.Image = Resources.Chat;
+                    chatBox.lblTitleExtern.ImageAlign = ContentAlignment.MiddleLeft;
+                }
                 chatBox.Show();
                 chatBox.OpenChatBox();
             }
@@ -527,12 +536,12 @@ namespace Uno
                 lastCardPlayed = deck.playingDeck.LastOrDefault();
                 deck.playingDeck.Remove(lastCardPlayed);
             } while (lastCardPlayed.Color == Card.ColorEnum.Black);
-           
+
             cardFunctionality.currentColor = lastCardPlayed.Color;
             await serverHost.BroadcastData($"PILE {lastCardPlayed.ID}");
 
             int startingPlayer = random.Next(0, playerDatabase.players.Count);
-            if (playerDatabase.players[startingPlayer] != currentPlayer) 
+            if (playerDatabase.players[startingPlayer] != currentPlayer)
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[startingPlayer], out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
@@ -612,7 +621,7 @@ namespace Uno
         {
             foreach (Control control in pnlInventory.Controls)
             {
-                control.Dispose();  
+                control.Dispose();
             }
 
             Image originalImageTopPile = lastCardPlayed.Image;
@@ -645,11 +654,13 @@ namespace Uno
 
                 if (!currentPlayer.IsHost)
                 {
-                    await serverJoin.SendDataToServer(message);
+                    if (cardFunctionality.canPlay)
+                        await serverJoin.SendDataToServer(message);
                 }
                 else
                 {
-                    cardFunctionality.DrawCardsFromDeck(currentPlayer, 1);
+                    if (cardFunctionality.canPlay)
+                        cardFunctionality.DrawCardsFromDeck(currentPlayer, 1);
                 }
                 SetInventoryGUI();
             };
@@ -667,7 +678,7 @@ namespace Uno
                 Image resizedImageInventory = new Bitmap(originalImageInventory, new Size(widthInventoryCard, heightInventoryCard));
 
                 pnlInventory.ColumnCount++;
-                CustomLabel cardlabel = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $" ", Image = resizedImageInventory, Tag = inventory[i].ID};
+                CustomLabel cardlabel = new CustomLabel() { Dock = DockStyle.Fill, Parent = pnlInventory, Text = $" ", Image = resizedImageInventory, Tag = inventory[i].ID };
 
                 int cardID = (int)cardlabel.Tag;
                 cardlabel.Click += async (sender, e) =>

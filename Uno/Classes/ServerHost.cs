@@ -194,6 +194,8 @@ namespace Uno.Classes
                                 chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
                             else
                                 chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
+
+                            SendDataToSpecificClient("MSG Server You said uno", client);
                         }
                         return (true, false);
                     case "JOIN":

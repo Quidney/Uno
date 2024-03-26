@@ -144,30 +144,32 @@ namespace Uno.Classes
                 lblRed.Click += ((sender, e) => 
                 { 
                     cardFunctionality.ChangeGameColor(Card.ColorEnum.Red);
-                    selectedColor = true;
-                    this.DialogResult = DialogResult.OK;
+                    Clicked();
                 });
 
                 lblGreen.Click += ((sender, e) => 
                 { 
                     cardFunctionality.ChangeGameColor(Card.ColorEnum.Green);
-                    selectedColor = true;
-                    this.DialogResult = DialogResult.OK;
+                    Clicked();
                 });
 
                 lblYellow.Click += ((sender, e) => 
                 { 
                     cardFunctionality.ChangeGameColor(Card.ColorEnum.Yellow);
-                    selectedColor = true;
-                    this.DialogResult = DialogResult.OK;
+                    Clicked();
                 });
 
                 lblBlue.Click += ((sender, e) => 
                 { 
                     cardFunctionality.ChangeGameColor(Card.ColorEnum.Blue);
-                    selectedColor = true;
-                    this.DialogResult = DialogResult.OK;
+                    Clicked();
                 });
+            }
+
+            void Clicked()
+            {
+                selectedColor = true;
+                this.DialogResult = DialogResult.OK;
             }
         }
     }
