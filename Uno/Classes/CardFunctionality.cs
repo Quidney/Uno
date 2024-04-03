@@ -92,7 +92,8 @@ namespace Uno.Classes
                             }
                             else
                             {
-                                MessageBox.Show(player.ToString() + " Won!!");
+                                serverHost.BroadcastData($"WIN {player.Name}");
+                                form1.GameWon();
                             }
                         }
                     }

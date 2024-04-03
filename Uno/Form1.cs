@@ -54,7 +54,6 @@ namespace Uno
         {
             base.OnClosing(e);
             Application.Exit();
-
         }
 
         void InitMethod()
@@ -552,7 +551,15 @@ namespace Uno
                 Text += " YOUR TURN!!!";
             }
 
-            for (int i = 0; i < 7; i++)
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !                                                    !
+            // !        CHANGE THIS BACK TO 7 BEFORE LAUNCH         !   
+            // !                                                    !
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            int cardDrawCount = 2;
+
+            for (int i = 0; i < cardDrawCount; i++)
             {
                 foreach (Player player in playerDatabase.players)
                 {
@@ -709,15 +716,42 @@ namespace Uno
             }
         }
 
+        bool reversing;
+        int red = 255;
+        int green = 0;
+        int blue = 0;
         private void set_background(Object sender, PaintEventArgs e)
         {
+            //Get graphics
             Graphics graphics = e.Graphics;
-
-            Rectangle gradient_rectangle = new Rectangle(0, 0, Width, Height);
-
-            Brush b = new LinearGradientBrush(gradient_rectangle, Color.FromArgb(255, 70, 70), Color.FromArgb(176, 0, 0), 65f);
-
+            //Create rectangle with the windows size.
+            Rectangle gradient_rectangle = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
+            //Create a LinearGradientBrush, get the colors from red green and blue values
+            Brush b = new LinearGradientBrush(gradient_rectangle, Color.FromArgb(red, green, blue), Color.FromArgb(red, 0, 0), 45f);
+            //Color the background
             graphics.FillRectangle(b, gradient_rectangle);
+        }
+        private async void ChangeBackGroundColor()
+        {
+            //Wait 100 miliseconds
+            await Task.Delay(100);
+
+            //If red is 255, set reverse bool to true
+            if (red == 255)
+                reversing = true;
+            //If red is 0 set reverse to false
+            if (red == 0)
+                reversing = false;
+
+            //Set colors to +1 or -1 according to reverse variable
+            red = reversing ? red - 1 : red + 1;
+            green = reversing ? green + 1 : green - 1;
+            blue = reversing ? blue + 1 : blue - 1;
+
+            //Call redraw
+            Invalidate();
+            //Call this method again
+            ChangeBackGroundColor();
         }
 
         private void enterHover(object sender, EventArgs e)
@@ -727,6 +761,21 @@ namespace Uno
 
         private void leaveHover(object sender, EventArgs e)
         {
+
+        }
+
+        private void frmUno_Load(object sender, EventArgs e)
+        {
+            ChangeBackGroundColor();
+        }
+
+        public void GameWon()
+        {
+            if (currentPlayer.IsHost)
+                DisconnectedFromServerHost();
+            else
+                DisconnectedFromServerClient();
+
 
         }
     }
