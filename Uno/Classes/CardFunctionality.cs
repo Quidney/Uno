@@ -93,12 +93,17 @@ namespace Uno.Classes
                             else
                             {
                                 serverHost.BroadcastData($"WIN {player.Name}");
-                                form1.GameWon();
+                                if (form1.InvokeRequired)
+                                    form1.Invoke(new Action(() => { form1.GameWon(); }));
+                                else
+                                    form1.GameWon();
                             }
                         }
                     }
 
                     currentColorLabel.Text = currentColor.ToString();
+
+                    player.turn = false;
                 }
 
                 return success;
@@ -128,11 +133,13 @@ namespace Uno.Classes
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
+                turnPlayer.turn = true;
             }
             else
             {
                 form1.Text += " YOUR TURN!!!";
                 canPlay = true;
+                form1.currentPlayer.turn = true;
             }
         }
 

@@ -273,6 +273,10 @@ namespace Uno.Classes
                         else
                             form1.GameWon();
                         break;
+                    case "CLEARINV":
+                        playerDatabase.ClearInventories();
+                        cardFunctionality.canPlay = false;
+                        break;
                 }
             }
             catch (Exception ex)

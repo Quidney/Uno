@@ -528,6 +528,14 @@ namespace Uno
         }
         private async void StartGame()
         {
+            playerDatabase.ClearInventories();
+
+            await serverHost.BroadcastData("CLEARINV");
+
+            lastCardPlayed = null;
+
+            cardFunctionality.canPlay = false;
+
             await deck.Shuffle();
 
             do
@@ -586,6 +594,7 @@ namespace Uno
         public void StartGameClient()
         {
             pctrChatBox.Parent = pnlMain;
+
 
             pnlMain.Show();
             pnlMain.BringToFront();
@@ -769,14 +778,19 @@ namespace Uno
             ChangeBackGroundColor();
         }
 
-        public void GameWon()
+        public async void GameWon()
         {
-            if (currentPlayer.IsHost)
-                DisconnectedFromServerHost();
-            else
-                DisconnectedFromServerClient();
+            Text = "Uno!";
 
+            pctrChatBox.Parent = pnlMultiplayer;
+            pnlMultiplayer.SetCellPosition(pctrChatBox, new TableLayoutPanelCellPosition(0, 0));
 
+            pnlMultiplayer.Show();
+            pnlMultiplayer.BringToFront();
+            Application.DoEvents();
+            pnlMain.Hide();
+
+            isStarted = false;
         }
     }
 }

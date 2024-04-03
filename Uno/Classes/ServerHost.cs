@@ -199,23 +199,26 @@ namespace Uno.Classes
 
                         if (restOfMessageMSG.ToLower().Contains("uno"))
                         {
-                            if (senderPlayer.Inventory.Count == 1)
+                            if (!senderPlayer.turn)
                             {
-                                senderPlayer.SaidUno = true;
-                                if (chatBox.InvokeRequired)
-                                    chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
-                                else
-                                    chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
+                                if (senderPlayer.Inventory.Count == 1)
+                                {
+                                    senderPlayer.SaidUno = true;
+                                    if (chatBox.InvokeRequired)
+                                        chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
+                                    else
+                                        chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
 
-                                SendDataToSpecificClient("MSG Server You said uno", client);
-                                await SendDataToAllExcept($"MSG Server {senderPlayer.Name} said Uno!", client);
-                            }
-                            else
-                            {
-                                if (chatBox.InvokeRequired)
-                                    chatBox.Invoke(new Action(() => { chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server"); }));
+                                    SendDataToSpecificClient("MSG Server You said uno", client);
+                                    await SendDataToAllExcept($"MSG Server {senderPlayer.Name} said Uno!", client);
+                                }
                                 else
-                                    chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server");
+                                {
+                                    if (chatBox.InvokeRequired)
+                                        chatBox.Invoke(new Action(() => { chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server"); }));
+                                    else
+                                        chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server");
+                                }
                             }
                         }
                         return (true, false);
