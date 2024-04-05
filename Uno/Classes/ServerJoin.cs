@@ -36,6 +36,8 @@ namespace Uno.Classes
             this.cardFunctionality = form1.cardFunctionality;
         }
 
+
+        // Try to connect to a server, return "Player + true" if it works, return "null + false" if it fails.
         public async Task<(Player, bool)> JoinGame(IPAddress ip, int port, string username)
         {
             try
@@ -82,9 +84,12 @@ namespace Uno.Classes
                 byte[] buffer = new byte[4096];
                 int bytesRead;
 
+                //While the received data is more than 0 (the client isn't disconnected), await another message
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    string receivedData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    //Decode the message using UTF8
+                    string receivedData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    //Send the decoded string to a method to be processed.
                     ProcessReceivedData(receivedData);
                 }
             }
@@ -114,6 +119,8 @@ namespace Uno.Classes
 
         private void ProcessReceivedData(string receivedData)
         {
+            //Split messages by delimiter. This is to ensure if multiple messages are written to the stream at the same time
+            //(in a loop for example) then the messages still work as intended.
             string delimiter = "\n";
 
             messageBuffer.Append(receivedData);
@@ -136,6 +143,8 @@ namespace Uno.Classes
         {
             try
             {
+                //Process the message received from the server.
+
                 string command = message.Split(' ')[0].Trim();
                 //MessageBox.Show($"\"{message}\"", "ProcessMessage - ServerJoin");
                 switch (command)
@@ -249,6 +258,25 @@ namespace Uno.Classes
                     default:
                         MessageBox.Show(message + "\nPlease tell the developer what you were doing when this occured.", "Unknown Message");
                         break;
+
+                    case "WIN":
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.AppendLogBox($"{message.Split(' ')[1]} Won the game!"); }));
+                        else
+                            form1.AppendLogBox($"{message.Split(' ')[1]} Won the game!");
+
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() =>
+                            {
+                                form1.GameWon();
+                            }));
+                        else
+                            form1.GameWon();
+                        break;
+                    case "CLEARINV":
+                        playerDatabase.ClearInventories();
+                        cardFunctionality.canPlay = false;
+                        break;
                 }
             }
             catch (Exception ex)
@@ -257,11 +285,12 @@ namespace Uno.Classes
             }
         }
 
+        //Send data to server by writing to the stream
         public async Task SendDataToServer(string message)
         {
             try
             {
-                byte[] buffer = Encoding.ASCII.GetBytes(message);
+                byte[] buffer = Encoding.UTF8.GetBytes(message);
                 await stream.WriteAsync(buffer, 0, buffer.Length);
             }
             catch (IOException)

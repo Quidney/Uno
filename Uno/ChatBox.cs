@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Uno.Classes;
 
@@ -38,7 +36,7 @@ namespace Uno
         {
             this.form1 = form1;
             this.openChatBox = openChatBox;
-            chatBoxStates = new Image[] {Properties.Resources.Chat, Properties.Resources.ChatNewMessage };
+            chatBoxStates = new Image[] { Properties.Resources.Chat, Properties.Resources.ChatNewMessage };
         }
 
         private async void btnSendDataToServer_Click(object sender, EventArgs e)
@@ -52,6 +50,15 @@ namespace Uno
                 {
                     case true:
                         await form1.serverHost.BroadcastData("MSG " + form1.currentPlayer.Name + " " + message);
+                        if (message.ToLower().Contains("uno"))
+                        {
+                            if (form1.currentPlayer.Inventory.Count == 1)
+                            {
+                                form1.currentPlayer.SaidUno = true;
+                                await form1.serverHost.BroadcastData($"MSG Server {form1.currentPlayer.Name} said Uno!");
+                                AppendChatBox($"You said Uno!", Color.Red, "Server");
+                            }
+                        }
                         break;
                     case false:
                         await form1.serverJoin.SendDataToServer("MSG " + form1.currentPlayer.Name + " " + message);

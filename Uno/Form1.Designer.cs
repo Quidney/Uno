@@ -412,10 +412,12 @@
             this.ClientSize = new System.Drawing.Size(982, 762);
             this.Controls.Add(this.pnlMain);
             this.Controls.Add(this.pnlMultiplayer);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmUno";
             this.Text = "Uno!";
+            this.Load += new System.EventHandler(this.frmUno_Load);
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctrChatBox)).EndInit();

@@ -111,5 +111,15 @@ namespace Uno.Classes
                 return uuid.ToString();
             }
         }
+
+
+        public void ClearInventories()
+        {
+            foreach (Player player in players)
+            {
+                player.Inventory.Clear();
+            }
+        }
+
     }
 }

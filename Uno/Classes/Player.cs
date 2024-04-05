@@ -14,6 +14,8 @@ namespace Uno.Classes
         public bool SaidUno { get; set; }
         public List<Card> Inventory;
 
+        public bool turn { get; set; }
+
         public Player(string id, string name)
         {
             this.Id = id;

@@ -243,5 +243,10 @@ namespace Uno.Class
             playingDeck.Remove(drawnCard);
             return drawnCard;
         }
+
+        public void ResetPlayingDeck()
+        {
+            playingDeck = new List<Card>(cardsDeckList);
+        }
     }
 }

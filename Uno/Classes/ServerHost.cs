@@ -42,6 +42,8 @@ namespace Uno.Classes
             this.cardFunctionality = form1.cardFunctionality;
         }
 
+        //Host server. Hosting the server returns "Player + true",
+        //failing to host (for example because the port is already used by another process) returns "null + false"
         public (Player, bool) HostServer(int port, string username)
         {
             try
@@ -62,6 +64,7 @@ namespace Uno.Classes
             }
         }
 
+        //Accept clients async. When a client connects, create a new Thread for it, then start awaiting another client.
         private async void AcceptClients()
         {
             try
@@ -87,9 +90,9 @@ namespace Uno.Classes
             }
         }
 
+        //This method is created as a new Thread. So that multiple clients can connect.
         private async void ClientConnection(object clientInit)
         {
-
             TcpClient client = null;
             NetworkStream stream = null;
             bool sameNameDisconnection = false;
@@ -104,7 +107,7 @@ namespace Uno.Classes
 
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    string message = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     (bool, bool) operationSuccess = await ProcessMessage(message, client);
                     sameNameDisconnection = operationSuccess.Item2;
                     if (!operationSuccess.Item1)
@@ -171,9 +174,13 @@ namespace Uno.Classes
         {
             try
             {
+                //Process message (string) and do something based on the message
+
                 string command = message.Split(' ')[0].Trim();
                 string senderString = message.Split(' ')[1].Trim();
 
+
+                //Switch (-string command-)
                 switch (command)
                 {
                     case "MSG":
@@ -187,15 +194,32 @@ namespace Uno.Classes
                             chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name); }));
                         else
                         chatBox.AppendChatBox(restOfMessageMSG, Color.Blue, senderPlayer.Name);
-                        if (restOfMessageMSG.ToLower().Contains("uno") && senderPlayer.Inventory.Count == 1)
-                        {
-                            senderPlayer.SaidUno = true;
-                            if (chatBox.InvokeRequired)
-                                chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
-                            else
-                                chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
 
-                            SendDataToSpecificClient("MSG Server You said uno", client);
+                        await SendDataToAllExcept($"MSG {senderString} {restOfMessageMSG}", client);
+
+                        if (restOfMessageMSG.ToLower().Contains("uno"))
+                        {
+                            if (!senderPlayer.turn)
+                            {
+                                if (senderPlayer.Inventory.Count == 1)
+                                {
+                                    senderPlayer.SaidUno = true;
+                                    if (chatBox.InvokeRequired)
+                                        chatBox.Invoke(new Action(() => { chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server"); }));
+                                    else
+                                        chatBox.AppendChatBox(senderPlayer.Name + " said Uno!", Color.Red, "Server");
+
+                                    SendDataToSpecificClient("MSG Server You said uno", client);
+                                    await SendDataToAllExcept($"MSG Server {senderPlayer.Name} said Uno!", client);
+                                }
+                                else
+                                {
+                                    if (chatBox.InvokeRequired)
+                                        chatBox.Invoke(new Action(() => { chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server"); }));
+                                    else
+                                        chatBox.AppendChatBox($"Player {senderPlayer.Name} said UNO, but he/she doesn't have 1 card in their inventory.", Color.Red, "Server");
+                                }
+                            }
                         }
                         return (true, false);
                     case "JOIN":
@@ -317,6 +341,7 @@ namespace Uno.Classes
 
         }
 
+        //Send data to all the clients in the list.
         public async Task BroadcastData(string message)
         {
             foreach (TcpClient client in clients)
@@ -327,11 +352,12 @@ namespace Uno.Classes
 
                 string messageWithDelimiter = message + delimiter;
 
-                byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                byte[] buffer = Encoding.UTF8.GetBytes(messageWithDelimiter);
                 await stream.WriteAsync(buffer, 0, buffer.Length);
             }
         }
 
+        //Send data to only one client.
         public async void SendDataToSpecificClient(string message, TcpClient client)
         {
             try
@@ -342,7 +368,7 @@ namespace Uno.Classes
 
                 string messageWithDelimiter = message + delimiter;
 
-                byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                byte[] buffer = Encoding.UTF8.GetBytes(messageWithDelimiter);
                 await clientStream?.WriteAsync(buffer, 0, buffer.Length);
             }
             catch (Exception ex)
@@ -351,6 +377,7 @@ namespace Uno.Classes
             }
         }
 
+        //Send data to all the clients except specified. (For example when a client joins the game)
         public async Task SendDataToAllExcept(string message, TcpClient clientInit)
         {
             foreach (TcpClient client in clients)
@@ -363,7 +390,7 @@ namespace Uno.Classes
 
                     string messageWithDelimiter = message + delimiter;
 
-                    byte[] buffer = Encoding.ASCII.GetBytes(messageWithDelimiter);
+                    byte[] buffer = Encoding.UTF8.GetBytes(messageWithDelimiter);
                     await stream.WriteAsync(buffer, 0, buffer.Length);
                 }
             }
