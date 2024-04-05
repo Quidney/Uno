@@ -70,21 +70,25 @@ namespace Uno.Classes
 
                     canPlay = false;
 
-                    string nameNewPlayer = string.Empty;
+                    Player newPlayer = null;
 
                     if (form1.isHost)
                     {
                         Player newTurnPlayer = PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
-                        nameNewPlayer = newTurnPlayer.Name;
+                        newPlayer = newTurnPlayer;
+
+
+                        if (form1.currentPlayer == player)
+                        {
+
+                            if (form1.InvokeRequired)
+                                form1.Invoke(new Action(() => { form1.Text = $"Uno! {newPlayer.Name}'s Turn! ({newPlayer.Inventory.Count} Cards left!)"; }));
+                            else
+                                form1.Text = $"Uno! {newPlayer.Name}'s Turn! ({newPlayer.Inventory.Count} Cards left!)";
+
+                        }
                     }
 
-                    if (form1.currentPlayer == player)
-                    {
-                        if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text = "Uno!"; }));
-                        else
-                            form1.Text = $"Uno! {nameNewPlayer}'s Turn!";
-                    }
 
                     if (form1.currentPlayer.IsHost)
                     {
@@ -138,14 +142,14 @@ namespace Uno.Classes
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
-                serverHost.SendDataToAllExcept($"TURNOTHER {turnPlayer.Name}", client);
+                serverHost.SendDataToAllExcept($"TURNOTHER {turnPlayer.Name} {turnPlayer.Inventory.Count}", client);
                 form1.Text = $"Uno! {turnPlayer.Name}'s Turn!";
                 turnPlayer.turn = true;
             }
             else
             {
                 form1.Text = "Uno! Your Turn!";
-                serverHost.BroadcastData($"TURNOTHER {form1.currentPlayer.Name}");
+                serverHost.BroadcastData($"TURNOTHER {form1.currentPlayer.Name} {form1.currentPlayer.Inventory.Count}");
                 canPlay = true;
                 form1.currentPlayer.turn = true;
             }

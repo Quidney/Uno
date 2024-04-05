@@ -305,10 +305,15 @@ namespace Uno.Classes
                     case "TURNOTHER":
                         //Command TurnOther. Syntax: "TURNOTHER USERNAME".
                         //Tells the client that another player has the turn.
+                        string username = message.Split(' ')[1];
+                        string cardsLeft = "7";
+                        if (message.Split(' ').Length == 3)
+                            cardsLeft = message.Split(' ')[2];
+
                         if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text = $"Uno! {message.Split(' ')[1]}'s Turn!"; }));
+                            form1.Invoke(new Action(() => { form1.Text = $"Uno! {username}'s Turn! ({cardsLeft} Cards left)"; }));
                         else
-                            form1.Text = $"Uno! {message.Split(' ')[1]}'s Turn!";
+                            form1.Text = $"Uno! {username}'s Turn! ({cardsLeft} Cards left)";
                         break;
                     case "CHEATS":
                         //Command Cheats. Syntax "CHEATS"
