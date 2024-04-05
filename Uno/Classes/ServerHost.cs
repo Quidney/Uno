@@ -208,6 +208,8 @@ namespace Uno.Classes
                 switch (command)
                 {
                     case "MSG":
+                        //Command Message. Syntax "MESSAGE USERNAME MESSAGE_CONTENT"
+                        //ChatBox.
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
 
@@ -247,6 +249,8 @@ namespace Uno.Classes
                         }
                         return (true, false);
                     case "JOIN":
+                        //Command Join. Syntax: "JOIN USERNAME SCORE"
+                        //This command is sent to the server by the joining Client.
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
                         string score = message.Split(' ')[2];
                         string restOfMessageJOIN = message.Split(' ')[1];
@@ -293,6 +297,9 @@ namespace Uno.Classes
                         }
 
                     case "PLAY":
+
+                        //Command play. Syntax: "PLAY USERNAME CARD_ID"
+                        //This is sent to the server when a player is trying to play a card.
                         int playedCardID = Convert.ToInt32(message.Split(' ')[2].Trim());
                         if (deck.idToCard.TryGetValue(playedCardID, out Card playedCard))
                         {
@@ -331,11 +338,15 @@ namespace Uno.Classes
 
                         return (true, false);
                     case "CHANGECOLOR":
+                        //Command ChangeColor. Syntax: "CHANGECOLOR COLOR_ENUM"
+                        //This is sent when a client changes the color.
                         Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
                         cardFunctionality.currentColor = colorToChange;
                         await SendDataToAllExcept(message, client);
                         return (true, false);
                     case "DECK":
+                        //Command Deck. Syntax: "DECK USERNAME"
+                        //This command is sent by the client when it draws a card from the deck.
                         string playerNameDeck = message.Split(' ')[1];
                         playerDatabase.NamePlayerDictionary.TryGetValue(playerNameDeck, out Player player);
                         cardFunctionality.DrawCardsFromDeck(player, 1);

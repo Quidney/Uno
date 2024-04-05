@@ -174,6 +174,8 @@ namespace Uno.Classes
                 switch (command)
                 {
                     case "MSG":
+                        //Command Message. Syntax: "MSG PLAYERNAME MESSAGE"
+                        //This command is sent when using the ChatBox
                         string senderString = message.Split(' ')[1].Trim();
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
@@ -184,6 +186,8 @@ namespace Uno.Classes
                         break;
 
                     case "JOIN":
+                        //Command Join. Syntax: "JOIN USERNAME"
+                        //This is sent to the CLIENT when another player joins the server.
                         int skipSubstringJOIN = command.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
 
@@ -194,6 +198,10 @@ namespace Uno.Classes
                         break;
 
                     case "ERR":
+                        //Command Error. Syntax: "ERR ERROR_MESSAGE"
+                        //Sent when there's an exception in the server regarding the Client.
+                        //For example; A server with the same name joins, then the newly joined player is kicked with the message
+                        //"A player with the same name already joined".
                         int skipSubstringERR = command.Length + 1;
                         string restOfMessageERR = message.Substring(skipSubstringERR);
                         if (form1.InvokeRequired)
@@ -204,6 +212,8 @@ namespace Uno.Classes
                         break;
 
                     case "WELCOME":
+                        //Comamnd Welcome. Syntax: "Welcome".
+                        //This is sent once to the client after join. To setup certain aspects.
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(() => { form1.AppendLogBox("Connected to server"); }));
                         else
@@ -212,12 +222,16 @@ namespace Uno.Classes
                         break;
 
                     case "DRAW":
+                        //Command Draw. Syntax: "DRAW CARD_ID"
+                        //This is regulated by the server, and sent to the Client which cards it should draw.
                         string cardIdStr = message.Split(' ')[1];
                         int cardID = Convert.ToInt32(cardIdStr);
                         deck.idToCard.TryGetValue(cardID, out Card cardToDraw);
                         player.AddCardToInventory(cardToDraw);
                         break;
                     case "START":
+                        //Command Start. Syntax: "START"
+                        //This is sent when the game is started.
                         if (form1.InvokeRequired)
                         {
                             form1.Invoke(new Action(form1.StartGameClient));
@@ -226,6 +240,8 @@ namespace Uno.Classes
                             form1.StartGameClient();
                         break;
                     case "PLAY":
+                        //Command Play. Syntax: "PLAY USERNAME CARD_ID"
+                        //This is sent when a new card is played (so the Client can update their GUI).
                         deck.idToCard.TryGetValue(Convert.ToInt32(message.Split(' ')[2]), out Card card);
                         cardFunctionality.ThrowCardInPileForClient(card);
                         if (form1.InvokeRequired)
@@ -234,6 +250,8 @@ namespace Uno.Classes
                             form1.SetInventoryGUI();
                         break;
                     case "PILE":
+                        //Command Pile. Syntax: "PILE CARD_ID"
+                        //Set new card on top of the pile.
                         deck.idToCard.TryGetValue(Convert.ToInt32(message.Split(' ')[1]), out Card cardOnPile);
                         form1.lastCardPlayed = cardOnPile;
                         cardFunctionality.currentColor = form1.lastCardPlayed.Color;
@@ -243,6 +261,8 @@ namespace Uno.Classes
                             form1.SetInventoryGUI();
                         break;
                     case "CHANGECOLOR":
+                        //Command ChangeColor. Syntax: "CHANGECOLOR COLOR_ENUM"
+                        //Changes the color of the game. This is for when "Change Color Wild card" is played.
                         Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
                         cardFunctionality.currentColor = colorToChange;
                         if (form1.InvokeRequired)
@@ -252,7 +272,9 @@ namespace Uno.Classes
 
                         break;
                     case "KICK":
-
+                        //Command Kick. Syntax "KICK"
+                        //Kicks the client from the server.
+                        //Can be done via console or happen on same-name-conflict
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(() => { form1.AppendLogBox("Kicked from the server."); }));
                         else
@@ -271,6 +293,9 @@ namespace Uno.Classes
 
                         break;
                     case "TURN":
+                        //Command Turn. Syntax: "TURN"
+                        //Gives the turn to the client.
+
                         cardFunctionality.canPlay = true;
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
@@ -278,6 +303,8 @@ namespace Uno.Classes
                             form1.Text += " YOUR TURN!!!";
                         break;
                     case "CHEATS":
+                        //Command Cheats. Syntax "CHEATS"
+                        //This is sent to all Clients when the Server admin uses commands to check a players cards.
                         chatBox.AppendChatBox("THE ADMIN USED COMMANDS TO LOOK AT A PLAYERS CARDS!", Color.Red, "SERVER");
                         break;
                     default:
@@ -285,6 +312,8 @@ namespace Uno.Classes
                         break;
 
                     case "WIN":
+                        //Command Win. Syntax "WIN USERNAME"
+                        //This command is sent when someone wins the game.
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(() => { form1.AppendLogBox($"{message.Split(' ')[1]} Won the game!"); }));
                         else
@@ -299,6 +328,8 @@ namespace Uno.Classes
                             form1.GameWon(message.Split(' ')[1]);
                         break;
                     case "CLEARINV":
+                        //Command ClearInventory. Syntax: "CLEARINV".
+                        //This is sent to a client when the game is reset and the inventory must be cleared.
                         playerDatabase.ClearInventories();
                         cardFunctionality.canPlay = false;
                         break;
