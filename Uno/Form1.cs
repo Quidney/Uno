@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,6 +13,7 @@ using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
 using Uno.Properties;
+using static System.Windows.Forms.LinkLabel;
 
 namespace Uno
 {
@@ -42,12 +44,19 @@ namespace Uno
         public bool YourTurn { get; set; }
         public bool OtherTurn { get; set; }
 
+        public string scorePath = @"./scores.txt";
+
         public frmUno()
         {
             InitializeComponent();
             InitMethod();
             pnlMain.Paint += set_background;
             pnlMultiplayer.Paint += set_background;
+
+            if (!File.Exists(scorePath))
+            {
+                File.Create(scorePath).Close();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -565,7 +574,7 @@ namespace Uno
             // !        CHANGE THIS BACK TO 7 BEFORE LAUNCH         !   
             // !                                                    !
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            int cardDrawCount = 2;
+            int cardDrawCount = 7;
 
             for (int i = 0; i < cardDrawCount; i++)
             {
@@ -778,7 +787,7 @@ namespace Uno
             ChangeBackGroundColor();
         }
 
-        public async void GameWon()
+        public async void GameWon(string username)
         {
             Text = "Uno!";
 
@@ -789,8 +798,21 @@ namespace Uno
             pnlMultiplayer.BringToFront();
             Application.DoEvents();
             pnlMain.Hide();
-
             isStarted = false;
+
+            List<string> lines = File.ReadAllLines(scorePath).ToList();
+            foreach (string line in lines)
+            {
+                string[] splittedLine = line.Split(';');
+                if (splittedLine[0].Equals(username))
+                {
+                    int score = int.Parse(splittedLine[1]);
+                    score++;
+                    splittedLine[1] = score.ToString();
+                }
+            }
+
+            File.WriteAllLines(scorePath, lines);
         }
     }
 }

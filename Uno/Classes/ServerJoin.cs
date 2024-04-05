@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -22,6 +24,10 @@ namespace Uno.Classes
         PlayerDatabase playerDatabase;
         CardFunctionality cardFunctionality;
         Deck deck;
+
+        public string scorePath = @"./scores.txt";
+        public int score = 0;
+
         public ServerJoin()
         {
 
@@ -46,10 +52,28 @@ namespace Uno.Classes
                 await client.ConnectAsync(ip, port);
                 stream = client.GetStream();
 
+                List<string> lines = File.ReadAllLines(scorePath).ToList();
+                bool usernameExists = false;
+                foreach (string line in lines)
+                {
+                    string[] splittedLine = line.Split(';');
+                    if (splittedLine[0].Equals(username))
+                    {
+                        score = int.Parse(splittedLine[1]);
+                        usernameExists = true;
+                    }
+                }
+
+                if (!usernameExists)
+                {
+                    lines.Add(username + ";0");
+                    File.WriteAllLines(scorePath, lines);
+                }
+
                 Thread joinServerThread = new Thread(ServerConnection);
                 joinServerThread.Start();
 
-                await SendDataToServer($"JOIN {username}");
+                await SendDataToServer($"JOIN {username} {score}");
 
                 player = playerDatabase.AddClientPlayer(username);
 
@@ -162,10 +186,11 @@ namespace Uno.Classes
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + 1;
                         string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
+
                         if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageJOIN + " has joined the server!"); }));
+                            form1.Invoke(new Action(() => { form1.AppendLogBox(restOfMessageJOIN + " has joined the server with " + score + " amount of wins!"); }));
                         else
-                            form1.AppendLogBox(restOfMessageJOIN + " has joined the server!");
+                            form1.AppendLogBox(restOfMessageJOIN + " has joined the server with" + score + " amount of wins!");
                         break;
 
                     case "ERR":
@@ -268,10 +293,10 @@ namespace Uno.Classes
                         if (form1.InvokeRequired)
                             form1.Invoke(new Action(() =>
                             {
-                                form1.GameWon();
+                                form1.GameWon(message.Split(' ')[1]);
                             }));
                         else
-                            form1.GameWon();
+                            form1.GameWon(message.Split(' ')[1]);
                         break;
                     case "CLEARINV":
                         playerDatabase.ClearInventories();

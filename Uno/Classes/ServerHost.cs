@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -26,6 +27,9 @@ namespace Uno.Classes
 
         frmUno form1;
         ChatBox chatBox;
+
+        public string scorePath = @"./scores.txt";
+        public int score = 0;
 
         public ServerHost()
         {
@@ -52,6 +56,26 @@ namespace Uno.Classes
                 listener.Start();
 
                 hostPlayer = playerDatabase.AddHostPlayer(username);
+
+                List<string> lines = File.ReadAllLines(scorePath).ToList();
+
+                bool usernameExists = false;
+                foreach (string line in lines)
+                {
+                    string[] splittedLine = line.Split(';');
+                    if (splittedLine[0].Equals(username))
+                    {
+                        score = int.Parse(splittedLine[1]);
+                        usernameExists = true;
+                    }
+                }
+
+                if (!usernameExists)
+                {
+                    lines.Add(username + ";0");
+                    File.WriteAllLines(scorePath, lines);
+                }
+
 
                 AcceptClients();
 
@@ -224,7 +248,9 @@ namespace Uno.Classes
                         return (true, false);
                     case "JOIN":
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
-                        string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
+                        string score = message.Split(' ')[2];
+                        string restOfMessageJOIN = message.Split(' ')[1];
+                        
 
                         if (!playerDatabase.NamePlayerDictionary.TryGetValue(restOfMessageJOIN, out Player existingPlayer))
                         {
@@ -235,7 +261,7 @@ namespace Uno.Classes
                                 playerClientPair.Add(client, newPlayer);
 
                                 if (form1.InvokeRequired)
-                                    form1.Invoke(new Action(() => { form1.AppendLogBox($"{newPlayer.Name} has joined the server!"); }));
+                                    form1.Invoke(new Action(() => { form1.AppendLogBox($"{newPlayer.Name} has joined the server with {score} amount of wins!"); }));
                                 else
                                 form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
 
