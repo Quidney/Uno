@@ -13,7 +13,6 @@ using System.Windows.Forms;
 using Uno.Class;
 using Uno.Classes;
 using Uno.Properties;
-using static System.Windows.Forms.LinkLabel;
 
 namespace Uno
 {
@@ -412,6 +411,8 @@ namespace Uno
 
         public void DisconnectedFromServerClient()
         {
+            Text = "Uno!";
+
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -437,6 +438,10 @@ namespace Uno
 
         public async void DisconnectedFromServerHost()
         {
+            Text = "Uno!";
+
+
+
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -561,13 +566,16 @@ namespace Uno
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[startingPlayer], out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
+                serverHost.SendDataToAllExcept($"TURNOTHER {playerDatabase.players[startingPlayer].Name}", client);
+                Text = $"Uno! {playerDatabase.players[startingPlayer].Name}'s Turn!";
             }
             else
             {
                 cardFunctionality.canPlay = true;
-                Text += " YOUR TURN!!!";
-            }
+                Text = "Uno! Your Turn!";
 
+                serverHost.BroadcastData($"TURNOTHER {currentPlayer.Name}");
+            }
 
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // !                                                    !
@@ -787,6 +795,8 @@ namespace Uno
             ChangeBackGroundColor();
         }
 
+
+        //Go to the menu when someone wins the game.
         public void GameWon(string username)
         {
             Text = "Uno!";

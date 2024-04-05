@@ -298,9 +298,17 @@ namespace Uno.Classes
 
                         cardFunctionality.canPlay = true;
                         if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
+                            form1.Invoke(new Action(() => { form1.Text = "Uno! Your Turn!"; }));
                         else
-                            form1.Text += " YOUR TURN!!!";
+                            form1.Text = "Uno! Your Turn!";
+                        break;
+                    case "TURNOTHER":
+                        //Command TurnOther. Syntax: "TURNOTHER USERNAME".
+                        //Tells the client that another player has the turn.
+                        if (form1.InvokeRequired)
+                            form1.Invoke(new Action(() => { form1.Text = $"Uno! {message.Split(' ')[1]}'s Turn!"; }));
+                        else
+                            form1.Text = $"Uno! {message.Split(' ')[1]}'s Turn!";
                         break;
                     case "CHEATS":
                         //Command Cheats. Syntax "CHEATS"

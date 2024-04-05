@@ -70,15 +70,20 @@ namespace Uno.Classes
 
                     canPlay = false;
 
+                    string nameNewPlayer = string.Empty;
+
                     if (form1.isHost)
-                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
+                    {
+                        Player newTurnPlayer = PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
+                        nameNewPlayer = newTurnPlayer.Name;
+                    }
 
                     if (form1.currentPlayer == player)
                     {
                         if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
+                            form1.Invoke(new Action(() => { form1.Text = "Uno!"; }));
                         else
-                            form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+                            form1.Text = $"Uno! {nameNewPlayer}'s Turn!";
                     }
 
                     if (form1.currentPlayer.IsHost)
@@ -114,7 +119,7 @@ namespace Uno.Classes
             }
         }
 
-        public void PlayerTurn(Player player, bool skip, bool reverse)
+        public Player PlayerTurn(Player player, bool skip, bool reverse)
         {
             if (reverse)
                 playerDatabase.players.Reverse();
@@ -133,14 +138,19 @@ namespace Uno.Classes
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
+                serverHost.SendDataToAllExcept($"TURNOTHER {turnPlayer.Name}", client);
+                form1.Text = $"Uno! {turnPlayer.Name}'s Turn!";
                 turnPlayer.turn = true;
             }
             else
             {
-                form1.Text += " YOUR TURN!!!";
+                form1.Text = "Uno! Your Turn!";
+                serverHost.BroadcastData($"TURNOTHER {form1.currentPlayer.Name}");
                 canPlay = true;
                 form1.currentPlayer.turn = true;
             }
+
+            return turnPlayer;
         }
 
         public void ThrowCardInPileForClient(Card card)
