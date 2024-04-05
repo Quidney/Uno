@@ -787,7 +787,7 @@ namespace Uno
             ChangeBackGroundColor();
         }
 
-        public async void GameWon(string username)
+        public void GameWon(string username)
         {
             Text = "Uno!";
 

@@ -94,9 +94,9 @@ namespace Uno.Classes
                             {
                                 serverHost.BroadcastData($"WIN {player.Name}");
                                 if (form1.InvokeRequired)
-                                    form1.Invoke(new Action(() => { form1.GameWon(); }));
+                                    form1.Invoke(new Action(() => { form1.GameWon(player.Name); }));
                                 else
-                                    form1.GameWon();
+                                    form1.GameWon(player.Name);
                             }
                         }
                     }
