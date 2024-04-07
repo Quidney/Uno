@@ -829,7 +829,7 @@ namespace Uno
             cardFunctionality.canPlay = true;
             seconden = 15;
             lblTimer.Text = seconden.ToString();
-            timerTurn.Start();
+            //timerTurn.Start(); Momenteel uit door error wanneer die op 0 komt !!!!!!!!!!!
         }
 
         private void timerTurn_Tick(object sender, EventArgs e)
