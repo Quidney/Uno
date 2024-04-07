@@ -70,16 +70,25 @@ namespace Uno.Classes
 
                     canPlay = false;
 
-                    if (form1.isHost)
-                        PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
+                    Player newPlayer = null;
 
-                    if (form1.currentPlayer == player)
+                    if (form1.isHost)
                     {
-                        if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text = form1.Text.Replace(" YOUR TURN!!!", ""); }));
-                        else
-                            form1.Text = form1.Text.Replace(" YOUR TURN!!!", "");
+                        Player newTurnPlayer = PlayerTurn(player, card.Action == Card.ActionEnum.Skip, card.Action == Card.ActionEnum.Reverse);
+                        newPlayer = newTurnPlayer;
+
+
+                        if (form1.currentPlayer == player)
+                        {
+
+                            if (form1.InvokeRequired)
+                                form1.Invoke(new Action(() => { form1.Text = $"Uno! {newPlayer.Name}'s Turn! ({newPlayer.Inventory.Count} Cards left!)"; }));
+                            else
+                                form1.Text = $"Uno! {newPlayer.Name}'s Turn! ({newPlayer.Inventory.Count} Cards left!)";
+
+                        }
                     }
+
 
                     if (form1.currentPlayer.IsHost)
                     {
@@ -94,9 +103,9 @@ namespace Uno.Classes
                             {
                                 serverHost.BroadcastData($"WIN {player.Name}");
                                 if (form1.InvokeRequired)
-                                    form1.Invoke(new Action(() => { form1.GameWon(); }));
+                                    form1.Invoke(new Action(() => { form1.GameWon(player.Name); }));
                                 else
-                                    form1.GameWon();
+                                    form1.GameWon(player.Name);
                             }
                         }
                     }
@@ -114,7 +123,7 @@ namespace Uno.Classes
             }
         }
 
-        public void PlayerTurn(Player player, bool skip, bool reverse)
+        public Player PlayerTurn(Player player, bool skip, bool reverse)
         {
             if (reverse)
                 playerDatabase.players.Reverse();
@@ -133,14 +142,19 @@ namespace Uno.Classes
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(turnPlayer, out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
+                serverHost.SendDataToAllExcept($"TURNOTHER {turnPlayer.Name} {turnPlayer.Inventory.Count}", client);
+                form1.Text = $"Uno! {turnPlayer.Name}'s Turn!";
                 turnPlayer.turn = true;
             }
             else
             {
-                form1.Text += " YOUR TURN!!!";
+                form1.Text = "Uno! Your Turn!";
+                serverHost.BroadcastData($"TURNOTHER {form1.currentPlayer.Name} {form1.currentPlayer.Inventory.Count}");
                 canPlay = true;
                 form1.currentPlayer.turn = true;
             }
+
+            return turnPlayer;
         }
 
         public void ThrowCardInPileForClient(Card card)

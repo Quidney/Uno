@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -40,12 +41,19 @@ namespace Uno
         public int next = 0;
         public bool timer = true;
 
+        public string scorePath = @"./scores.txt";
+
         public frmUno()
         {
             InitializeComponent();
             InitMethod();
             pnlMain.Paint += set_background;
             pnlMultiplayer.Paint += set_background;
+
+            if (!File.Exists(scorePath))
+            {
+                File.Create(scorePath).Close();
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -401,6 +409,8 @@ namespace Uno
 
         public void DisconnectedFromServerClient()
         {
+            Text = "Uno!";
+
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -426,6 +436,10 @@ namespace Uno
 
         public async void DisconnectedFromServerHost()
         {
+            Text = "Uno!";
+
+
+
             joinedOrHosted = false;
             isHost = false;
             chatBox.lblTitleExtern.Text = string.Empty;
@@ -550,20 +564,23 @@ namespace Uno
             {
                 playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[startingPlayer], out TcpClient client);
                 serverHost.SendDataToSpecificClient("TURN", client);
+                serverHost.SendDataToAllExcept($"TURNOTHER {playerDatabase.players[startingPlayer].Name}", client);
+                Text = $"Uno! {playerDatabase.players[startingPlayer].Name}'s Turn!";
             }
             else
             {
                 cardFunctionality.canPlay = true;
-                Text += " YOUR TURN!!!";
-            }
+                Text = "Uno! Your Turn!";
 
+                serverHost.BroadcastData($"TURNOTHER {currentPlayer.Name}");
+            }
 
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // !                                                    !
             // !        CHANGE THIS BACK TO 7 BEFORE LAUNCH         !   
             // !                                                    !
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            int cardDrawCount = 2;
+            int cardDrawCount = 7;
 
             for (int i = 0; i < cardDrawCount; i++)
             {
@@ -776,7 +793,9 @@ namespace Uno
             ChangeBackGroundColor();
         }
 
-        public async void GameWon()
+
+        //Go to the menu when someone wins the game.
+        public void GameWon(string username)
         {
             Text = "Uno!";
 
@@ -787,8 +806,21 @@ namespace Uno
             pnlMultiplayer.BringToFront();
             Application.DoEvents();
             pnlMain.Hide();
-
             isStarted = false;
+
+            List<string> lines = File.ReadAllLines(scorePath).ToList();
+            foreach (string line in lines)
+            {
+                string[] splittedLine = line.Split(';');
+                if (splittedLine[0].Equals(username))
+                {
+                    int score = int.Parse(splittedLine[1]);
+                    score++;
+                    splittedLine[1] = score.ToString();
+                }
+            }
+
+            File.WriteAllLines(scorePath, lines);
         }
 
         public void StartTime() // Zorgt ervoor dat de timer start

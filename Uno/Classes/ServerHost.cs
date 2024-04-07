@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -26,6 +27,9 @@ namespace Uno.Classes
 
         frmUno form1;
         ChatBox chatBox;
+
+        public string scorePath = @"./scores.txt";
+        public int score = 0;
 
         public ServerHost()
         {
@@ -52,6 +56,26 @@ namespace Uno.Classes
                 listener.Start();
 
                 hostPlayer = playerDatabase.AddHostPlayer(username);
+
+                List<string> lines = File.ReadAllLines(scorePath).ToList();
+
+                bool usernameExists = false;
+                foreach (string line in lines)
+                {
+                    string[] splittedLine = line.Split(';');
+                    if (splittedLine[0].Equals(username))
+                    {
+                        score = int.Parse(splittedLine[1]);
+                        usernameExists = true;
+                    }
+                }
+
+                if (!usernameExists)
+                {
+                    lines.Add(username + ";0");
+                    File.WriteAllLines(scorePath, lines);
+                }
+
 
                 AcceptClients();
 
@@ -184,6 +208,8 @@ namespace Uno.Classes
                 switch (command)
                 {
                     case "MSG":
+                        //Command Message. Syntax "MESSAGE USERNAME MESSAGE_CONTENT"
+                        //ChatBox.
                         int skipSubstringMSG = command.Length + senderString.Length + 2;
                         string restOfMessageMSG = message.Substring(skipSubstringMSG);
 
@@ -223,8 +249,12 @@ namespace Uno.Classes
                         }
                         return (true, false);
                     case "JOIN":
+                        //Command Join. Syntax: "JOIN USERNAME SCORE"
+                        //This command is sent to the server by the joining Client.
                         int skipSubstringJOIN = command.Length + senderString.Length + 1;
-                        string restOfMessageJOIN = message.Substring(skipSubstringJOIN);
+                        string score = message.Split(' ')[2];
+                        string restOfMessageJOIN = message.Split(' ')[1];
+                        
 
                         if (!playerDatabase.NamePlayerDictionary.TryGetValue(restOfMessageJOIN, out Player existingPlayer))
                         {
@@ -235,7 +265,7 @@ namespace Uno.Classes
                                 playerClientPair.Add(client, newPlayer);
 
                                 if (form1.InvokeRequired)
-                                    form1.Invoke(new Action(() => { form1.AppendLogBox($"{newPlayer.Name} has joined the server!"); }));
+                                    form1.Invoke(new Action(() => { form1.AppendLogBox($"{newPlayer.Name} has joined the server with {score} amount of wins!"); }));
                                 else
                                 form1.AppendLogBox($"{newPlayer.Name} has joined the server!");
 
@@ -267,6 +297,9 @@ namespace Uno.Classes
                         }
 
                     case "PLAY":
+
+                        //Command play. Syntax: "PLAY USERNAME CARD_ID"
+                        //This is sent to the server when a player is trying to play a card.
                         int playedCardID = Convert.ToInt32(message.Split(' ')[2].Trim());
                         if (deck.idToCard.TryGetValue(playedCardID, out Card playedCard))
                         {
@@ -305,11 +338,15 @@ namespace Uno.Classes
 
                         return (true, false);
                     case "CHANGECOLOR":
+                        //Command ChangeColor. Syntax: "CHANGECOLOR COLOR_ENUM"
+                        //This is sent when a client changes the color.
                         Enum.TryParse<Card.ColorEnum>(message.Split(' ')[1], out Card.ColorEnum colorToChange);
                         cardFunctionality.currentColor = colorToChange;
                         await SendDataToAllExcept(message, client);
                         return (true, false);
                     case "DECK":
+                        //Command Deck. Syntax: "DECK USERNAME"
+                        //This command is sent by the client when it draws a card from the deck.
                         string playerNameDeck = message.Split(' ')[1];
                         playerDatabase.NamePlayerDictionary.TryGetValue(playerNameDeck, out Player player);
                         cardFunctionality.DrawCardsFromDeck(player, 1);
