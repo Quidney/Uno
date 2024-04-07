@@ -248,7 +248,7 @@ namespace Uno.Classes
                     case "TURN":
                         cardFunctionality.canPlay = true;
                         if (form1.InvokeRequired)
-                            form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; }));
+                            form1.Invoke(new Action(() => { form1.Text += " YOUR TURN!!!"; form1.StartTime(); form1.seconden = 15; })) ;
                         else
                             form1.Text += " YOUR TURN!!!";
                         break;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -35,12 +36,9 @@ namespace Uno
         public AdminConsole adminConsole;
 
         public Card lastCardPlayed;
-
-        public bool myTurn = false;
-
         public int seconden { get; set; }
-        public bool YourTurn { get; set; }
-        public bool OtherTurn { get; set; }
+        public int next = 0;
+        public bool timer = true;
 
         public frmUno()
         {
@@ -188,7 +186,7 @@ namespace Uno
                     Parent = pnlMultiplayer,
                     Dock = DockStyle.Fill,
                 };
-                btnStartGame.Click += (sender, e) => StartGame();
+                btnStartGame.Click += (sender, e) => { StartGame(); StartTime(); };
 
                 pnlMultiplayer.SetCellPosition(btnStartGame, new TableLayoutPanelCellPosition(7, 13));
                 pnlMultiplayer.SetColumnSpan(btnStartGame, 3);
@@ -571,7 +569,7 @@ namespace Uno
             {
                 foreach (Player player in playerDatabase.players)
                 {
-                    //Draw Card, Player, Int Card Count
+                    // Draw Card, Player, Int Card Count
                     cardFunctionality.DrawCardsFromDeck(player, 1);
                 }
             }
@@ -791,6 +789,70 @@ namespace Uno
             pnlMain.Hide();
 
             isStarted = false;
+        }
+
+        public void StartTime() // Zorgt ervoor dat de timer start
+        {
+            timer = true;
+            cardFunctionality.canPlay = true;
+            seconden = 15;
+            lblTimer.Text = seconden.ToString();
+            timerTurn.Start();
+        }
+
+        private void timerTurn_Tick(object sender, EventArgs e)
+        {
+            if (cardFunctionality.canPlay && seconden > -1)
+            {
+                lblTimer.Text = seconden--.ToString(); // Text van lblTimer word veranderd naar seconden en seconden gaat met 1 omlaag
+                lblTimer.Update(); // Text wordt geupdate
+            if (seconden == 0 && timer == true)
+                {
+                    timer = false; // Zorgt ervoor dat de code niet herhaalt
+                    seconden = 15; // Seconden terug naar 15
+                    cardFunctionality.DrawCardsFromDeck(currentPlayer, 1); // Pakt één kaart van de stapel !!!! Werkt voor de een of andere reden niet
+                    EndTime();
+                }
+            }
+            if (seconden < 6)
+            {
+                lblTimer.ForeColor = Color.Red;
+            }
+            else if (seconden > 5)
+            {
+                lblTimer.ForeColor = Color.White;
+            }
+        }
+
+        public void EndTime()
+        {
+            timerTurn.Stop();
+            seconden = 15;
+            lblTimer.Text = seconden.ToString();
+
+            if (currentPlayer.IsHost)
+            { // currentplayer
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[0], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+            }
+            else if (!currentPlayer.IsHost || next == 0)
+            {
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[1], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+                next++;
+            }
+            else if (!currentPlayer.IsHost || next == 1)
+            {
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[2], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+                next++;
+            }
+            else if (!currentPlayer.IsHost || next == 2)
+            {
+                playerDatabase.PlayerClientDictionary.TryGetValue(playerDatabase.players[3], out TcpClient client);
+                serverHost.SendDataToSpecificClient("TURN", client);
+                next = 0;
+            }
         }
     }
 }

@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUno));
+            this.timerTurn = new System.Windows.Forms.Timer(this.components);
             this.pnlMain = new Uno.Classes.CustomTableLayoutPanel();
+            this.lblTimer = new Uno.Classes.CustomLabel();
             this.pnlMultiplayer = new Uno.Classes.CustomTableLayoutPanel();
             this.lblUsername = new Uno.Classes.CustomLabel();
             this.txtUsername = new Uno.Classes.CustomTextBox();
@@ -46,10 +49,16 @@
             this.lblHost = new Uno.Classes.CustomLabel();
             this.pctrChatBox = new Uno.Classes.CustomPictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.pnlMain.SuspendLayout();
             this.pnlMultiplayer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctrChatBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // timerTurn
+            // 
+            this.timerTurn.Interval = 1000;
+            this.timerTurn.Tick += new System.EventHandler(this.timerTurn_Tick);
             // 
             // pnlMain
             // 
@@ -80,6 +89,7 @@
             this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
             this.pnlMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.pnlMain.Controls.Add(this.lblTimer, 1, 21);
             this.pnlMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlMain.Location = new System.Drawing.Point(0, 0);
             this.pnlMain.Margin = new System.Windows.Forms.Padding(4);
@@ -114,6 +124,25 @@
             this.pnlMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.pnlMain.Size = new System.Drawing.Size(1228, 952);
             this.pnlMain.TabIndex = 0;
+            // 
+            // lblTimer
+            // 
+            this.lblTimer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTimer.AssignedCard = null;
+            this.lblTimer.BackColor = System.Drawing.Color.Transparent;
+            this.pnlMain.SetColumnSpan(this.lblTimer, 3);
+            this.lblTimer.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTimer.ForeColor = System.Drawing.Color.White;
+            this.lblTimer.Location = new System.Drawing.Point(53, 798);
+            this.lblTimer.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblTimer.Name = "lblTimer";
+            this.pnlMain.SetRowSpan(this.lblTimer, 3);
+            this.lblTimer.Size = new System.Drawing.Size(139, 114);
+            this.lblTimer.TabIndex = 16;
+            this.lblTimer.Text = "15";
+            this.lblTimer.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pnlMultiplayer
             // 
@@ -435,6 +464,7 @@
             this.Name = "frmUno";
             this.Text = "Uno!";
             this.Load += new System.EventHandler(this.frmUno_Load);
+            this.pnlMain.ResumeLayout(false);
             this.pnlMultiplayer.ResumeLayout(false);
             this.pnlMultiplayer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pctrChatBox)).EndInit();
@@ -462,6 +492,8 @@
         private Classes.CustomButton btnJoinServer;
         private Classes.CustomPictureBox pctrChatBox;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private Classes.CustomLabel lblTimer;
+        private System.Windows.Forms.Timer timerTurn;
     }
 }
 
